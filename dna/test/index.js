@@ -6,12 +6,7 @@
 //　https://www.youtube.com/watch?v=OX9jsY24S9A&list=PLJgZAXKruDXf9QbFzebpPvA0UV7e35OWQ&index=7&t=0s
 
 const path = require('path')
-const { Orchestrator, Config, combine, singleConductor, localOnly, tapeExecutor } = require('@holochain/tryorama')
-
-process.on('unhandledRejection', error => {
-  // Will print "unhandledRejection err is not defined"
-  console.error('got unhandledRejection:', error);
-});
+const { Orchestrator, Config} = require('@holochain/tryorama')
 
 const dnaPath = path.join(__dirname, "../dist/dna.dna.json")
 
@@ -24,12 +19,12 @@ const conductorConfig = Config.gen(
     // use a sim2h network (see conductor config options for all valid network types)
     // TATS: So sim2h is the simulated network that we use for testing our zome calls. 
     // More info on the video link I shared above. Basically acts like a switchboard that allows
-    // 2 agents to talk to one another. default port is 9000.
+    // 2 agents to talk to one another.
     // IMPORTANT: Make sure to open a new terminal and get inside the nix-shell and run 'sim2h-server'
     // to instantiate a sim2h_server
     network: {
       type: 'sim2h',
-      sim2h_url: 'ws://localhost:9000',
+      sim2h_url: 'ws://localhost:8888',
     },
   })
 
@@ -38,17 +33,7 @@ const conductorConfig = Config.gen(
 // * custom conductor spawning
 // * custom test result reporting
 // * scenario middleware, including integration with other test harnesses
-const orchestrator = new Orchestrator({
-  middleware: combine(
-    // use the tape harness to run the tests, injects the tape API into each scenario
-    // as the second argument
-    tapeExecutor(require('tape')),
-
-    // specify that all "players" in the test are on the local machine, rather than
-    // on remote machines
-    localOnly,
-  ),
-})
+const orchestrator = new Orchestrator()
 
 // Register a scenario, which is a function that gets a special API injected in
 // TATS: this first line is just a boiler plate then sa string you can just specify what scenario you are creating 
@@ -73,7 +58,6 @@ orchestrator.registerScenario("call create_profile then get_profile", async (s, 
 
   // TATS: check if the profile_addr returns Ok from rust
   t.ok(profile_addr.Ok)
-  console.log(profile_addr.Ok)
 
   // Wait for all network activity to settle
   await s.consistency()
@@ -83,7 +67,7 @@ orchestrator.registerScenario("call create_profile then get_profile", async (s, 
   const result = await bob.call("kizuna_dna", "profile", "get_profile", {"address": profile_addr.Ok})
 
   // check for equality of the actual and expected results
-  t.deepEqual(result, { Ok: { App: [ 'profile', '{"first_name":"tatsuya","last_name":"sato","email":"tatsuya.g.sato@gmail.com"}' ] } })
+  t.deepEqual(result, { Ok: { App: [ 'Profile', '{"first_name": "tatsuya", "last_name": "sato", "email": "tatsuya.g.sato@gmail.com"}' ] } })
 })
 
 orchestrator.run()
