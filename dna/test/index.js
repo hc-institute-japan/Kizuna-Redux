@@ -65,25 +65,36 @@ orchestrator.registerScenario("call create_profile then get_profile", async (s, 
   // Make a call to a Zome function create_profile
   // indicating the function, and passing it the argument
   // FROM TATS: the first argument is the nickname I assigned in line 13. then zome name then zome call name.
-  const profile_addr = await alice.call("kizuna_dna", "profile", "create_profile", {
+  const private_profile_addr = await alice.call("kizuna_dna", "profile", "create_private_profile", {
     first_name : "tatsuya",
     last_name: "sato",
     email: "tatsuya.g.sato@gmail.com"
   })
 
   // TATS: check if the profile_addr returns Ok from rust
-  t.ok(profile_addr.Ok)
-  console.log(profile_addr.Ok)
+  t.ok(private_profile_addr.Ok)
 
   // Wait for all network activity to settle
   await s.consistency()
 
+  const public_profile_addr = await bob.call("kizuna_dna", "profile", "create_public_profile", {
+    username : "tats_sato"
+  })
+
+  t.ok(public_profile_addr.Ok)
+
+  await s.consistency()
+
   // TATS: now, let's try to get the entry content created with the result_create_profile with bob using get_profile call
   // the profile_addr.Ok contains the address of the profile entry committed since create_profile returns the addr of the committed entry. 
-  const result = await bob.call("kizuna_dna", "profile", "get_profile", {"address": profile_addr.Ok})
+  const private_profile_result = await bob.call("kizuna_dna", "profile", "get_profile", {"address": private_profile_addr.Ok})
 
   // check for equality of the actual and expected results
-  t.deepEqual(result, { Ok: { App: [ 'profile', '{"first_name":"tatsuya","last_name":"sato","email":"tatsuya.g.sato@gmail.com"}' ] } })
+  t.deepEqual(private_profile_result, { Ok: { App: [ 'PRIVATE_PROFILE', '{"first_name":"tatsuya","last_name":"sato","email":"tatsuya.g.sato@gmail.com"}' ] } })
+
+  const public_profile_result = await alice.call("kizuna_dna", "profile", "get_profile", {"address": public_profile_addr.Ok})
+
+  t.deepEqual(public_profile_result, { Ok: { App: [ 'PUBLIC_PROFILE', '{"username":"tats_sato"}' ] } })
 })
 
 orchestrator.run()
