@@ -23,50 +23,51 @@ use hdk::{
 
 // see https://developer.holochain.org/api/0.0.42-alpha5/hdk/ for info on using the hdk library
 
-const PROFILE_ENTRY_NAME: &str = "profile";
-const PROFILE_LINK_TYPE: &str = "profile_link";
-const PROFILES_ANCHOR_TYPE: &str = "profiles";
-const PROFILES_ANCHOR_TEXT: &str = "profiles";
+// To avoid typo
+const PRIVATE_PROFILE_ENTRY_NAME: &str = "PRIVATE_PROFILE";
+const PUBLIC_PROFILE_ENTRY_NAME: &str = "PUBLIC_PROFILE";
 
 #[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
-#[serde(rename_all = "snake_case")]
-pub struct Profile {
-    id: Address,
+// this entry is the privateprofile which wil not be propagated to the DHT
+pub struct PrivateProfile {
     first_name: String,
     last_name: String,
     email: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
-#[serde(rename_all = "snake_case")]
-pub struct ProfileEntry {
-    first_name: String,
-    last_name: String,
-    email: String,
-}
-
-impl Profile {
-    pub fn new(id: Address, profile_input: ProfileEntry) ->  ZomeApiResult<Profile> {
-        Ok(Profile {
-            id: id.clone(),
-            first_name: profile_input.first_name,
-            last_name: profile_input.last_name,
-            email: profile_input.email
-        })
+impl PrivateProfile {
+    // implement a new() function for PrivateProfile that will generate a new
+    // struct for with the given arguments
+    pub fn new(first_name: String, last_name: String, email: String) -> Self {
+        PrivateProfile {
+            first_name,
+            last_name,
+            email,
+        }
     }
 
-    // pub fn entry(profile_input: ProfileEntry) -> ZomeApiResult<Entry> {
-    //     Entry::App(PROFILE_ENTRY_NAME.into(), profile_input.clone().into())
-    // }
+    // turns a PrivateProfile struct into an entry for sourcechain and DHT
+    pub fn entry(&self) -> Entry {
+        Entry::App(PRIVATE_PROFILE_ENTRY_NAME.into(), self.into())
+    }
+}
 
-    // pub fn profile_from_entry(entry_input: Entry) -> ZomeApiResult<Profile> {
-    //     Ok(Profile {
-    //         id: Entry.address.clone(),
-    //         first_name: entry_input.first_name,
-    //         second_name: entry_input.last_name,
-    //         email: entry_input.email
-    //     })
-    // }
+#[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
+// a public profile that can be looked up by anyone
+pub struct PublicProfile {
+    username: String,
+}
+
+impl PublicProfile {
+    pub fn new(username: String) -> Self {
+        PublicProfile {
+            username,
+        }
+    }
+
+    pub fn entry(&self) -> Entry {
+        Entry::App(PUBLIC_PROFILE_ENTRY_NAME.into(), self.into())
+    }
 }
 
 #[zome]
@@ -79,19 +80,43 @@ mod profile_zome {
 
     #[validate_agent]
     pub fn validate_agent(validation_data: EntryValidationData<AgentId>) {
+        // this is where you can actually have some validations for agents who want to join this network.
+        // Since this is a public DHT wehere anyone can join, we might not have much of validation here. Let's see.
         Ok(())
     }
 
     #[entry_def]
-    fn definition() -> ValidatingEntryType {
+    fn private_profile_definition() -> ValidatingEntryType {
         entry!(
-            name: PROFILE_ENTRY_NAME,
-            description: "this is the profile spec of the user",
+            name: PRIVATE_PROFILE_ENTRY_NAME, // uses the variable to avoid typo
+            description: "this is the private profile spec of the user",
+            sharing: Sharing::Public, // currently public but has to be private when released
+            validation_package: || {
+                // this is the validation package that an agent can use to validate this entry.
+                // For now it is just using the Entry itself to validate it but there are more options
+                // such as the entire source chain of the agent or al the entries
+                // more here: https://docs.rs/hdk/0.0.46-alpha1/hdk/prelude/enum.ValidationPackageDefinition.html
+                hdk::ValidationPackageDefinition::Entry
+            },
+            validation: | _validation_data: hdk::EntryValidationData<PrivateProfile>| {
+                // this is the actual callback that will be called by the agent when they are going to validate this entry.
+                // Since this is a private entry (eventually) only the creator of thie entry can validate it.
+                // For now, it is just Ok(()) which does not anything.
+                Ok(())
+            }
+        )
+    }
+
+    #[entry_def]
+    fn public_profile_definition() -> ValidatingEntryType {
+        entry!(
+            name: PUBLIC_PROFILE_ENTRY_NAME,
+            description: "this is the public profile spec of the user",
             sharing: Sharing::Public,
             validation_package: || {
                 hdk::ValidationPackageDefinition::Entry
             },
-            validation: | _validation_data: hdk::EntryValidationData<ProfileEntry>| {
+            validation: | _validation_data: hdk::EntryValidationData<PublicProfile>| {
                 Ok(())
             },
             links: [
@@ -119,12 +144,11 @@ mod profile_zome {
     }
 
     #[zome_fn("hc_public")]
-    fn create_profile(profile_input: ProfileEntry) -> ZomeApiResult<Profile> {
-        // let new_profile_entry = Profile::entry(profile_input);
-        let new_profile_entry = Entry::App(PROFILE_ENTRY_NAME.into(), profile_input.clone().into());
-        let address = hdk::commit_entry(&new_profile_entry)?;
-        hdk::link_entries(&profiles_anchor()?, &address, PROFILE_LINK_TYPE, "")?;
-        Profile::new(address, profile_input)
+    fn create_private_profile(first_name: String, last_name: String, email: String) -> ZomeApiResult<Address> {
+        let new_private_profile = PrivateProfile::new(first_name, last_name, email);
+        let new_private_profile_entry = new_private_profile.entry();
+        let address = hdk::commit_entry(&new_private_profile_entry)?;
+        Ok(address)
     }
 
     // #[zome_fn("hc_public")]
@@ -134,16 +158,15 @@ mod profile_zome {
     }
     
     #[zome_fn("hc_public")]
-    fn list_profiles() -> ZomeApiResult<Vec<Profile>> {
-        hdk::get_links_and_load(&profiles_anchor()?, LinkMatch::Exactly(PROFILE_LINK_TYPE), LinkMatch::Any)
-            .map(|profile_list|{
-                profile_list.into_iter()
-                    .filter_map(Result::ok)
-                    .flat_map(|entry| {
-                        let id = entry.address();
-                        hdk::debug(format!("list_entry{:?}", entry)).ok();
-                        get_profile(id)
-                    }).collect()
-            })
+    fn create_public_profile(username: String,) -> ZomeApiResult<Address> {
+        let new_public_profile = PublicProfile::new(username);
+        let new_public_profile_entry = new_public_profile.entry();
+        let address = hdk::commit_entry(&new_public_profile_entry)?;
+        Ok(address)
+    }
+
+    #[zome_fn("hc_public")]
+    fn get_profile(address: Address) -> ZomeApiResult<Option<Entry>> {
+        hdk::get_entry(&address)
     }
 }
