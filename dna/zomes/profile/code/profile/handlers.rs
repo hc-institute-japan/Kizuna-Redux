@@ -10,54 +10,55 @@ use hdk::{
     prelude::*,
 };
 use holochain_anchors::anchor;
-use crate::note::{
-    NoteEntry,
-    Note,
-    NOTE_ENTRY_NAME,
-    NOTES_ANCHOR_TYPE,
-    NOTES_ANCHOR_TEXT,
-    NOTE_LINK_TYPE
+use crate::Profile::{
+    PublicProfile,
+    PrivateProfile,
+    PublicProfileInput,
+    PrivatProfileInput,
+    // test strings file implementation
+    PRIVATE_PROFILE_ENTRY_NAME,
+    PUBLIC_PROFILE_ENTRY_NAME,
+    PRIVATE_PROFILE_LINK_TYPE,
+    PUBLIC_PROFILE_LINK_TYPE,
+    PRIVATE_PROFILES_ANCHOR_TYPE,
+    PUBLIC_PROFILES_ANCHOR_TYPE,
+    PRIVATE_PROFILES_ANCHOR_TEXT,
+    PUBLIC_PROFILES_ANCHOR_TEXT,
 };
 
-fn notes_anchor() -> ZomeApiResult<Address> {
-    anchor(NOTES_ANCHOR_TYPE.to_string(), NOTES_ANCHOR_TEXT.to_string())
+// helper function to attach anchors to profiles
+fn anchor_profile(anchor_type: String, anchor_text: String) -> ZomeApiResult<Address> {
+    anchor(anchor_type.to_string(), anchor_text.to_string())
 }
-
-pub fn create_note(note_entry: NoteEntry) -> ZomeApiResult<Note> {
-    let entry = Entry::App(NOTE_ENTRY_NAME.into(), note_entry.clone().into());
-    let address = hdk::commit_entry(&entry)?;
-    hdk::link_entries(&notes_anchor()?, &address, NOTE_LINK_TYPE, "")?;
-    Note::new(address, note_entry)
+pub fn create_private_profile(input: PrivateProfileInput) -> ZomeApiResult<PrivateProfile> {
+    let new_private_profile_entry = Entry::App(PRIVATE_PROFILE_ENTRY_NAME.into(), input.clone().into());
+    let address = hdk::commit_entry(&new_private_profile_entry)?;
+    hdk::link_entries(&anchor_profile(PRIVATE_PROFILES_ANCHOR_TYPE, PRIVATE_PROFILES_ANCHOR_TEXT)?, &address, PRIVATE_PROFILE_LINK_TYPE, "")?;
+    PrivateProfile::new(address, input)
 }
-
-pub fn get_note(id: Address) -> ZomeApiResult<Note> {
-    let note: NoteEntry = hdk::utils::get_as_type(id.clone())?;
-    Note::new(id, note)
+pub fn create_public_profile(input: PublicProfileInput) -> ZomeApiResult<PublicProfile> {
+    let new_public_profile_entry = Entry::App(PUBLIC_PROFILE_ENTRY_NAME.into(), input.clone().into());
+    let address = hdk::commit_entry(&new_public_profile_entry)?;
+    hdk::link_entries(&anchor_profile(PUBLIC_PROFILES_ANCHOR_TYPE, PUBLIC_PROFILES_ANCHOR_TEXT)?, &address, PUBLIC_PROFILE_LINK_TYPE, "")?;
+    PublicProfile::new(address, input)
 }
-
-pub fn update_note(id: Address, note_input: NoteEntry) -> ZomeApiResult<Note> {
-    let address = match hdk::get_entry(&id.clone())? {
-        None => id.clone(),
-        Some(entry) => entry.address()
-    };
-    hdk::update_entry(Entry::App(NOTE_ENTRY_NAME.into(), note_input.clone().into()), &address)?;
-    Note::new(id, note_input)
+pub fn get_private_profile(id: Address) -> ZomeApiResult<Profile> {
+    let entry: PrivateProfileEntry = hdk::utils::get_as_type(id.clone())?; //returns type result
+    PrivateProfile::new(id, entry)
 }
-
-pub fn remove_note(id: Address) -> ZomeApiResult<Address> {
-    hdk::remove_link(&notes_anchor()?, &id, NOTE_LINK_TYPE, "")?;
-    hdk::remove_entry(&id)
+pub fn get_public_profile(id: Address) -> ZomeApiResult<Profile> {
+    let entry: PublicProfileEntry = hdk::utils::get_as_type(id.clone())?; //returns type result
+    PublicProfile::new(id, entry)
 }
-
-pub fn list_notes() -> ZomeApiResult<Vec<Note>> {
-    hdk::get_links_and_load(&notes_anchor()?, LinkMatch::Exactly(NOTE_LINK_TYPE), LinkMatch::Any)
-        .map(|note_list|{
-            note_list.into_iter()
+fn list_profiles() -> ZomeApiResult<Vec<PublicProfile>> {
+    hdk::get_links_and_load(&profiles_anchor()?, LinkMatch::Exactly(PROFILE_LINK_TYPE), LinkMatch::Any)
+        .map(|profile_list|{
+            profile_list.into_iter()
                 .filter_map(Result::ok)
                 .flat_map(|entry| {
                     let id = entry.address();
                     hdk::debug(format!("list_entry{:?}", entry)).ok();
-                    get_note(id)
+                    get_profile(id)
                 }).collect()
         })
 }
