@@ -5,11 +5,11 @@ import apolloLogger from "apollo-link-logger";
 import { ApolloLink } from "apollo-link";
 import { InMemoryCache } from "apollo-cache-inmemory";
 
-import typeDefs from "./schema";
-import resolvers from "./resolvers";
+import typeDefs from "../graphql/schema";
+import resolvers from "../graphql/resolvers";
 
 const schemaLink = new SchemaLink({
-  schema: makeExecutableSchema({ typeDefs, resolvers })
+  schema: makeExecutableSchema({ typeDefs, resolvers }),
 });
 
 var links = [schemaLink];
@@ -23,7 +23,7 @@ const link = ApolloLink.from(links);
 const apolloClient = new ApolloClient({
   link,
   cache: new InMemoryCache(),
-  connectToDevTools: true
+  connectToDevTools: true,
 });
 
 export default apolloClient;
