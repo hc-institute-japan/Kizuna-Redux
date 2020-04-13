@@ -102,6 +102,7 @@ export function createZomeCall(zomeCallPath, callOpts = {}) {
 
   return async function (args = {}) {
     try {
+      // console.log(args);
       const { instanceId, zome, zomeFunc } = parseZomeCallPath(zomeCallPath);
       let zomeCall;
       //   if (MOCK_DNA_CONNECTION) {
