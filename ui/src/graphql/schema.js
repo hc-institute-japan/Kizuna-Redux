@@ -14,11 +14,10 @@ export default gql`
   }
 
   type Query {
-    listProfiles: [Profile]
+    getProfile(address: String): Profile
   }
 
   type Mutation {
-    getProfile(first_name: String): Profile
-    createProfile(profileInput: ProfileInput): Profile
+    createProfile(profileInput: ProfileInput): String
   }
-`
+`;

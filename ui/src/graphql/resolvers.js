@@ -2,14 +2,14 @@ import { createZomeCall } from "../connection/holochainClient";
 
 const resolvers = {
   Query: {
-    listProfiles: async () =>
-      await createZomeCall("/test-instance/profile/list_profiles")(),
+    getProfile: async (_, { address }) =>
+      await createZomeCall("/test-instance/profile/get_profile")({ address }),
   },
 
   Mutation: {
     createProfile: async (_, { profileInput }) =>
-      await createZomeCall("/test-instance/profile/create_profile")({
-        profile_input: profileInput,
+      await createZomeCall("/test-instance/profile/create_private_profile")({
+        ...profileInput,
       }),
   },
 };

@@ -15,12 +15,24 @@ import Register from "../../Register";
  * The Redirect part means that any url aside from those two registered will be redirected to '/' path or the Landing page
  */
 
-const Unauthenticated = () => (
+type Props = {
+  setIsLogged(param: boolean): void;
+};
+
+const Unauthenticated: React.FC<Props> = ({ setIsLogged }) => (
   <Switch>
-    <Route path="/" exact component={Landing} />
-    <Route path="/login" exact component={Login} />
-    <Route path="/register" exact component={Register} />
-    <Route path="/complete" exact component={Complete} />
+    <Route path="/" exact>
+      <Landing />
+    </Route>
+    <Route path="/login" exact>
+      <Login />
+    </Route>
+    <Route path="/register" exact>
+      <Register setIsLogged={setIsLogged} />
+    </Route>
+    <Route path="/complete" exact>
+      <Complete />
+    </Route>
     <Redirect to="/" />
   </Switch>
 );

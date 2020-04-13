@@ -17,6 +17,12 @@ import Auth from "./pages/Auth";
 /* Theme variables */
 import "./theme/variables.css";
 
+/**
+ * @name App
+ *
+ * Root of the application. Encloses the app with the necessary containers. Proceed to Container to see all the containers
+ */
+
 const App: React.FC = () => (
   <Container>
     <Auth />

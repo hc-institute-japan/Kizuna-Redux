@@ -6,12 +6,17 @@ import {
   IonLabel,
   IonRow,
 } from "@ionic/react";
-import { withRouter } from "react-router-dom";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 import React, { useState } from "react";
 import styles from "./style.module.css";
-
-const Login = ({ history }: { history: any }) => {
+/**
+ * @name Login
+ *
+ * The user will be redirected to login or signup depending on if the user has an account or not
+ */
+const Login: React.SFC<RouteComponentProps> = ({ history }) => {
   const [email, setEmail] = useState("");
+  const [isEmailValid, setIsEmailValid] = useState(false);
 
   const handleOnSubmit = () => {
     const isRegistered = true;
@@ -23,11 +28,16 @@ const Login = ({ history }: { history: any }) => {
     });
   };
 
-  /**
-   * @name Login
-   *
-   * The user will be redirected to login or signup depending on if the user has an account or not
-   */
+  const handleOnChange = (e: any) => {
+    const string = e.target.value.trim();
+    setIsEmailValid(
+      //eslint-disable-next-line
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+        String(e.target.value).toLowerCase()
+      )
+    );
+    setEmail(string);
+  };
 
   return (
     <IonContent>
@@ -40,14 +50,16 @@ const Login = ({ history }: { history: any }) => {
             <IonInput
               type="email"
               value={email}
-              onIonChange={(e) =>
-                setEmail((e.target as HTMLInputElement).value)
-              }
+              onIonChange={handleOnChange}
               placeholder="john@address.com"
             ></IonInput>
           </IonCol>
         </IonRow>
-        <IonButton onClick={handleOnSubmit} className={styles.Next}>
+        <IonButton
+          onClick={handleOnSubmit}
+          disabled={!isEmailValid}
+          className={styles.Next}
+        >
           Next
         </IonButton>
       </div>

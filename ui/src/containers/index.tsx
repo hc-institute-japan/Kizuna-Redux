@@ -10,7 +10,8 @@ const Container = ({ children }: { children: React.ReactNode }) => {
    * Contains the whole application with the following containers:
    * Apollo - To be able to provide the graphql apollo client to the application which links the app to the backend (holochain)
    * Redux Container - To be able to provide the redux store to the whole application that provides an easier state management
-   * Ionic - To be able to use ionic components and functionality in the whole application. Ionic provides useful components such as menu, drawer, content, footers, etc.
+   * Ionic - To allow the app to use ionic components and its functionality in the whole application. Ionic provides useful components such as menu, drawer, content, footers, etc.
+   * Router - To allow the app to use routing functions and components. Examples of router components are Switch, Redirect, Route, withRouter, etc.
    *
    * Accepts children as props
    */

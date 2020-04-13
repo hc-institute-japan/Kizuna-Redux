@@ -10,12 +10,16 @@ import Unauthenticated from "./routes/Unauthenticated";
  * Route - maps the necessary components to a certain url.
  */
 
-const Auth = () => {
-  const [isLogged] = useState(false);
+const Auth: React.FC = () => {
+  const [isLogged, setIsLogged] = useState<boolean | false>(false);
 
   return (
     <IonRouterOutlet>
-      {isLogged ? <Authenticated /> : <Unauthenticated />}
+      {isLogged ? (
+        <Authenticated />
+      ) : (
+        <Unauthenticated setIsLogged={setIsLogged} />
+      )}
     </IonRouterOutlet>
   );
 };
