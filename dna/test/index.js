@@ -96,7 +96,7 @@ orchestrator.registerScenario("call create_profile, get_profile, list_profiles",
 
   await s.consistency()
   
-  const search_ussername_result = await charlie.call("kizuna_dna", "profile", "search_username", {"username": "alice"})
+  const search_ussername_result = await charlie.call("kizuna_dna", "profile", "search_username", {"username": "alicegirl"})
   t.deepEqual(search_ussername_result.Some)
   console.log(search_ussername_result.Some)
 
