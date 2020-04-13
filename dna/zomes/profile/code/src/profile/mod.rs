@@ -8,8 +8,8 @@ use hdk::{
     entry_definition::ValidatingEntryType,
     holochain_core_types::{
         dna::entry_types::Sharing,
-        time::Timeout,
-        time::Iso8601,
+        // time::Timeout,
+        // time::Iso8601,
     },
     holochain_json_api::{
         json::JsonString,
@@ -22,9 +22,12 @@ use hdk::{
 pub mod handlers;
 pub mod validation;
 
+// MAIN MODULE UNDER THE PROFILE CRATE
+// contains data structure definitions and implementations, and entry definitions
+
 // CONSTANT STRINGS (to avoid typo)
 // Entry Names
-const PRIVATE_PROFILE_ENTRY_NAME: &str = "PRIVATE_PROFILE";
+pub const PRIVATE_PROFILE_ENTRY_NAME: &str = "PRIVATE_PROFILE";
 const PUBLIC_PROFILE_ENTRY_NAME: &str = "PUBLIC_PROFILE";
 // Link Types 
 const PRIVATE_PROFILE_LINK_TYPE: &str = "PRIVATE_PROFILE_LINK";
@@ -39,6 +42,7 @@ const PUBLIC_PROFILES_ANCHOR_TEXT: &str = "PUBLIC_PROFILES";
 // STRUCTS
 // Private Profile; this entry is the private profile which wil not be propagated to the DHT
 #[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
+#[serde(rename_all = "snake_case")]
 pub struct PrivateProfile {
     id: Address,
     first_name: String,
@@ -47,55 +51,53 @@ pub struct PrivateProfile {
 }
 // Public Profile; a public profile that can be looked up by anyone
 #[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
+#[serde(rename_all = "snake_case")]
 pub struct PublicProfile {
     id: Address,
     username: String,
 }
 // Private Profile Entry
-#[derive(Serialize, Deserialize, Debug, DefaultJson,Clone)]
-pub struct PrivateProfileInput {
+#[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
+#[serde(rename_all = "snake_case")]
+pub struct PrivateProfileEntry {
     first_name: String,
     last_name: String,
     email: String,
 }
 // Public Profile Entry
-#[derive(Serialize, Deserialize, Debug, DefaultJson,Clone)]
-pub struct PublicProfileInput {
+#[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
+#[serde(rename_all = "snake_case")]
+pub struct PublicProfileEntry {
     username: String,
 }
 
 // IMPLEMENTATIONS OF STRUCTS
-// Private Profile; new(), entry()
+// Private Profile; new()
 impl PrivateProfile {
-    // a new() function that will generate a new struct for with the given arguments
-    pub fn new(first_name: String, last_name: String, email: String) -> Self {
-        PrivateProfile {
-            first_name,
-            last_name,
-            email,
-        }
-    }
-    // turns a PrivateProfile struct into an entry for sourcechain and DHT
-    pub fn entry(&self) -> Entry {
-        Entry::App(PRIVATE_PROFILE_ENTRY_NAME.into(), self.into())
+    // a new() function that will generate a new private profile struct with the given arguments
+    pub fn new(id: Address, profile_input: PrivateProfileEntry) -> ZomeApiResult<PrivateProfile> {
+        Ok(PrivateProfile {
+            id: id.clone(),
+            first_name: profile_input.first_name,
+            last_name: profile_input.last_name,
+            email: profile_input.email
+        })
     }
 }
-// Public Profile; new(), entry()
+// Public Profile; new()
 impl PublicProfile {
-    pub fn new(username: String) -> Self {
-        PublicProfile {
-            username,
-        }
-    }
-
-    pub fn entry(&self) -> Entry {
-        Entry::App(PUBLIC_PROFILE_ENTRY_NAME.into(), self.into())
+    // a new() function that will generate a new public profile struct with the given arguments
+    pub fn new(id: Address, input: PublicProfileEntry) -> ZomeApiResult<PublicProfile> {
+        Ok(PublicProfile {
+            id: id.clone(),
+            username: input.username
+        })
     }
 }
 
 // DEFINITIONS
 // Private Profile
-fn private_profile_definition() -> ValidatingEntryType {
+pub fn private_profile_definition() -> ValidatingEntryType {
     entry!(
         name: PRIVATE_PROFILE_ENTRY_NAME, // uses the variable to avoid typo
         description: "this is the private profile spec of the user",
@@ -103,17 +105,17 @@ fn private_profile_definition() -> ValidatingEntryType {
         validation_package: || {
             hdk::ValidationPackageDefinition::Entry
         },
-        validation: | _validation_data: hdk::EntryValidationData<PrivateProfile>| {
+        validation: | _validation_data: hdk::EntryValidationData<PrivateProfileEntry>| {
             Ok(())
         },
         links: [
             from!(
                 holochain_anchors::ANCHOR_TYPE,
-                link_type: PUBLIC_PROFILE_LINK_TYPE,
+                link_type: PRIVATE_PROFILE_LINK_TYPE,
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry
                 },
-                validation: |validation_data: hdk::LinkValidationData| {
+                validation: | _validation_data: hdk::LinkValidationData| {
                     Ok(())
                 }
             )
@@ -121,7 +123,7 @@ fn private_profile_definition() -> ValidatingEntryType {
     )
 }
 // Public Profile
-fn public_profile_definition() -> ValidatingEntryType {
+pub fn public_profile_definition() -> ValidatingEntryType {
     entry!(
         name: PUBLIC_PROFILE_ENTRY_NAME,
         description: "this is the public profile spec of the user",
@@ -129,13 +131,13 @@ fn public_profile_definition() -> ValidatingEntryType {
         validation_package: || {
             hdk::ValidationPackageDefinition::Entry
         },
-        validation: | _validation_data: hdk::EntryValidationData<PublicProfile>| {
+        validation: | _validation_data: hdk::EntryValidationData<PublicProfileEntry>| {
             Ok(())
         },
         links: [
             from!(
                 holochain_anchors::ANCHOR_TYPE,
-                link_type: PRIVATE_PROFILE_LINK_TYPE,
+                link_type: PUBLIC_PROFILE_LINK_TYPE,
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry
                 },
@@ -146,22 +148,18 @@ fn public_profile_definition() -> ValidatingEntryType {
         ]
     )
 }
-// Anchor
-fn anchor_def() ->ValidatingEntryType {
-    holochain_anchors::anchor_definition()
-}
 
 // HELPER FUNCTION
 // Timestamp: populates timestamp values in structs when in use
-fn timestamp(address: Address) -> ZomeApiResult<Iso8601> {
-    let options = GetEntryOptions{status_request: StatusRequestKind::Initial, entry: false, headers: true, timeout: Timeout::new(10000)};
-    let entry_result = hdk::get_entry_result(&address, options)?;
-    match entry_result.result {
-        GetEntryResultType::Single(entry) => {
-            Ok(entry.headers[0].timestamp().clone())
-        },
-        _ => {
-            unreachable!()
-        }
-    }
-}
+// fn timestamp(address: Address) -> ZomeApiResult<Iso8601> {
+//     let options = GetEntryOptions{status_request: StatusRequestKind::Initial, entry: false, headers: true, timeout: Timeout::new(10000)};
+//     let entry_result = hdk::get_entry_result(&address, options)?;
+//     match entry_result.result {
+//         GetEntryResultType::Single(entry) => {
+//             Ok(entry.headers[0].timestamp().clone())
+//         },
+//         _ => {
+//             unreachable!()
+//         }
+//     }
+// }

@@ -12,7 +12,7 @@ test_agent = true
 
 [[dnas]]
 file = '/home/holo/Desktop/KizunaFork/Kizuna/dna/dist/dna.dna.json'
-hash = 'QmXuEKJfaMmNLUBKAh1hipTJ3aRJtQSvhKWKphZTmWwBUb'
+hash = 'QmdZUk4E1MZjgfXg93XohqvY5HsCzqEgHieXSroL3R9zFP'
 id = 'hc-run-dna'
 
 [[instances]]

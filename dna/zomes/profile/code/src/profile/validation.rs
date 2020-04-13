@@ -4,15 +4,15 @@ use hdk::{
         link::link_data::LinkData
     }
 };
-use crate::note::NoteEntry;
+use crate::profile::PublicProfileEntry;
 
-pub fn validate_entry_create(entry: NoteEntry, validation_data: hdk::ValidationData) -> Result<(), String> {
+pub fn validate_entry_create(entry: PublicProfileEntry, validation_data: hdk::ValidationData) -> Result<(), String> {
     hdk::debug(format!("validate_entry_create_entry: {:?}", entry)).ok();
     hdk::debug(format!("validate_entry_create_validation_data: {:?}", validation_data)).ok();
     Ok(())
 }
 
-pub fn validate_entry_modify(new_entry: NoteEntry, old_entry: NoteEntry, old_entry_header: ChainHeader, validation_data: hdk::ValidationData) -> Result<(), String> {
+pub fn validate_entry_modify(new_entry: PublicProfileEntry, old_entry: PublicProfileEntry, old_entry_header: ChainHeader, validation_data: hdk::ValidationData) -> Result<(), String> {
     hdk::debug(format!("validate_entry_modify_new_entry: {:?}", new_entry)).ok();
     hdk::debug(format!("validate_entry_modify_old_entry: {:?}", old_entry)).ok();
     hdk::debug(format!("validate_entry_modify_old_entry_header: {:?}", old_entry_header)).ok();
@@ -31,7 +31,7 @@ pub fn validate_entry_modify(new_entry: NoteEntry, old_entry: NoteEntry, old_ent
     }
 }
 
-pub fn validate_entry_delete(old_entry: NoteEntry, old_entry_header: ChainHeader, validation_data: hdk::ValidationData) -> Result<(), String> {
+pub fn validate_entry_delete(old_entry: PublicProfileEntry, old_entry_header: ChainHeader, validation_data: hdk::ValidationData) -> Result<(), String> {
     hdk::debug(format!("validate_entry_delete_old_entry: {:?}", old_entry)).ok();
     hdk::debug(format!("validate_entry_delete_old_entry_header: {:?}", old_entry_header)).ok();
     hdk::debug(format!("validate_entry_delete_validation_data: {:?}", validation_data)).ok();

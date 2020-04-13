@@ -1,12 +1,10 @@
 #![feature(proc_macro_hygiene)]
+
 use hdk_proc_macros::zome;
-use serde_derive::{Deserialize, Serialize}
+use serde_derive::{Deserialize, Serialize};
 use hdk::{
     entry_definition::ValidatingEntryType,
-    holochain_json_api::{
-        json::JsonString,
-        error::JsonError,
-    },
+    error::ZomeApiResult,
     holochain_persistence_api::cas::content::Address
 };
 use crate::profile::{
@@ -16,6 +14,14 @@ use crate::profile::{
     PublicProfileEntry
 };
 pub mod profile;
+
+// MAIN FILE FOR THE PROFILE ZOME
+// contains calls to entry definitions and functions
+
+// Crate              Modules
+// profile __________ mod
+//            |______ handlers
+//            |______ validation
 
 #[zome]
 mod profile_zome {
@@ -39,12 +45,12 @@ mod profile_zome {
 
     #[entry_def]
     fn private_profile_def() -> ValidatingEntryType {
-        profile::private_profile_definiton();
+        profile::private_profile_definition()
     }
 
     #[entry_def]
     fn public_profile_def() -> ValidatingEntryType {
-        profile::handlers::public_profile_definiton()
+        profile::public_profile_definition()
     }
 
     #[zome_fn("hc_public")]
@@ -58,8 +64,22 @@ mod profile_zome {
     }
 
     #[zome_fn("hc_public")]
-    fn list_profiles() -> ZomeApiResult<Vec<PublicProfile>> {
-        profile::handlers::list_profiles()
+    fn get_public_profile(id: Address) -> ZomeApiResult<PublicProfile> {
+        profile::handlers::get_public_profile(id)
+    }
+
+    #[zome_fn("hc_public")]
+    fn get_private_profile(id: Address) -> ZomeApiResult<PrivateProfile> {
+        profile::handlers::get_private_profile(id)
+    }
+
+    #[zome_fn("hc_public")]
+    fn list_public_profiles() -> ZomeApiResult<Vec<PublicProfile>> {
+        profile::handlers::list_public_profiles()
     }
     
+    #[zome_fn("hc_public")]
+    fn search_username(input: PublicProfileEntry) -> ZomeApiResult<Vec<PublicProfile>> {
+        profile::handlers::search_username(input)
+    }
 }
