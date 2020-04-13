@@ -45,7 +45,7 @@ orchestrator.registerScenario("call create_profile, get_profile, list_profiles",
   // test agents should be auto-spawned. If no arguemnt true is passed in the second arguemnt, then
   // you have to call await alice.spawn() to spawn the conductor yourself and kill it after the scenario 
   // with await alice.kill()
-  const {alice, bob} = await s.players({alice: conductorConfig, bob: conductorConfig}, true)
+  const {alice, bob, charlie} = await s.players({alice: conductorConfig, bob: conductorConfig, charlie: conductorConfig}, true)
 
   // Make a call to a Zome function create_profile
   // indicating the function, and passing it the argument
@@ -66,12 +66,16 @@ orchestrator.registerScenario("call create_profile, get_profile, list_profiles",
   const create_public_rofile_result_bob = await bob.call("kizuna_dna", "profile", "create_public_profile", {"input" : {
     "username":"bobito"
   }})
+  const create_public_rofile_result_charlie = await charlie.call("kizuna_dna", "profile", "create_public_profile", {"input" : {
+    "username":"alice_2"
+  }})
 
   // TATS: check if the 4 calls above returns Ok from rust
   t.ok(create_private_profile_result_alice.Ok)
   t.ok(create_private_profile_result_bob.Ok)
   t.ok(create_public_profile_result_alice.Ok)
   t.ok(create_public_rofile_result_bob.Ok)
+  t.ok(create_public_rofile_result_charlie.Ok)
 
   // Wait for all network activity to settle
   await s.consistency()
@@ -85,10 +89,16 @@ orchestrator.registerScenario("call create_profile, get_profile, list_profiles",
   t.deepEqual(get_private_profile_result, { Ok: { id: create_private_profile_result_bob.Ok.id, first_name: 'bob', last_name:'test', email:'abc@abc.com'} })
 
 
-  // // TATS: we're testing here the list_profiles fucntion
-  // const list_result = await bob.call("kizuna_dna", "profile", "list_profiles", {})
-  // // check for if the array returned has a length of 1
-  // t.deepEqual(list_result.Ok.length, 1)
+  // TATS: we're testing here the list_profiles fucntion
+  const list_result = await bob.call("kizuna_dna", "profile", "list_public_profiles", {"initial": "a"})
+  // check for if the array returned has a length of 1
+  t.deepEqual(list_result.Ok.length, 2)
+
+  await s.consistency()
+  
+  const search_ussername_result = await charlie.call("kizuna_dna", "profile", "search_username", {"username": "alice"})
+  t.deepEqual(search_ussername_result.Some)
+  console.log(search_ussername_result.Some)
 
 
 })

@@ -57,6 +57,7 @@ fn anchor_profile_2(anchor_type: String, anchor_text: String) -> ZomeApiResult<A
 // argument(s): PrivateProfileEntry, PublicProfileEntry
 // return value: PrivateProfile, PublicProfile
 pub fn create_private_profile(input: PrivateProfileEntry) -> ZomeApiResult<PrivateProfile> {
+    // needs validation if the same agent already created a private profile
     // creates an entry that will be committed
     let new_private_profile_entry = Entry::App(PRIVATE_PROFILE_ENTRY_NAME.into(), input.clone().into());
     // commits the entry to the DHT and gets the address of the committed entry
@@ -74,6 +75,7 @@ pub fn create_private_profile(input: PrivateProfileEntry) -> ZomeApiResult<Priva
     PrivateProfile::new(address, input)
 }
 pub fn create_public_profile(input: PublicProfileEntry) -> ZomeApiResult<PublicProfile> {
+    // needs validation if the same agent already created a public profile
     let new_public_profile_entry = Entry::App(PUBLIC_PROFILE_ENTRY_NAME.into(), input.clone().into());
     let address = hdk::commit_entry(&new_public_profile_entry)?;
     hdk::link_entries(
@@ -92,6 +94,7 @@ pub fn create_public_profile(input: PublicProfileEntry) -> ZomeApiResult<PublicP
 // get_private_profile(), get_public_profile()
 // argument(s): Address
 // return value: PrivateProfile or PublicProfile
+// can maybe refactored to have one function that gets the profile
 pub fn get_private_profile(id: Address) -> ZomeApiResult<PrivateProfile> {
     // get the entry at the given address and convert to the given type (i.e. PrivateProfileEntry)
     let entry: PrivateProfileEntry = hdk::utils::get_as_type(id.clone())?;
@@ -104,19 +107,19 @@ pub fn get_public_profile(id: Address) -> ZomeApiResult<PublicProfile> {
 }
 
 // list_public_profiles()
-// argument(s): none (can be changed to username)
+// argument(s): none (can be changed to username) -> needs to calrify use case and lessen the overhead
 // return value: Vector of PublicProfile
-pub fn list_public_profiles() -> ZomeApiResult<Vec<PublicProfile>> {
+pub fn list_public_profiles(initial: String) -> ZomeApiResult<Vec<PublicProfile>> {
     // get the entries from the DHT with the specified anchors, link type, and tag
     // outputs a ZomeApiResult<Vec<ZomeApiResult<Entry>>>
     hdk::get_links_and_load(
         &anchor_profile(
             PUBLIC_PROFILES_ANCHOR_TYPE.to_string(),        // anchor_type: PUBLIC_PROFILE_n
             PUBLIC_PROFILES_ANCHOR_TEXT.to_string(),        // anchor_text: PUBLIC_PROFILES_n
-            "n".to_string()                                 // stub for testing; concatenated to anchor type and text
+            initial.to_string()                                 // stub for testing; concatenated to anchor type and text
         )?, 
         LinkMatch::Exactly(PUBLIC_PROFILE_LINK_TYPE),       // link_type: PUBLIC_PROFILE_LINK
-        LinkMatch::Exactly("nicko")                         // tag: nicko
+        LinkMatch::Any                         // tag: nicko
     // iterate over the Vec<ZomeApiResult<Entry>> result
     ).map(|profile_list| {
         // apply eerything below to every profile_list
@@ -139,15 +142,15 @@ pub fn list_public_profiles() -> ZomeApiResult<Vec<PublicProfile>> {
 // search_username()
 // argument(s): PublicProfileEntry
 // return value: Vector of PublicProfile
-pub fn search_username(input: PublicProfileEntry) -> ZomeApiResult<Vec<PublicProfile>> {
+pub fn search_username(username: String) -> ZomeApiResult<Option<PublicProfile>> {
     hdk::get_links_and_load(
         &anchor_profile(
             PUBLIC_PROFILES_ANCHOR_TYPE.to_string(), 
             PUBLIC_PROFILES_ANCHOR_TEXT.to_string(),
-            input.username.clone()
+            username.clone()
         )?, 
         LinkMatch::Exactly(PUBLIC_PROFILE_LINK_TYPE), 
-        LinkMatch::Exactly(&input.username)                  // matches the username exactly to return only one
+        LinkMatch::Exactly(&username)                  // matches the username exactly to return only one
     ).map(|profile_list|{
         profile_list.into_iter()
             .filter_map(Result::ok)
@@ -155,6 +158,6 @@ pub fn search_username(input: PublicProfileEntry) -> ZomeApiResult<Vec<PublicPro
                 let id = entry.address();
                 get_public_profile(id)
             }
-        ).collect()
+        ).next()
     })
 }
