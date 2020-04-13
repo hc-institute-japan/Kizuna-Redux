@@ -1,1 +1,4 @@
-node_moules/
+  node_modules/
+target/
+.hc
+.cargo/

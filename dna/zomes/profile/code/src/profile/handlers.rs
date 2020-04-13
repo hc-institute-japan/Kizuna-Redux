@@ -15,6 +15,8 @@ use crate::profile::{
     PrivateProfile,
     PublicProfileEntry,
     PrivateProfileEntry,
+};
+use crate::profile::strings::{
     PRIVATE_PROFILE_ENTRY_NAME,
     PUBLIC_PROFILE_ENTRY_NAME,
     PRIVATE_PROFILE_LINK_TYPE,

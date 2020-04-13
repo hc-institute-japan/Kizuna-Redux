@@ -21,23 +21,16 @@ use hdk::{
 
 pub mod handlers;
 pub mod validation;
+pub mod strings;
+use strings::{
+    PRIVATE_PROFILE_LINK_TYPE,
+    PRIVATE_PROFILE_ENTRY_NAME,
+    PUBLIC_PROFILE_LINK_TYPE,
+    PUBLIC_PROFILE_ENTRY_NAME,
+};
 
 // MAIN MODULE UNDER THE PROFILE CRATE
 // contains data structure definitions and implementations, and entry definitions
-
-// CONSTANT STRINGS (to avoid typo)
-// Entry Names
-pub const PRIVATE_PROFILE_ENTRY_NAME: &str = "PRIVATE_PROFILE";
-const PUBLIC_PROFILE_ENTRY_NAME: &str = "PUBLIC_PROFILE";
-// Link Types 
-const PRIVATE_PROFILE_LINK_TYPE: &str = "PRIVATE_PROFILE_LINK";
-const PUBLIC_PROFILE_LINK_TYPE: &str = "PUBLIC_PROFILE_LINK";
-// Anchor Types
-const PRIVATE_PROFILES_ANCHOR_TYPE: &str = "PRIVATE_PROFILE";
-const PUBLIC_PROFILES_ANCHOR_TYPE: &str = "PUBLIC_PROFILE";
-// Anchor Text
-const PRIVATE_PROFILES_ANCHOR_TEXT: &str = "PRIVATE_PROFILES";
-const PUBLIC_PROFILES_ANCHOR_TEXT: &str = "PUBLIC_PROFILES";
 
 // STRUCTS
 // Private Profile; this entry is the private profile which wil not be propagated to the DHT
