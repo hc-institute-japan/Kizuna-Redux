@@ -74,12 +74,12 @@ mod profile_zome {
     }
 
     #[zome_fn("hc_public")]
-    fn list_public_profiles() -> ZomeApiResult<Vec<PublicProfile>> {
-        profile::handlers::list_public_profiles()
+    fn list_public_profiles(initial: String) -> ZomeApiResult<Vec<PublicProfile>> {
+        profile::handlers::list_public_profiles(initial)
     }
     
     #[zome_fn("hc_public")]
-    fn search_username(input: PublicProfileEntry) -> ZomeApiResult<Vec<PublicProfile>> {
-        profile::handlers::search_username(input)
+    fn search_username(username: String) -> ZomeApiResult<Option<PublicProfile>> {
+        profile::handlers::search_username(username)
     }
 }

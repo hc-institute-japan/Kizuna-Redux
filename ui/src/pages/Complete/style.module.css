@@ -1,0 +1,22 @@
+.Complete {
+  display: flex;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 20vh;
+  padding-bottom: 20vh;
+}
+
+.CompleteInput {
+  width: 80vw;
+  border-bottom: 1px solid gray;
+}
+
+.Next {
+  position: absolute;
+  bottom: 20vh;
+  width: 80vw;
+}

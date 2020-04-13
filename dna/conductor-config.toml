@@ -11,8 +11,8 @@ public_address = 'HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhm
 test_agent = true
 
 [[dnas]]
-file = '/home/holo/Desktop/KizunaFork/Kizuna/dna/dist/dna.dna.json'
-hash = 'QmdZUk4E1MZjgfXg93XohqvY5HsCzqEgHieXSroL3R9zFP'
+file = '/Users/neilsongardose/Documents/projects/beyonder/kizuna/Kizuna/dna/dist/dna.dna.json'
+hash = 'QmVLDX3k1J7CLKrypr72A7RitjkxchJSdMHifUawWzTVBM'
 id = 'hc-run-dna'
 
 [[instances]]

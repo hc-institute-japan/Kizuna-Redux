@@ -19,7 +19,7 @@ async function initAndGetHolochainClient() {
   try {
     holochainClient = await hcWebClientConnect({
       url: process.env.REACT_APP_DNA_INTERFACE_URL,
-      wsClient: { max_reconnects: 0 }
+      wsClient: { max_reconnects: 0 },
     });
 
     if (HOLOCHAIN_LOGGING) {
@@ -43,16 +43,64 @@ export function parseZomeCallPath(zomeCallPath) {
   return { instanceId, zome, zomeFunc };
 }
 
+export const callZome = (
+  { instanceId, zome, zomeFunction },
+  opts = {}
+) => async (args = {}) => {
+  try {
+    await initAndGetHolochainClient();
+    holochainClient
+      .callZome(
+        instanceId,
+        zome,
+        zomeFunction
+      )(args)
+      .then((res) => {
+        const final = JSON.parse(res);
+        const { Err, SerializationError, Ok } = final;
+        const err = Err || SerializationError;
+        if (err) throw err;
+
+        if ({ logging: HOLOCHAIN_LOGGING, ...opts }.loggging) {
+          const detailsFormat = "font-weight: bold; color: rgb(220, 208, 120)";
+
+          console.groupCollapsed(
+            `👍 ${instanceId}/${zome}/${zomeFunction}%c zome call complete`,
+            "font-weight: normal; color: rgb(160, 160, 160)"
+          );
+          console.groupCollapsed("%cArgs", detailsFormat);
+          console.log(args);
+          console.groupEnd();
+          console.groupCollapsed("%cResult", detailsFormat);
+          console.log(Ok);
+          console.groupEnd();
+          console.groupEnd();
+
+          return Ok;
+        }
+      });
+  } catch (error) {
+    console.log(
+      `👎 %c${instanceId}/${zome}/${zomeFunction}%c zome call ERROR using args: `,
+      "font-weight: bold; color: rgb(220, 208, 120); color: red",
+      "font-weight: normal; color: rgb(160, 160, 160)",
+      args,
+      " -- ",
+      error
+    );
+  }
+};
+
 export function createZomeCall(zomeCallPath, callOpts = {}) {
   const DEFAULT_OPTS = {
-    logging: HOLOCHAIN_LOGGING
+    logging: HOLOCHAIN_LOGGING,
   };
   const opts = {
     ...DEFAULT_OPTS,
-    ...callOpts
+    ...callOpts,
   };
 
-  return async function(args = {}) {
+  return async function (args = {}) {
     try {
       // console.log(args);
       const { instanceId, zome, zomeFunc } = parseZomeCallPath(zomeCallPath);
