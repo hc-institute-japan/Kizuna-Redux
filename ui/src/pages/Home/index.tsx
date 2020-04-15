@@ -8,6 +8,8 @@ const Home = () => {
     variables: { address: localStorage.getItem("user_address") },
   });
 
+  // console.log(data);
+
   return <IonContent></IonContent>;
 };
 

@@ -1,7 +1,9 @@
 import { IonRouterOutlet } from "@ionic/react";
-import React, { useState } from "react";
-import Authenticated from "./routes/Authenticated";
-import Unauthenticated from "./routes/Unauthenticated";
+import React, { useEffect } from "react";
+import Authenticated from "../../routes/Authenticated";
+import Unauthenticated from "../../routes/Unauthenticated";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/reducers";
 
 /**
  * @name Auth
@@ -11,15 +13,15 @@ import Unauthenticated from "./routes/Unauthenticated";
  */
 
 const Auth: React.FC = () => {
-  const [isLogged, setIsLogged] = useState<boolean | false>(false);
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated
+  );
+
+  useEffect(() => {}, []);
 
   return (
     <IonRouterOutlet>
-      {isLogged ? (
-        <Authenticated />
-      ) : (
-        <Unauthenticated setIsLogged={setIsLogged} />
-      )}
+      {isAuthenticated ? <Authenticated /> : <Unauthenticated />}
     </IonRouterOutlet>
   );
 };

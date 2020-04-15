@@ -1,9 +1,9 @@
 import React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
-import Complete from "../../Complete";
-import Landing from "../../Landing";
-import Login from "../../Login";
-import Register from "../../Register";
+import Complete from "../pages/Complete";
+import Landing from "../pages/Landing";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
 
 /**
  * @name Unauthenticated
@@ -15,11 +15,7 @@ import Register from "../../Register";
  * The Redirect part means that any url aside from those two registered will be redirected to '/' path or the Landing page
  */
 
-type Props = {
-  setIsLogged(param: boolean): void;
-};
-
-const Unauthenticated: React.FC<Props> = ({ setIsLogged }) => (
+const Unauthenticated: React.FC = (_) => (
   <Switch>
     <Route path="/" exact>
       <Landing />
@@ -28,7 +24,7 @@ const Unauthenticated: React.FC<Props> = ({ setIsLogged }) => (
       <Login />
     </Route>
     <Route path="/register" exact>
-      <Register setIsLogged={setIsLogged} />
+      <Register />
     </Route>
     <Route path="/complete" exact>
       <Complete />

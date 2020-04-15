@@ -9,7 +9,11 @@ const Landing = () => {
       <IonText color="primary">
         <h1>Kizuna {"<Temporary>"}</h1>
       </IonText>
-      <IonButton className={styles.LandingButton} routerLink="/login">
+      <IonButton
+        color="primary"
+        className={styles.LandingButton}
+        routerLink="/login"
+      >
         Start Messaging
       </IonButton>
     </div>
