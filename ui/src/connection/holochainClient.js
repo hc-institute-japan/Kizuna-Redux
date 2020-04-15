@@ -56,6 +56,7 @@ export const callZome = (
         zomeFunction
       )(args)
       .then((res) => {
+        console.log(res);
         const final = JSON.parse(res);
         const { Err, SerializationError, Ok } = final;
         const err = Err || SerializationError;
