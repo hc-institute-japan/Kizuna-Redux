@@ -2,14 +2,28 @@ use hdk::{
     holochain_core_types::{
         chain_header::ChainHeader,
         link::link_data::LinkData
-    }
+    },
+    api::AGENT_ADDRESS,
 };
-use crate::profile::PublicProfileEntry;
+use crate::profile::{
+  PublicProfileEntry,
+  ProfileEntry,
+};
 
-pub fn validate_entry_create(entry: PublicProfileEntry, validation_data: hdk::ValidationData) -> Result<(), String> {
+pub fn validate_entry_create<T: ProfileEntry + std::fmt::Debug>(entry: T, validation_data: hdk::ValidationData) -> Result<(), String> {
     hdk::debug(format!("validate_entry_create_entry: {:?}", entry)).ok();
     hdk::debug(format!("validate_entry_create_validation_data: {:?}", validation_data)).ok();
-    Ok(())
+    if let Some(p) = validation_data.package.chain_header.provenances().get(0) {
+      if AGENT_ADDRESS.to_string() == p.source().to_string() {
+        Ok(())
+      }
+      else {
+        Err("Another agent is trying to create a profile for this agent".to_string())
+      }
+    }
+    else {
+      Err("No provenance on this validation_data".to_string())
+    }
 }
 
 pub fn validate_entry_modify(new_entry: PublicProfileEntry, old_entry: PublicProfileEntry, old_entry_header: ChainHeader, validation_data: hdk::ValidationData) -> Result<(), String> {

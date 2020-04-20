@@ -88,6 +88,24 @@ impl PublicProfile {
     }
 }
 
+// PROFILEENTRY TRAIT
+pub trait ProfileEntry {
+    fn entry(self) -> Entry;
+}
+
+// Private Profile Entry
+impl ProfileEntry for PublicProfileEntry {
+    fn entry(self) -> Entry {
+        Entry::App(PUBLIC_PROFILE_ENTRY_NAME.into(), self.into())
+    }
+}
+// Public Profile Entry
+impl ProfileEntry for PrivateProfileEntry {
+    fn entry(self) -> Entry {
+        Entry::App(PRIVATE_PROFILE_ENTRY_NAME.into(), self.into())
+    }
+}
+
 // DEFINITIONS
 // Private Profile
 pub fn private_profile_definition() -> ValidatingEntryType {
@@ -98,8 +116,14 @@ pub fn private_profile_definition() -> ValidatingEntryType {
         validation_package: || {
             hdk::ValidationPackageDefinition::Entry
         },
-        validation: | _validation_data: hdk::EntryValidationData<PrivateProfileEntry>| {
-            Ok(())
+        validation: | validation_data: hdk::EntryValidationData<PrivateProfileEntry>| {
+            match validation_data {
+                hdk::EntryValidationData::Create{entry, validation_data} =>
+                {
+                    validation::validate_entry_create(entry, validation_data)
+                },
+                _ => Ok(()) // placeholder for Modify and Delete for now
+            }
         },
         links: [
             from!(
@@ -124,8 +148,14 @@ pub fn public_profile_definition() -> ValidatingEntryType {
         validation_package: || {
             hdk::ValidationPackageDefinition::Entry
         },
-        validation: | _validation_data: hdk::EntryValidationData<PublicProfileEntry>| {
-            Ok(())
+        validation: | validation_data: hdk::EntryValidationData<PublicProfileEntry>| {
+            match validation_data {
+                hdk::EntryValidationData::Create{entry, validation_data} =>
+                {
+                    validation::validate_entry_create(entry, validation_data)
+                },
+                _ => Ok(()) // placeholder for Modify and Delete for now
+            }
         },
         links: [
             from!(

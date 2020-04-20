@@ -1,11 +1,10 @@
 use hdk::{
     error::ZomeApiResult,
-    holochain_core_types::{
-        entry::Entry,
-    },
+    // holochain_core_types::{
+    //     entry::Entry,
+    // },
     holochain_persistence_api::cas::content::{
         Address,
-        AddressableContent
     },
     prelude::*,
 };
@@ -15,10 +14,9 @@ use crate::profile::{
     PrivateProfile,
     PublicProfileEntry,
     PrivateProfileEntry,
+    ProfileEntry,
 };
 use crate::profile::strings::{
-    PRIVATE_PROFILE_ENTRY_NAME,
-    PUBLIC_PROFILE_ENTRY_NAME,
     PRIVATE_PROFILE_LINK_TYPE,
     PUBLIC_PROFILE_LINK_TYPE,
     PRIVATE_PROFILES_ANCHOR_TYPE,
@@ -44,7 +42,7 @@ use crate::profile::strings::{
 //      anchor type: 'PRIVATE_PROFILE_<first character of username>' or 'PUBLIC_PROFILE_<first character of username>'
 //      anchor text: 'PRIVATE_PROFILES_<first character of username>' or 'PUBLIC_PROFILES_<first character of username>'
 fn anchor_profile(anchor_type: String, anchor_text: String, username: String) -> ZomeApiResult<Address> {
-    let first_letter = username.chars().next().unwrap();
+    let first_letter = username.chars().next().unwrap().to_ascii_lowercase();
     let type_string = format!("{}{}{}", anchor_type, "_", first_letter);
     let text_string = format!("{}{}{}", anchor_text, "_", first_letter);
     anchor(type_string.to_string(), text_string.to_string())
@@ -57,10 +55,8 @@ fn anchor_profile_2(anchor_type: String, anchor_text: String) -> ZomeApiResult<A
 // argument(s): PrivateProfileEntry, PublicProfileEntry
 // return value: PrivateProfile, PublicProfile
 pub fn create_private_profile(input: PrivateProfileEntry) -> ZomeApiResult<PrivateProfile> {
-    // creates an entry that will be committed
-    let new_private_profile_entry = Entry::App(PRIVATE_PROFILE_ENTRY_NAME.into(), input.clone().into());
-    // commits the entry to the DHT and gets the address of the committed entry
-    let address = hdk::commit_entry(&new_private_profile_entry)?;
+    // create an entry with entry() then commits the entry to the DHT and gets the address of the committed entry
+    let address = hdk::commit_entry(&input.clone().entry())?;
     // links the entry using the specified anchors and tags
     hdk::link_entries(
         &anchor_profile_2(
@@ -74,17 +70,16 @@ pub fn create_private_profile(input: PrivateProfileEntry) -> ZomeApiResult<Priva
     PrivateProfile::new(address, input)
 }
 pub fn create_public_profile(input: PublicProfileEntry) -> ZomeApiResult<PublicProfile> {
-    let new_public_profile_entry = Entry::App(PUBLIC_PROFILE_ENTRY_NAME.into(), input.clone().into());
-    let address = hdk::commit_entry(&new_public_profile_entry)?;
+    let address = hdk::commit_entry(&input.clone().entry())?;
     hdk::link_entries(
         &anchor_profile(
             PUBLIC_PROFILES_ANCHOR_TYPE.to_string(),    // PUBLIC_PROFILE
             PUBLIC_PROFILES_ANCHOR_TEXT.to_string(),    // PUBLIC_PROFILES
-            input.clone().username                      // <username input> to concatenate to anchor type and text
+            input.username.clone().to_ascii_lowercase()          // <username input> to concatenate to anchor type and text
         )?, 
         &address,                                       // address of the entry in the dht
         PUBLIC_PROFILE_LINK_TYPE,                       // PUBLIC_PROFILE_LINK
-        &input.username                                 // tag: username (for easier searching)
+        &input.username.to_ascii_lowercase()          // tag: lowercased username (for easier searching)
     )?;
     PublicProfile::new(address, input)
 }
@@ -107,55 +102,77 @@ pub fn get_public_profile(id: Address) -> ZomeApiResult<PublicProfile> {
 // list_public_profiles()
 // argument(s): none (can be changed to username)
 // return value: Vector of PublicProfile
-pub fn list_public_profiles(initial: String) -> ZomeApiResult<Vec<PublicProfile>> {
+pub fn list_public_profiles(username: String) -> ZomeApiResult<Vec<PublicProfile>> {
     // get the entries from the DHT with the specified anchors, link type, and tag
     // outputs a ZomeApiResult<Vec<ZomeApiResult<Entry>>>
-    hdk::get_links_and_load(
+    // hdk::get_links_and_load(
+    //     &anchor_profile(
+    //         PUBLIC_PROFILES_ANCHOR_TYPE.to_string(),        // anchor_type: PUBLIC_PROFILE_n
+    //         PUBLIC_PROFILES_ANCHOR_TEXT.to_string(),        // anchor_text: PUBLIC_PROFILES_n
+    //         username,
+    //     )?, 
+    //     LinkMatch::Exactly(PUBLIC_PROFILE_LINK_TYPE),       // link_type: PUBLIC_PROFILE_LINK
+    //     LinkMatch::Any                                      // tag: any
+    // // iterate over the Vec<ZomeApiResult<Entry>> result
+    // ).map(|profile_list| {
+    //     // apply eerything below to every profile_list
+    //     // converts profile_list to an iterator
+    //     profile_list.into_iter()
+    //         // return only values of result type ok
+    //         .filter_map(Result::ok)
+    //         // flatten nested structure
+    //         .flat_map(|entry| {
+    //             // apply everything below to every entry
+    //             let id = entry.address();
+    //             hdk::debug(format!("list_entry{:?}", entry)).ok();
+    //             get_public_profile(id)
+    //         }
+    //     // convert the iterator back into a collection after modification
+    //     ).collect()
+    // })
+    hdk::get_links(
         &anchor_profile(
             PUBLIC_PROFILES_ANCHOR_TYPE.to_string(),        // anchor_type: PUBLIC_PROFILE_n
             PUBLIC_PROFILES_ANCHOR_TEXT.to_string(),        // anchor_text: PUBLIC_PROFILES_n
-            initial.to_string()                                 // stub for testing; concatenated to anchor type and text
+            username,
         )?, 
         LinkMatch::Exactly(PUBLIC_PROFILE_LINK_TYPE),       // link_type: PUBLIC_PROFILE_LINK
-        LinkMatch::Any                         // tag: nicko
-    // iterate over the Vec<ZomeApiResult<Entry>> result
-    ).map(|profile_list| {
-        // apply eerything below to every profile_list
-        // converts profile_list to an iterator
-        profile_list.into_iter()
-            // return only values of result type ok
-            .filter_map(Result::ok)
-            // flatten nested structure
-            .flat_map(|entry| {
-                // apply everything below to every entry
-                let id = entry.address();
-                hdk::debug(format!("list_entry{:?}", entry)).ok();
-                get_public_profile(id)
-            }
-        // convert the iterator back into a collection after modification
-        ).collect()
-    })
+        LinkMatch::Any    
+    )?.addresses().into_iter().map(|profile_address| {
+        get_public_profile(profile_address)
+    }).collect()
 }
 
 // search_username()
 // argument(s): PublicProfileEntry
 // return value: Vector of PublicProfile
-pub fn search_username(username: String) -> ZomeApiResult<Option<PublicProfile>> {
-    hdk::get_links_and_load(
+pub fn search_username(username: String) -> ZomeApiResult<Vec<PublicProfile>> {
+    // hdk::get_links_and_load(
+    //     &anchor_profile(
+    //         PUBLIC_PROFILES_ANCHOR_TYPE.to_string(), 
+    //         PUBLIC_PROFILES_ANCHOR_TEXT.to_string(),
+    //         username.clone().to_ascii_lowercase()
+    //     )?,
+    //     LinkMatch::Exactly(PUBLIC_PROFILE_LINK_TYPE), 
+    //     LinkMatch::Exactly(&username.to_ascii_lowercase())                  // matches the username exactly to return only one
+    // ).map(|profile_list|{
+    //     profile_list.into_iter()
+    //         .filter_map(Result::ok)
+    //         .flat_map(|entry| {
+    //             let id = entry.address();
+    //             get_public_profile(id)
+    //         }
+    //     ).next()
+    // })
+    hdk::get_links(
         &anchor_profile(
             PUBLIC_PROFILES_ANCHOR_TYPE.to_string(), 
             PUBLIC_PROFILES_ANCHOR_TEXT.to_string(),
-            username.clone()
-        )?, 
+            username.clone().to_ascii_lowercase()
+        )?,
         LinkMatch::Exactly(PUBLIC_PROFILE_LINK_TYPE), 
-        LinkMatch::Exactly(&username)                  // matches the username exactly to return only one
-    ).map(|profile_list|{
-        profile_list.into_iter()
-            .filter_map(Result::ok)
-            .flat_map(|entry| {
-                let id = entry.address();
-                get_public_profile(id)
-            }
-        ).next()
-    })
+        LinkMatch::Exactly(&username.to_ascii_lowercase())                  // matches the username exactly to return only one
+    )?.addresses().into_iter().map(|profile_address| {
+        get_public_profile(profile_address)
+    }).collect() // is it okay that search_username does not return anything when there is no match?
 }

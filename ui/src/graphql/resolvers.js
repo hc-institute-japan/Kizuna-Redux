@@ -15,14 +15,12 @@ ZomeCall Structure:
 */
 
 const resolvers = {
-  Query: {
-    listProfiles: async () =>
-      await createZomeCall("/test-instance/profile/list_public_profiles")(),
-    searchUsername: async (_, username) =>
-      await createZomeCall("/test-instance/profile/search_username")({
-        input: username.username,
-      }),
-  },
+    Query: {
+        listProfiles: async (_, username) => 
+            (await createZomeCall('/test-instance/profile/list_public_profiles')({username})),
+        searchUsername: async (_,  username ) =>
+            (await createZomeCall('/test-instance/profile/search_username')( { input: username.username } ))
+    },
 
   Mutation: {
     registerUsername: async (_, username) =>
