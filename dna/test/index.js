@@ -45,7 +45,7 @@ orchestrator.registerScenario("call create_profile, get_profile, list_profiles",
   // test agents should be auto-spawned. If no arguemnt true is passed in the second arguemnt, then
   // you have to call await alice.spawn() to spawn the conductor yourself and kill it after the scenario 
   // with await alice.kill()
-  const {alice, bob, charlie} = await s.players({alice: conductorConfig, bob: conductorConfig, charlie: conductorConfig}, true)
+  const {alice, bob} = await s.players({alice: conductorConfig, bob: conductorConfig}, true)
 
   // Make a call to a Zome function create_profile
   // indicating the function, and passing it the argument
@@ -66,16 +66,16 @@ orchestrator.registerScenario("call create_profile, get_profile, list_profiles",
   const create_public_profile_result_bob = await bob.call("kizuna_dna", "profile", "create_public_profile", {"input" : {
     "username":"Alexander"
   }})
-    const create_public_profile_result_charlie = await charlie.call("kizuna_dna", "profile", "create_public_profile", {"input" : {
-    "username":"ALICE_2"
-  }})
+  //   const create_public_profile_result_charlie = await charlie.call("kizuna_dna", "profile", "create_public_profile", {"input" : {
+  //   "username":"ALICE_2"
+  // }})
 
   // TATS: check if all calls above returns Ok from rust
   t.ok(create_private_profile_result_alice.Ok)
   t.ok(create_private_profile_result_bob.Ok)
   t.deepEqual(create_public_profile_result_bob.Ok.username, "Alexander")
   t.ok(create_public_profile_result_alice.Ok)
-  t.ok(create_public_profile_result_charlie.Ok)
+  // t.ok(create_public_profile_result_charlie.Ok)
 
   // // Wait for all network activity to settle
   await s.consistency()
@@ -84,42 +84,39 @@ orchestrator.registerScenario("call create_profile, get_profile, list_profiles",
   // the public/private/profile_result__addr.Ok.id contains the address of the profile entry committed since create_pub/private_profile returns
   // a profile struct with its id field having the address of the committed entry. 
   const get_pub_profile_result = await alice.call("kizuna_dna", "profile", "get_public_profile", {"id": create_public_profile_result_bob.Ok.id})
-  const get_private_profile_result = await bob.call("kizuna_dna", "profile", "get_private_profile", {"id": create_private_profile_result_bob.Ok.id})
+  const get_private_profile_result = await alice.call("kizuna_dna", "profile", "get_private_profile", {"id": create_private_profile_result_bob.Ok.id})
   t.deepEqual(get_pub_profile_result, { Ok: { id: create_public_profile_result_bob.Ok.id, username: 'Alexander'} })
   t.deepEqual(get_private_profile_result, { Ok: { id: create_private_profile_result_bob.Ok.id, first_name: 'bob', last_name:'test', email:'abc@abc.com'} })
 
-
   // TATS: we're testing here the list_profiles fucntion
   // Failing for some reason
-  const list_result_a = await alice.call("kizuna_dna", "profile", "list_public_profiles", {"username": "Alice"})
+  const list_result_a = await bob.call("kizuna_dna", "profile", "list_public_profiles", {"username": "Alice"})
   await s.consistency() 
   // check for if the array returned has a length of 2
-  t.deepEqual(list_result_a.Ok.length, 3)
+  t.deepEqual(list_result_a.Ok.length, 2)
   // const list_result_b = await bob.call("kizuna_dna", "profile", "list_public_profiles", {"username": "bobito"})
   // t.deepEqual(list_result_b.Ok.length, 1)
   // const list_result_c = await charlie.call("kizuna_dna", "profile", "list_public_profiles", {"username": "charlie"})
   // t.deepEqual(list_result_c.Ok.length, 1)
-
-  await s.consistency()
   
   const search_username_result = await bob.call("kizuna_dna", "profile", "search_username", {"username": "ALicegirl"})
-  t.deepEqual(search_username_result, {Ok: { id: create_public_profile_result_alice.Ok.id, username: 'aLiCeGiRl' }})
+  const search_username_result_2 = await alice.call("kizuna_dna", "profile", "search_username", {"username": "alEXANder"})
+  // const search_username_result_none = await charlie.call("kizuna_dna", "profile", "search_username", {"username": "ronaldo"})
+  await s.consistency() 
+  t.deepEqual(search_username_result, {Ok: [{ id: create_public_profile_result_alice.Ok.id, username: 'aLiCeGiRl' }]})
+  t.deepEqual(search_username_result_2, {Ok: [{ id: create_public_profile_result_bob.Ok.id, username: 'Alexander' }]})
+  // t.deepEqual(search_username_result_none, {Ok : []})
 
-  const search_username_result_2 = await alice.call("kizuna_dna", "profile", "search_username", {"username": "alice_2"})
-  t.deepEqual(search_username_result_2, {Ok: { id: create_public_profile_result_charlie.Ok.id, username: 'ALICE_2' }})
-
-  const search_username_result_none = await charlie.call("kizuna_dna", "profile", "search_username", {"username": "ronaldo"})
-  t.deepEqual(search_username_result_2, {Ok : []})
 
   console.log(list_result_a)
   console.log(search_username_result)
   console.log(search_username_result_2)
-  console.log(search_username_result_none)
+  // console.log(search_username_result_none)
   console.log(create_private_profile_result_alice)
   console.log(create_private_profile_result_bob)
   console.log(create_public_profile_result_bob)
   console.log(create_public_profile_result_alice)
-  console.log(create_public_profile_result_charlie)
+  // console.log(create_public_profile_result_charlie)
 
 })
 
