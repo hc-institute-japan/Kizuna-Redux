@@ -1,3 +1,7 @@
+
+#![allow(dead_code)]
+#![allow(unused_imports)]
+
 use serde_derive::{Deserialize, Serialize};
 use holochain_json_derive::DefaultJson;
 use hdk::{
@@ -18,17 +22,19 @@ use hdk::{
     prelude::*,
     holochain_persistence_api::cas::content::Address
 };
+use std::collections::{
+    hash_map::DefaultHasher,
+    HashMap
+};
+use std::hash::{
+    Hash, 
+    Hasher
+};
 
 pub mod handlers;
 pub mod validation;
 pub mod strings;
-use strings::{
-    PRIVATE_PROFILE_LINK_TYPE,
-    PRIVATE_PROFILE_ENTRY_NAME,
-    PUBLIC_PROFILE_LINK_TYPE,
-    PUBLIC_PROFILE_ENTRY_NAME,
-};
-
+use strings::*;
 // MAIN MODULE UNDER THE PROFILE CRATE
 // contains data structure definitions and implementations, and entry definitions
 
@@ -37,7 +43,7 @@ use strings::{
 #[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
 #[serde(rename_all = "snake_case")]
 pub struct PrivateProfile {
-    id: Address,
+    pub id: Address,
     first_name: String,
     last_name: String,
     email: String,
@@ -63,6 +69,24 @@ pub struct PrivateProfileEntry {
 pub struct PublicProfileEntry {
     username: String,
 }
+// Hashed Email
+#[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
+#[serde(rename_all = "snake_case")]
+pub struct HashedEmail {
+    id: Address,
+    email_hash: u64,
+}
+#[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
+#[serde(rename_all = "snake_case")]
+pub struct HashedEmailEntry {
+    email_hash: u64,
+}
+// Email table
+#[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
+#[serde(rename_all = "snake_case")]
+pub struct EmailTable {
+    email_table: HashMap<u64, u64>,
+}
 
 // IMPLEMENTATIONS OF STRUCTS
 // Private Profile; new()
@@ -77,6 +101,26 @@ impl PrivateProfile {
         })
     }
 }
+impl Hash for PrivateProfileEntry {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.email.hash(state);
+    }
+}
+
+impl HashedEmail {
+    pub fn new(id: Address, email_hash: u64) -> ZomeApiResult<HashedEmail> {
+        Ok(HashedEmail {
+            id: id.clone(),
+            email_hash: email_hash
+        })
+    }
+    pub fn from(email_hash: u64) -> HashedEmailEntry {
+        HashedEmailEntry {
+            email_hash: email_hash,
+        }
+    }
+}
+
 // Public Profile; new()
 impl PublicProfile {
     // a new() function that will generate a new public profile struct with the given arguments
@@ -111,6 +155,16 @@ pub fn private_profile_definition() -> ValidatingEntryType {
                 validation: | _validation_data: hdk::LinkValidationData| {
                     Ok(())
                 }
+            ),
+            from!(
+                "%agent_id",
+                link_type: AGENT_PRIVATE_LINK_TYPE,
+                validation_package: || {
+                    hdk::ValidationPackageDefinition::Entry
+                },
+                validation: | _validation_data: hdk::LinkValidationData | {
+                    Ok(())
+                }
             )
         ]
     )
@@ -124,8 +178,13 @@ pub fn public_profile_definition() -> ValidatingEntryType {
         validation_package: || {
             hdk::ValidationPackageDefinition::Entry
         },
-        validation: | _validation_data: hdk::EntryValidationData<PublicProfileEntry>| {
-            Ok(())
+        validation: | validation_data: hdk::EntryValidationData<PublicProfileEntry>| {
+            match validation_data {
+                hdk::EntryValidationData::Create{entry, validation_data} => {
+                    validation::validate_public_profile_create(entry, validation_data)
+                },
+                _ => Ok(())
+            }
         },
         links: [
             from!(
@@ -137,10 +196,47 @@ pub fn public_profile_definition() -> ValidatingEntryType {
                 validation: | _validation_data: hdk::LinkValidationData | {
                     Ok(())
                 }
+            ),
+            from!(
+                "%agent_id",
+                link_type: AGENT_PUBLIC_LINK_TYPE,
+                validation_package: || {
+                    hdk::ValidationPackageDefinition::Entry
+                },
+                validation: | _validation_data: hdk::LinkValidationData | {
+                    Ok(())
+                }
             )
         ]
     )
 }
+
+pub fn hashed_email_definition() -> ValidatingEntryType {
+    entry!(
+        name: HASHED_EMAIL_ENTRY_NAME,
+        description: "this is a hash of a registered email",
+        sharing: Sharing::Public,
+        validation_package: || {
+            hdk::ValidationPackageDefinition::Entry
+        },
+        validation: | _validation_data: hdk::EntryValidationData<HashedEmailEntry>| {
+            Ok(())
+        },
+        links: [
+            from!(
+                holochain_anchors::ANCHOR_TYPE,
+                link_type: HASHED_EMAIL_LINK_TYPE,
+                validation_package: || {
+                    hdk::ValidationPackageDefinition::Entry
+                },
+                validation: | _validation_data: hdk::LinkValidationData | {
+                    Ok(())
+                }
+            )
+        ]
+    )
+}
+
 
 // HELPER FUNCTION
 // Timestamp: populates timestamp values in structs when in use

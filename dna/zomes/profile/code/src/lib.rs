@@ -1,4 +1,6 @@
 #![feature(proc_macro_hygiene)]
+#![allow(dead_code)]
+#![allow(unused_imports)]
 
 use hdk_proc_macros::zome;
 use serde_derive::{Deserialize, Serialize};
@@ -11,7 +13,8 @@ use crate::profile::{
     PrivateProfile,
     PrivateProfileEntry,
     PublicProfile,
-    PublicProfileEntry
+    PublicProfileEntry,
+    HashedEmail
 };
 pub mod profile;
 
@@ -53,14 +56,24 @@ mod profile_zome {
         profile::public_profile_definition()
     }
 
+    #[entry_def]
+    fn hashed_email_def() -> ValidatingEntryType {
+        profile::hashed_email_definition()
+    }
+    
     #[zome_fn("hc_public")]
     fn create_private_profile(input: PrivateProfileEntry) -> ZomeApiResult<PrivateProfile> {
         profile::handlers::create_private_profile(input)
     }
-
+    
     #[zome_fn("hc_public")]
     fn create_public_profile(input: PublicProfileEntry) -> ZomeApiResult<PublicProfile> {
         profile::handlers::create_public_profile(input)
+    }
+    
+    #[zome_fn("hc_public")]
+    fn create_hashed_email(input: PrivateProfileEntry) -> ZomeApiResult<HashedEmail> {
+        profile::handlers::create_hashed_email(input)
     }
 
     #[zome_fn("hc_public")]
@@ -81,5 +94,30 @@ mod profile_zome {
     #[zome_fn("hc_public")]
     fn search_username(username: String) -> ZomeApiResult<Option<PublicProfile>> {
         profile::handlers::search_username(username)
+    }
+
+    #[zome_fn("hc_public")]
+    fn register(
+        public_input: PublicProfileEntry, 
+        private_input: PrivateProfileEntry
+        ) -> ZomeApiResult<PublicProfile> {
+            profile::handlers::create_private_profile(private_input.clone())?;
+            profile::handlers::create_hashed_email(private_input)?;
+            profile::handlers::create_public_profile(public_input)
+    }
+
+    #[zome_fn("hc_public")]
+    fn get_linked_profile(username: String) -> ZomeApiResult<Option<PrivateProfile>> {
+        profile::handlers::get_linked_profile(username)
+    }
+
+    #[zome_fn("hc_public")]
+    pub fn compare_hashes (input: PrivateProfileEntry) -> ZomeApiResult<HashedEmail>{
+        profile::handlers::compare_hashes(input)
+    }
+
+    #[zome_fn("hc_public")]
+    pub fn get_hashed_emails(email: String) -> ZomeApiResult<Vec<HashedEmail>> {
+        profile::handlers::get_hashed_emails(email)
     }
 }

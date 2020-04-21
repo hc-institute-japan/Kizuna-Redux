@@ -4,12 +4,45 @@ use hdk::{
         link::link_data::LinkData
     }
 };
-use crate::profile::PublicProfileEntry;
+use crate::profile::{
+  // PublicProfile,
+  PublicProfileEntry
+};
+use crate::profile::handlers::{
+  search_username
+};
 
 pub fn validate_entry_create(entry: PublicProfileEntry, validation_data: hdk::ValidationData) -> Result<(), String> {
     hdk::debug(format!("validate_entry_create_entry: {:?}", entry)).ok();
     hdk::debug(format!("validate_entry_create_validation_data: {:?}", validation_data)).ok();
     Ok(())
+}
+
+/*
+  Checks for profile creation:
+    1. Each agent should only be able to commit one registered username and profile
+    2. Usernames must be unique
+    3. Emails must be unique
+*/
+pub fn validate_public_profile_create(entry: PublicProfileEntry, _validation_data: hdk::ValidationData) -> Result<(), String> {
+  // search DHT for entries with the same agent address/public key
+    // get all entries
+      // ? commit provenances to PublicProfileEntry structure
+    // get EntryWithMetaAndHeader
+    // get provenance
+    // compare provenances
+
+  // 2. Usernmes must be unique
+  let username_match = search_username(entry.username);
+  match username_match {
+    Ok(t) => {
+      match t {
+        Some(_u) => Err("Username already exists. Please choose a different one.".to_string()),
+        None => Ok(())
+      }
+    },
+    Err(_e) => Ok(())
+  }
 }
 
 pub fn validate_entry_modify(new_entry: PublicProfileEntry, old_entry: PublicProfileEntry, old_entry_header: ChainHeader, validation_data: hdk::ValidationData) -> Result<(), String> {

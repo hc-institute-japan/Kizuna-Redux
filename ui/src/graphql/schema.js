@@ -24,6 +24,10 @@ export default gql`
     email: String,
   }
 
+  type HashedEmail {
+    email_hash: Int
+  }
+
   input PrivateProfileEntry {
     first_name: String,
     last_name: String,
@@ -35,12 +39,15 @@ export default gql`
   }
 
   type Query {
-    searchUsername (profile_input: PublicProfileEntry): [PublicProfile],
-    listProfiles: [PublicProfile]
+    searchUsername (username: String): PublicProfile,
+    listProfiles: [PublicProfile],
+    getLinkedProfile(username: String): PrivateProfile,
+    getHashedEmails (email: String): [HashedEmail]
   }
 
   type Mutation {
     registerUsername(profile_input: PublicProfileEntry): PublicProfile,
-    createProfile(profile_input: PrivateProfileEntry): PrivateProfile
+    createProfile(profile_input: PrivateProfileEntry): PrivateProfile,
+    register(public_input: PublicProfileEntry, private_input: PrivateProfileEntry): PublicProfile,
   }
 `

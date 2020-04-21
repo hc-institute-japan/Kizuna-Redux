@@ -20,14 +20,20 @@ const resolvers = {
         listProfiles: async () => 
             (await createZomeCall('/test-instance/profile/list_public_profiles')()),
         searchUsername: async (_,  username ) =>
-            (await createZomeCall('/test-instance/profile/search_username')( { input: username.username } ))
+            (await createZomeCall('/test-instance/profile/search_username')( { username: username.username } )),
+        getLinkedProfile: async (_, username) =>
+            (await createZomeCall('test-instance/profile/get_linked_profile')( { username: username.username } )),
+        getHashedEmails: async (_, email) => 
+            (await createZomeCall('/test-instance/profile/get_hashed_emails')( { email: email.email } ))
     },
 
     Mutation: {
         registerUsername: async (_, username ) => 
             (await createZomeCall('/test-instance/profile/create_public_profile')( { input: username.profile_input } )),
         createProfile: async (_, profileDetails ) => 
-            (await createZomeCall('/test-instance/profile/create_private_profile')( { input: profileDetails.profile_input } ))
+            (await createZomeCall('/test-instance/profile/create_private_profile')( { input: profileDetails.profile_input } )),
+        register: async (_, profile_details) =>
+            (await createZomeCall('/test-instance/profile/register')( { public_input: profile_details.public_input, private_input: profile_details.private_input} ))
     }
 };
 
