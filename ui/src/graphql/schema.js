@@ -35,12 +35,15 @@ export default gql`
   }
 
   type Query {
-    searchUsername(profile_input: PublicProfileEntry): [PublicProfile]
     listProfiles: [PublicProfile]
+    address: String
+    getPrivateProfile(id: String): PrivateProfile
+    usernames(username: String): [PublicProfile]
   }
 
   type Mutation {
     registerUsername(profile_input: PublicProfileEntry): PublicProfile
-    createProfile(profile_input: PrivateProfileEntry): PrivateProfile
+    createPrivateProfile(profile_input: PrivateProfileEntry): PrivateProfile
+    createPublicProfile(profile_input: PublicProfileEntry): PublicProfile
   }
 `;

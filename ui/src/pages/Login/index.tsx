@@ -6,10 +6,11 @@ import {
   IonLabel,
   IonRow,
 } from "@ionic/react";
-import { withRouter, RouteComponentProps } from "react-router-dom";
 import React, { useState } from "react";
-import styles from "./style.module.css";
+import { RouteComponentProps, withRouter } from "react-router-dom";
 import { isEmailFormatValid } from "../../utils/helpers/regex";
+import styles from "./style.module.css";
+
 /**
  * @name Login
  *
@@ -19,8 +20,16 @@ const Login: React.SFC<RouteComponentProps> = ({ history }) => {
   const [email, setEmail] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(false);
 
+  // const profile = useQuery(GET_PRIVATE_PROFILE, {
+  //   variables: {
+  //     skip: !data,
+  //     id: data && data.getAddress,
+  //   },
+  // });
+
   const handleOnSubmit = () => {
     const isRegistered = true;
+
     history.push({
       pathname: `/${isRegistered ? "register" : "complete"}`,
       state: {

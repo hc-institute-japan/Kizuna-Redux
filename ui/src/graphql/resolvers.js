@@ -15,26 +15,38 @@ ZomeCall Structure:
 */
 
 const resolvers = {
-    Query: {
-        listProfiles: async (_, username) => 
-            (await createZomeCall('/test-instance/profile/list_public_profiles')({username})),
-        searchUsername: async (_,  username ) =>
-            (await createZomeCall('/test-instance/profile/search_username')( { input: username.username } ))
+  Query: {
+    listProfiles: async () =>
+      await createZomeCall("/test-instance/profile/list_public_profiles")(),
+    address: async () =>
+      await createZomeCall("/test-instance/profile/get_agent_id")(),
+    getPrivateProfile: async (_, { id }) =>
+      await createZomeCall("/test-instance/profile/get_private_profile")({
+        id,
+      }),
+    usernames: async (_, { username }) => {
+      const result = await createZomeCall(
+        "/test-instance/profile/search_username"
+      )({
+        username,
+      });
+      return result;
     },
+  },
 
   Mutation: {
     registerUsername: async (_, username) =>
       await createZomeCall("/test-instance/profile/create_public_profile")({
         input: username.profile_input,
       }),
-    createProfile: async (_, { profile_input }) => {
-      console.log(profile_input);
-      return await createZomeCall(
-        "/test-instance/profile/create_private_profile"
-      )({
+    createPrivateProfile: async (_, { profile_input }) =>
+      await createZomeCall("/test-instance/profile/create_private_profile")({
         input: profile_input,
-      });
-    },
+      }),
+    createPublicProfile: async (_, { profile_input }) =>
+      await createZomeCall("/test-instance/profile/create_public_profile")({
+        input: profile_input,
+      }),
   },
 };
 

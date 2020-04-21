@@ -64,6 +64,11 @@ mod profile_zome {
     }
 
     #[zome_fn("hc_public")]
+    fn get_agent_id() -> ZomeApiResult<Address> {
+        Ok(hdk::AGENT_ADDRESS.clone())
+    }
+
+    #[zome_fn("hc_public")]
     fn get_public_profile(id: Address) -> ZomeApiResult<PublicProfile> {
         profile::handlers::get_public_profile(id)
     }

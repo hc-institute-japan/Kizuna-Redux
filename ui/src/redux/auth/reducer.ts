@@ -1,17 +1,18 @@
 import { ActionType } from "../types";
-import { AUTHENTICATE } from "./actionTypes";
+import * as actions from "./actionTypes";
 
 const initialState = {
   isAuthenticated: false,
+  agentAddress: null,
 };
 
 export default (state = initialState, action: ActionType) => {
   switch (action.type) {
-    case AUTHENTICATE:
+    case actions.AUTHENTICATE:
       return Object.assign({}, state, {
         isAuthenticated: true,
+        agentAddress: action.agentAddress,
       });
-
     default:
       return state;
   }

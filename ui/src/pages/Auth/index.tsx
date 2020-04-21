@@ -2,8 +2,9 @@ import { IonRouterOutlet } from "@ionic/react";
 import React, { useEffect } from "react";
 import Authenticated from "../../routes/Authenticated";
 import Unauthenticated from "../../routes/Unauthenticated";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/reducers";
+import { authenticate } from "../../redux/auth/actions";
 
 /**
  * @name Auth
@@ -17,7 +18,12 @@ const Auth: React.FC = () => {
     (state: RootState) => state.auth.isAuthenticated
   );
 
-  useEffect(() => {}, []);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const address = localStorage.getItem("agent_address");
+    if (address) dispatch(authenticate(address));
+  }, [dispatch]);
 
   return (
     <IonRouterOutlet>
