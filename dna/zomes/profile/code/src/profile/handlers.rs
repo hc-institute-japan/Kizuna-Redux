@@ -238,7 +238,7 @@ pub fn get_hashed_emails (_email: String) -> ZomeApiResult<Vec<HashedEmail>> {
     }).collect()
 }
 
-pub fn compare_hashes (input: PrivateProfileEntry) -> ZomeApiResult<HashedEmail>{
+pub fn compare_hashes (input: PrivateProfileEntry) -> ZomeApiResult<Option<HashedEmail>>{
     let input_email_hash = calculate_hash(&input);
     let matches = hdk::get_links(
         &anchor_profile(
@@ -248,8 +248,20 @@ pub fn compare_hashes (input: PrivateProfileEntry) -> ZomeApiResult<HashedEmail>
         )?,
         LinkMatch::Exactly(HASHED_EMAIL_LINK_TYPE),
         LinkMatch::Any
-    )?.addresses().into_iter().take_while(|entry_address|     
-        get_hashed_email(entry_address.clone()).ok().unwrap().email_hash == input_email_hash
-    ).next().unwrap();
-    get_hashed_email(matches)
+    )?.addresses().into_iter();
+    let mut result: Option<HashedEmail> = None;
+    for address in matches {
+        let entry = get_hashed_email(address)?;
+        if entry.email_hash == input_email_hash {
+            result = Some(entry);
+            break
+        } else {
+            result = None
+        }
+    };
+    Ok(result)
+    // .take_while(|entry_address|     
+    //     get_hashed_email(entry_address.clone()).ok().unwrap().email_hash == input_email_hash
+    // ).next().unwrap();
+    // get_hashed_email(matches)
 }

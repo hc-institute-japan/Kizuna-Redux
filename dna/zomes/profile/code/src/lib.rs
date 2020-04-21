@@ -101,6 +101,7 @@ mod profile_zome {
         public_input: PublicProfileEntry, 
         private_input: PrivateProfileEntry
         ) -> ZomeApiResult<PublicProfile> {
+            // profile::handlers::compare_hashes(private_input.clone())?;
             profile::handlers::create_private_profile(private_input.clone())?;
             profile::handlers::create_hashed_email(private_input)?;
             profile::handlers::create_public_profile(public_input)
@@ -112,7 +113,7 @@ mod profile_zome {
     }
 
     #[zome_fn("hc_public")]
-    pub fn compare_hashes (input: PrivateProfileEntry) -> ZomeApiResult<HashedEmail>{
+    pub fn compare_hashes (input: PrivateProfileEntry) -> ZomeApiResult<Option<HashedEmail>>{
         profile::handlers::compare_hashes(input)
     }
 

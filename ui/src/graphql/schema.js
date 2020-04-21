@@ -42,7 +42,8 @@ export default gql`
     searchUsername (username: String): PublicProfile,
     listProfiles: [PublicProfile],
     getLinkedProfile(username: String): PrivateProfile,
-    getHashedEmails (email: String): [HashedEmail]
+    getHashedEmails (email: String): [HashedEmail],
+    compareHashes (input: PrivateProfileEntry): HashedEmail
   }
 
   type Mutation {

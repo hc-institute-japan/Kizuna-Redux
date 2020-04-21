@@ -24,7 +24,9 @@ const resolvers = {
         getLinkedProfile: async (_, username) =>
             (await createZomeCall('test-instance/profile/get_linked_profile')( { username: username.username } )),
         getHashedEmails: async (_, email) => 
-            (await createZomeCall('/test-instance/profile/get_hashed_emails')( { email: email.email } ))
+            (await createZomeCall('/test-instance/profile/get_hashed_emails')( { email: email.email } )),
+        compareHashes: async (_, input) =>
+            (await createZomeCall('/test-instance/profile/compare_hashes')( { input: input.input } ))
     },
 
     Mutation: {

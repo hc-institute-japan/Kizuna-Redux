@@ -142,8 +142,13 @@ pub fn private_profile_definition() -> ValidatingEntryType {
         validation_package: || {
             hdk::ValidationPackageDefinition::Entry
         },
-        validation: | _validation_data: hdk::EntryValidationData<PrivateProfileEntry>| {
-            Ok(())
+        validation: | validation_data: hdk::EntryValidationData<PrivateProfileEntry>| {
+            match validation_data {
+                hdk::EntryValidationData::Create{entry, validation_data} => {
+                    validation::validate_private_profile_create(entry, validation_data)
+                },
+                _ => Ok(())
+            }
         },
         links: [
             from!(

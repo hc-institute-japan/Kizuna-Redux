@@ -6,10 +6,12 @@ use hdk::{
 };
 use crate::profile::{
   // PublicProfile,
-  PublicProfileEntry
+  PublicProfileEntry,
+  PrivateProfileEntry
 };
 use crate::profile::handlers::{
-  search_username
+  search_username,
+  compare_hashes
 };
 
 pub fn validate_entry_create(entry: PublicProfileEntry, validation_data: hdk::ValidationData) -> Result<(), String> {
@@ -25,19 +27,24 @@ pub fn validate_entry_create(entry: PublicProfileEntry, validation_data: hdk::Va
     3. Emails must be unique
 */
 pub fn validate_public_profile_create(entry: PublicProfileEntry, _validation_data: hdk::ValidationData) -> Result<(), String> {
-  // search DHT for entries with the same agent address/public key
-    // get all entries
-      // ? commit provenances to PublicProfileEntry structure
-    // get EntryWithMetaAndHeader
-    // get provenance
-    // compare provenances
-
-  // 2. Usernmes must be unique
+  // Usernmes must be unique
   let username_match = search_username(entry.username);
   match username_match {
     Ok(t) => {
       match t {
         Some(_u) => Err("Username already exists. Please choose a different one.".to_string()),
+        None => Ok(())
+      }
+    },
+    Err(_e) => Ok(())
+  }
+}
+
+pub fn validate_private_profile_create(entry: PrivateProfileEntry, _validation_data: hdk::ValidationData) -> Result<(), String> {
+  match compare_hashes(entry) {
+    Ok(t) => {
+      match t {
+        Some(_u) => Err("Email is already registered".to_string()),
         None => Ok(())
       }
     },

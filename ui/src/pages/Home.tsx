@@ -23,6 +23,7 @@ import {
   import REGISTER_MUTATION from '../graphql/registerMutation';
   import GET_LINKED_QUERY from '../graphql/getLinkedProfileQuery';
   import GET_HASHED_EMAILS from '../graphql/getHashedEmails';
+  import COMPARE_HASHES from '../graphql/compareHashesQuery';
   
   interface Profile {
     username: String,
@@ -48,7 +49,7 @@ import {
           { query: GET_LINKED_QUERY, variables: { username: "nicko" } },
           { query: SEARCH_USERNAME_QUERY, variables: { username: "nicko" } },
           { query: GET_HASHED_EMAILS, variables: { email: "nickolie@gmail.com" } },
-
+          // { query: COMPARE_HASHES, variables: { input: {first_name: "nickolie", last_name: "pangarungan", email: "nicko@gmail.com"} }},
         ]
       }
     );
