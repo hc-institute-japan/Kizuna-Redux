@@ -6,8 +6,14 @@ use hdk::{
     api::AGENT_ADDRESS,
 };
 use crate::profile::{
+  // PublicProfile,
   PublicProfileEntry,
-  ProfileEntry,
+  PrivateProfileEntry,
+  ProfileEntry
+};
+use crate::profile::handlers::{
+  search_username,
+  check_email
 };
 
 pub fn validate_entry_create<T: ProfileEntry + std::fmt::Debug>(entry: T, validation_data: hdk::ValidationData) -> Result<(), String> {
@@ -24,6 +30,34 @@ pub fn validate_entry_create<T: ProfileEntry + std::fmt::Debug>(entry: T, valida
     else {
       Err("No provenance on this validation_data".to_string())
     }
+}
+
+/*
+  Checks for profile creation:
+    1. Each agent should only be able to commit one registered username and profile
+    2. Usernames must be unique
+    3. Emails must be unique
+*/
+pub fn validate_public_profile_create(entry: PublicProfileEntry, _validation_data: hdk::ValidationData) -> Result<(), String> {
+  // Usernmes must be unique
+  let username_match = search_username(entry.username)?;
+  if username_match.is_empty() {
+    Ok(())
+  } else {
+    Err("Username already exists".to_string())
+  }
+}
+
+pub fn validate_private_profile_create(entry: PrivateProfileEntry, _validation_data: hdk::ValidationData) -> Result<(), String> {
+  match check_email(entry.email) {
+    Ok(t) => {
+      match t {
+        true => Err("Email is already registered".to_string()),
+        false => Ok(())
+      }
+    },
+    Err(e) => Err(format!("An error occurred. -> {}", e.to_string()))
+  }
 }
 
 pub fn validate_entry_modify(new_entry: PublicProfileEntry, old_entry: PublicProfileEntry, old_entry_header: ChainHeader, validation_data: hdk::ValidationData) -> Result<(), String> {

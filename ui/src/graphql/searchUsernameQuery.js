@@ -5,7 +5,7 @@ import gql from "graphql-tag";
 // return data: searchUsername: {username}
 
 export default gql`
-    query SearchUsername($username: PubicProfileEntry) {
+    query SearchUsername($username: String) {
         searchUsername(username: $username) {
             username
         }

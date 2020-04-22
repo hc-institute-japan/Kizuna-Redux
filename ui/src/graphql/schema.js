@@ -24,6 +24,14 @@ export default gql`
     email: String
   }
 
+  type HashedEmail {
+    email_hash: Int
+  }
+
+  type BooleanReturn {
+    value: Boolean
+  }
+
   input PrivateProfileEntry {
     first_name: String
     last_name: String
