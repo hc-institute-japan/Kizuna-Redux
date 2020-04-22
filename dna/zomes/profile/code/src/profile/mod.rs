@@ -84,8 +84,13 @@ pub struct HashedEmailEntry {
 // Email table
 #[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
 #[serde(rename_all = "snake_case")]
-pub struct EmailTable {
-    email_table: HashMap<u64, u64>,
+pub struct EmailString {
+    email: String,
+}
+#[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
+#[serde(rename_all = "snake_case")]
+pub struct BooleanReturn {
+    pub value: bool,
 }
 
 // IMPLEMENTATIONS OF STRUCTS
@@ -101,9 +106,15 @@ impl PrivateProfile {
         })
     }
 }
-impl Hash for PrivateProfileEntry {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        self.email.hash(state);
+
+// Public Profile; new()
+impl PublicProfile {
+    // a new() function that will generate a new public profile struct with the given arguments
+    pub fn new(id: Address, input: PublicProfileEntry) -> ZomeApiResult<PublicProfile> {
+        Ok(PublicProfile {
+            id: id.clone(),
+            username: input.username
+        })
     }
 }
 
@@ -121,14 +132,15 @@ impl HashedEmail {
     }
 }
 
-// Public Profile; new()
-impl PublicProfile {
-    // a new() function that will generate a new public profile struct with the given arguments
-    pub fn new(id: Address, input: PublicProfileEntry) -> ZomeApiResult<PublicProfile> {
-        Ok(PublicProfile {
-            id: id.clone(),
-            username: input.username
-        })
+impl Hash for PrivateProfileEntry {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.email.hash(state);
+    }
+}
+
+impl Hash for EmailString {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.email.hash(state);
     }
 }
 

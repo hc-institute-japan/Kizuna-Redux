@@ -14,7 +14,8 @@ use crate::profile::{
     PrivateProfileEntry,
     PublicProfile,
     PublicProfileEntry,
-    HashedEmail
+    HashedEmail,
+    BooleanReturn
 };
 pub mod profile;
 
@@ -25,6 +26,7 @@ pub mod profile;
 // profile __________ mod
 //            |______ handlers
 //            |______ validation
+//            |______ strings
 
 #[zome]
 mod profile_zome {
@@ -41,26 +43,45 @@ mod profile_zome {
         Ok(())
     }
 
-    #[entry_def]
-    fn anchor_def() -> ValidatingEntryType {
-        holochain_anchors::anchor_definition()
-    }
-
+    // ENTRY DEFINITIONS
     #[entry_def]
     fn private_profile_def() -> ValidatingEntryType {
         profile::private_profile_definition()
     }
-
+    
     #[entry_def]
     fn public_profile_def() -> ValidatingEntryType {
         profile::public_profile_definition()
     }
-
+    
     #[entry_def]
     fn hashed_email_def() -> ValidatingEntryType {
         profile::hashed_email_definition()
     }
     
+    #[entry_def]
+    fn anchor_def() -> ValidatingEntryType {
+        holochain_anchors::anchor_definition()
+    }
+
+
+    // FRONTEND FUNCTIONS
+    #[zome_fn("hc_public")]
+    fn is_email_registered (email: String) -> ZomeApiResult<BooleanReturn> {
+        let result = profile::handlers::check_email(email);
+        Ok(BooleanReturn {value: result.unwrap()})
+    }
+
+    #[zome_fn("hc_public")]
+    fn register(
+        public_input: PublicProfileEntry, 
+        private_input: PrivateProfileEntry
+        ) -> ZomeApiResult<PublicProfile> {
+            profile::handlers::create_private_profile(private_input.clone())?;
+            profile::handlers::create_hashed_email(private_input)?;
+            profile::handlers::create_public_profile(public_input)
+    }
+
     #[zome_fn("hc_public")]
     fn create_private_profile(input: PrivateProfileEntry) -> ZomeApiResult<PrivateProfile> {
         profile::handlers::create_private_profile(input)
@@ -76,6 +97,8 @@ mod profile_zome {
         profile::handlers::create_hashed_email(input)
     }
 
+    
+    // BACKEND FUNCTIONS
     #[zome_fn("hc_public")]
     fn get_public_profile(id: Address) -> ZomeApiResult<PublicProfile> {
         profile::handlers::get_public_profile(id)
@@ -96,16 +119,7 @@ mod profile_zome {
         profile::handlers::search_username(username)
     }
 
-    #[zome_fn("hc_public")]
-    fn register(
-        public_input: PublicProfileEntry, 
-        private_input: PrivateProfileEntry
-        ) -> ZomeApiResult<PublicProfile> {
-            // profile::handlers::compare_hashes(private_input.clone())?;
-            profile::handlers::create_private_profile(private_input.clone())?;
-            profile::handlers::create_hashed_email(private_input)?;
-            profile::handlers::create_public_profile(public_input)
-    }
+    
 
     #[zome_fn("hc_public")]
     fn get_linked_profile(username: String) -> ZomeApiResult<Option<PrivateProfile>> {
@@ -113,12 +127,15 @@ mod profile_zome {
     }
 
     #[zome_fn("hc_public")]
-    pub fn compare_hashes (input: PrivateProfileEntry) -> ZomeApiResult<Option<HashedEmail>>{
-        profile::handlers::compare_hashes(input)
+    pub fn compare_hashes (input_email_hash: u64) -> ZomeApiResult<bool>{
+        profile::handlers::compare_hashes(input_email_hash)
     }
 
     #[zome_fn("hc_public")]
     pub fn get_hashed_emails(email: String) -> ZomeApiResult<Vec<HashedEmail>> {
         profile::handlers::get_hashed_emails(email)
     }
+
+
+    // BACKEND FUNCTONS
 }

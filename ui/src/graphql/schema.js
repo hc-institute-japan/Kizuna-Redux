@@ -28,6 +28,10 @@ export default gql`
     email_hash: Int
   }
 
+  type BooleanReturn {
+    value: Boolean
+  }
+
   input PrivateProfileEntry {
     first_name: String,
     last_name: String,
@@ -43,7 +47,7 @@ export default gql`
     listProfiles: [PublicProfile],
     getLinkedProfile(username: String): PrivateProfile,
     getHashedEmails (email: String): [HashedEmail],
-    compareHashes (input: PrivateProfileEntry): HashedEmail
+    isEmailRegistered (email: String): BooleanReturn
   }
 
   type Mutation {

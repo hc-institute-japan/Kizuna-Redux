@@ -24,6 +24,7 @@ import {
   import GET_LINKED_QUERY from '../graphql/getLinkedProfileQuery';
   import GET_HASHED_EMAILS from '../graphql/getHashedEmails';
   import COMPARE_HASHES from '../graphql/compareHashesQuery';
+  import IS_EMAIL_REGISTERED from '../graphql/isEmailRegisteredQuery';
   
   interface Profile {
     username: String,
@@ -50,6 +51,7 @@ import {
           { query: SEARCH_USERNAME_QUERY, variables: { username: "nicko" } },
           { query: GET_HASHED_EMAILS, variables: { email: "nickolie@gmail.com" } },
           // { query: COMPARE_HASHES, variables: { input: {first_name: "nickolie", last_name: "pangarungan", email: "nicko@gmail.com"} }},
+          { query: IS_EMAIL_REGISTERED, variables: { email: "nickolie@gmail.com"} },
         ]
       }
     );

@@ -16,11 +16,12 @@ use hdk::{
 use holochain_anchors::anchor;
 use crate::profile::{
     PublicProfile,
-    PrivateProfile,
     PublicProfileEntry,
+    PrivateProfile,
     PrivateProfileEntry,
+    HashedEmail,
     HashedEmailEntry,
-    HashedEmail
+    EmailString
 };
 use crate::profile::strings::*;
 use std::collections::hash_map::DefaultHasher;
@@ -238,30 +239,31 @@ pub fn get_hashed_emails (_email: String) -> ZomeApiResult<Vec<HashedEmail>> {
     }).collect()
 }
 
-pub fn compare_hashes (input: PrivateProfileEntry) -> ZomeApiResult<Option<HashedEmail>>{
-    let input_email_hash = calculate_hash(&input);
+pub fn compare_hashes (hash: u64) -> ZomeApiResult<bool> {
     let matches = hdk::get_links(
         &anchor_profile(
             HASHED_EMAIL_ANCHOR_TYPE.to_string(),
             HASHED_EMAIL_ANCHOR_TEXT.to_string(),
-            input_email_hash.to_string()
+            hash.to_string()
         )?,
         LinkMatch::Exactly(HASHED_EMAIL_LINK_TYPE),
         LinkMatch::Any
     )?.addresses().into_iter();
-    let mut result: Option<HashedEmail> = None;
+    let mut result = true;
     for address in matches {
         let entry = get_hashed_email(address)?;
-        if entry.email_hash == input_email_hash {
-            result = Some(entry);
-            break
+        if entry.email_hash == hash {
+            result = true;
+            break;
         } else {
-            result = None
+            ()
         }
     };
     Ok(result)
-    // .take_while(|entry_address|     
-    //     get_hashed_email(entry_address.clone()).ok().unwrap().email_hash == input_email_hash
-    // ).next().unwrap();
-    // get_hashed_email(matches)
+}
+
+pub fn check_email (email: String) -> ZomeApiResult<bool> {
+    let input_email = EmailString{email: email};
+    let input_email_hash = calculate_hash(&input_email);
+    compare_hashes(input_email_hash)
 }

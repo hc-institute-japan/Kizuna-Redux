@@ -11,7 +11,7 @@ use crate::profile::{
 };
 use crate::profile::handlers::{
   search_username,
-  compare_hashes
+  check_email
 };
 
 pub fn validate_entry_create(entry: PublicProfileEntry, validation_data: hdk::ValidationData) -> Result<(), String> {
@@ -41,14 +41,14 @@ pub fn validate_public_profile_create(entry: PublicProfileEntry, _validation_dat
 }
 
 pub fn validate_private_profile_create(entry: PrivateProfileEntry, _validation_data: hdk::ValidationData) -> Result<(), String> {
-  match compare_hashes(entry) {
+  match check_email(entry.email) {
     Ok(t) => {
       match t {
-        Some(_u) => Err("Email is already registered".to_string()),
-        None => Ok(())
+        true => Err("Email is already registered".to_string()),
+        false => Ok(())
       }
     },
-    Err(_e) => Ok(())
+    Err(e) => Err(format!("An error occurred. -> {}", e.to_string()))
   }
 }
 
