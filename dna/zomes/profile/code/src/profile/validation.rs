@@ -8,7 +8,8 @@ use hdk::{
 use crate::profile::{
   // PublicProfile,
   PublicProfileEntry,
-  PrivateProfileEntry
+  PrivateProfileEntry,
+  ProfileEntry
 };
 use crate::profile::handlers::{
   search_username,
@@ -39,15 +40,11 @@ pub fn validate_entry_create<T: ProfileEntry + std::fmt::Debug>(entry: T, valida
 */
 pub fn validate_public_profile_create(entry: PublicProfileEntry, _validation_data: hdk::ValidationData) -> Result<(), String> {
   // Usernmes must be unique
-  let username_match = search_username(entry.username);
-  match username_match {
-    Ok(t) => {
-      match t {
-        Some(_u) => Err("Username already exists. Please choose a different one.".to_string()),
-        None => Ok(())
-      }
-    },
-    Err(_e) => Ok(())
+  let username_match = search_username(entry.username)?;
+  if username_match.is_empty() {
+    Ok(())
+  } else {
+    Err("Username already exists".to_string())
   }
 }
 

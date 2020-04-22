@@ -20,9 +20,10 @@ use crate::profile::{
     PrivateProfileEntry,
     HashedEmail,
     HashedEmailEntry,
-    EmailString
+    EmailString,
+    ProfileEntry
 };
-use crate::profile::strings::*;
+use crate::profile::strings::*; 
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{
     Hash, 
@@ -167,22 +168,9 @@ pub fn list_public_profiles(username: String) -> ZomeApiResult<Vec<PublicProfile
         LinkMatch::Exactly(PUBLIC_PROFILE_LINK_TYPE),       // link_type: PUBLIC_PROFILE_LINK
         LinkMatch::Any                                      // tag: nicko
     // iterate over the Vec<ZomeApiResult<Entry>> result
-    ).map(|profile_list| {
-        // apply eerything below to every profile_list
-        // converts profile_list to an iterator
-        profile_list.into_iter()
-            // return only values of result type ok
-            .filter_map(Result::ok)
-            // flatten nested structure
-            .flat_map(|entry| {
-                // apply everything below to every entry
-                let id = entry.address();
-                hdk::debug(format!("list_entry{:?}", entry)).ok();
-                get_public_profile(id)
-            }
-        // convert the iterator back into a collection after modification
-        ).collect()
-    })
+    )?.addresses().into_iter().map(|profile_address| {
+        get_public_profile(profile_address)
+    }).collect()
 }
 
 // search_username()
@@ -216,15 +204,9 @@ pub fn search_username(username: String) -> ZomeApiResult<Vec<PublicProfile>> {
         LinkMatch::Exactly(PUBLIC_PROFILE_LINK_TYPE), 
         LinkMatch::Exactly(&username)                  // matches the username exactly to return only one
         // LinkMatch::Exactly(&"nicko".to_string())
-    ).map(|profile_list|{
-        profile_list.into_iter()
-            .filter_map(Result::ok)
-            .flat_map(|entry| {
-                let id = entry.address();
-                get_public_profile(id)
-            }
-        ).next()
-    })
+    )?.addresses().into_iter().map(|profile_address| {
+        get_public_profile(profile_address)
+    }).collect()
 }
 
 pub fn get_linked_profile(username: String) -> ZomeApiResult<Option<PrivateProfile>> {
