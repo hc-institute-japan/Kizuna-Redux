@@ -11,7 +11,7 @@ Schema
 - Mutations
 -- regsterUsername()
 -- createProfile()
-*/ 
+*/
 
 export default gql`
   type PublicProfile {
@@ -19,9 +19,9 @@ export default gql`
   }
 
   type PrivateProfile {
-    first_name: String,
-    last_name: String,
-    email: String,
+    first_name: String
+    last_name: String
+    email: String
   }
 
   type HashedEmail {
@@ -33,8 +33,8 @@ export default gql`
   }
 
   input PrivateProfileEntry {
-    first_name: String,
-    last_name: String,
+    first_name: String
+    last_name: String
     email: String
   }
 
@@ -43,16 +43,15 @@ export default gql`
   }
 
   type Query {
-    searchUsername (username: String): PublicProfile,
-    listProfiles: [PublicProfile],
-    getLinkedProfile(username: String): PrivateProfile,
-    getHashedEmails (email: String): [HashedEmail],
-    isEmailRegistered (email: String): BooleanReturn
+    listProfiles: [PublicProfile]
+    address: String
+    getPrivateProfile(id: String): PrivateProfile
+    usernames(username: String): [PublicProfile]
   }
 
   type Mutation {
-    registerUsername(profile_input: PublicProfileEntry): PublicProfile,
-    createProfile(profile_input: PrivateProfileEntry): PrivateProfile,
-    register(public_input: PublicProfileEntry, private_input: PrivateProfileEntry): PublicProfile,
+    registerUsername(profile_input: PublicProfileEntry): PublicProfile
+    createPrivateProfile(profile_input: PrivateProfileEntry): PrivateProfile
+    createPublicProfile(profile_input: PublicProfileEntry): PublicProfile
   }
-`
+`;

@@ -1,8 +1,8 @@
 {
-  "appId": "io.ionic.starter",
-  "appName": "ui",
+  "appId": "beyonder.kizuna",
+  "appName": "kizuna",
   "bundledWebRuntime": false,
   "npmClient": "npm",
-  "webDir": "build",
+  "webDir": "www",
   "cordova": {}
 }

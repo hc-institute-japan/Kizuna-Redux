@@ -144,6 +144,24 @@ impl Hash for EmailString {
     }
 }
 
+// PROFILEENTRY TRAIT
+pub trait ProfileEntry {
+    fn entry(self) -> Entry;
+}
+
+// Private Profile Entry
+impl ProfileEntry for PublicProfileEntry {
+    fn entry(self) -> Entry {
+        Entry::App(PUBLIC_PROFILE_ENTRY_NAME.into(), self.into())
+    }
+}
+// Public Profile Entry
+impl ProfileEntry for PrivateProfileEntry {
+    fn entry(self) -> Entry {
+        Entry::App(PRIVATE_PROFILE_ENTRY_NAME.into(), self.into())
+    }
+}
+
 // DEFINITIONS
 // Private Profile
 pub fn private_profile_definition() -> ValidatingEntryType {

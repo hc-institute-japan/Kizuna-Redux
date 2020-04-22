@@ -22,17 +22,17 @@ async function initAndGetHolochainClient() {
       wsClient: { max_reconnects: 0 },
     });
 
-    if (HOLOCHAIN_LOGGING) {
-      console.log("🎉 Successfully connected to Holochain!");
-    }
+    // if (HOLOCHAIN_LOGGING) {
+    //   console.log("🎉 Successfully connected to Holochain!");
+    // }
     return holochainClient;
   } catch (error) {
-    if (HOLOCHAIN_LOGGING) {
-      console.log(
-        "😞 Holochain client connection failed -- ",
-        error.toString()
-      );
-    }
+    // if (HOLOCHAIN_LOGGING) {
+    //   console.log(
+    //     "😞 Holochain client connection failed -- ",
+    //     error.toString()
+    //   );
+    // }
     throw error;
   }
 }
@@ -56,6 +56,7 @@ export const callZome = (
         zomeFunction
       )(args)
       .then((res) => {
+        console.log(res);
         const final = JSON.parse(res);
         const { Err, SerializationError, Ok } = final;
         const err = Err || SerializationError;
@@ -93,7 +94,7 @@ export const callZome = (
 
 export function createZomeCall(zomeCallPath, callOpts = {}) {
   const DEFAULT_OPTS = {
-    logging: HOLOCHAIN_LOGGING,
+    // logging: HOLOCHAIN_LOGGING,
   };
   const opts = {
     ...DEFAULT_OPTS,
@@ -122,31 +123,31 @@ export function createZomeCall(zomeCallPath, callOpts = {}) {
 
       const result = rawOk;
 
-      if (opts.logging) {
-        const detailsFormat = "font-weight: bold; color: rgb(220, 208, 120)";
+      // if (opts.logging) {
+      //   const detailsFormat = "font-weight: bold; color: rgb(220, 208, 120)";
 
-        console.groupCollapsed(
-          `👍 ${zomeCallPath}%c zome call complete`,
-          "font-weight: normal; color: rgb(160, 160, 160)"
-        );
-        console.groupCollapsed("%cArgs", detailsFormat);
-        console.log(args);
-        console.groupEnd();
-        console.groupCollapsed("%cResult", detailsFormat);
-        console.log(result);
-        console.groupEnd();
-        console.groupEnd();
-      }
+      //   console.groupCollapsed(
+      //     `👍 ${zomeCallPath}%c zome call complete`,
+      //     "font-weight: normal; color: rgb(160, 160, 160)"
+      //   );
+      //   console.groupCollapsed("%cArgs", detailsFormat);
+      //   console.log(args);
+      //   console.groupEnd();
+      //   console.groupCollapsed("%cResult", detailsFormat);
+      //   console.log(result);
+      //   console.groupEnd();
+      //   console.groupEnd();
+      // }
       return result;
     } catch (error) {
-      console.log(
-        `👎 %c${zomeCallPath}%c zome call ERROR using args: `,
-        "font-weight: bold; color: rgb(220, 208, 120); color: red",
-        "font-weight: normal; color: rgb(160, 160, 160)",
-        args,
-        " -- ",
-        error
-      );
+      // console.log(
+      //   `👎 %c${zomeCallPath}%c zome call ERROR using args: `,
+      //   "font-weight: bold; color: rgb(220, 208, 120); color: red",
+      //   "font-weight: normal; color: rgb(160, 160, 160)",
+      //   args,
+      //   " -- ",
+      //   error
+      // );
     }
   };
 }

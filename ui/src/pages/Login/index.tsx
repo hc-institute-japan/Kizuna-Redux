@@ -6,9 +6,11 @@ import {
   IonLabel,
   IonRow,
 } from "@ionic/react";
-import { withRouter, RouteComponentProps } from "react-router-dom";
 import React, { useState } from "react";
+import { RouteComponentProps, withRouter } from "react-router-dom";
+import { isEmailFormatValid } from "../../utils/helpers/regex";
 import styles from "./style.module.css";
+
 /**
  * @name Login
  *
@@ -18,8 +20,16 @@ const Login: React.SFC<RouteComponentProps> = ({ history }) => {
   const [email, setEmail] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(false);
 
+  // const profile = useQuery(GET_PRIVATE_PROFILE, {
+  //   variables: {
+  //     skip: !data,
+  //     id: data && data.getAddress,
+  //   },
+  // });
+
   const handleOnSubmit = () => {
     const isRegistered = true;
+
     history.push({
       pathname: `/${isRegistered ? "register" : "complete"}`,
       state: {
@@ -30,12 +40,7 @@ const Login: React.SFC<RouteComponentProps> = ({ history }) => {
 
   const handleOnChange = (e: any) => {
     const string = e.target.value.trim();
-    setIsEmailValid(
-      //eslint-disable-next-line
-      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
-        String(e.target.value).toLowerCase()
-      )
-    );
+    setIsEmailValid(isEmailFormatValid(String(string).toLowerCase()));
     setEmail(string);
   };
 
@@ -56,6 +61,7 @@ const Login: React.SFC<RouteComponentProps> = ({ history }) => {
           </IonCol>
         </IonRow>
         <IonButton
+          color="primary"
           onClick={handleOnSubmit}
           disabled={!isEmailValid}
           className={styles.Next}

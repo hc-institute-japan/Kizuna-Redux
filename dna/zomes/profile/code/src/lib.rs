@@ -100,6 +100,11 @@ mod profile_zome {
     
     // BACKEND FUNCTIONS
     #[zome_fn("hc_public")]
+    fn get_agent_id() -> ZomeApiResult<Address> {
+        Ok(hdk::AGENT_ADDRESS.clone())
+    }
+
+    #[zome_fn("hc_public")]
     fn get_public_profile(id: Address) -> ZomeApiResult<PublicProfile> {
         profile::handlers::get_public_profile(id)
     }
@@ -110,12 +115,12 @@ mod profile_zome {
     }
 
     #[zome_fn("hc_public")]
-    fn list_public_profiles(initial: String) -> ZomeApiResult<Vec<PublicProfile>> {
-        profile::handlers::list_public_profiles(initial)
+    fn list_public_profiles(username: String) -> ZomeApiResult<Vec<PublicProfile>> {
+        profile::handlers::list_public_profiles(username)
     }
     
     #[zome_fn("hc_public")]
-    fn search_username(username: String) -> ZomeApiResult<Option<PublicProfile>> {
+    fn search_username(username: String) -> ZomeApiResult<Vec<PublicProfile>> {
         profile::handlers::search_username(username)
     }
 

@@ -1,14 +1,35 @@
-import { useQuery } from "@apollo/react-hooks";
-import { IonContent } from "@ionic/react";
+import {
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonToolbar,
+} from "@ionic/react";
 import React from "react";
-import GET_PROFILE_QUERY from "../../graphql/query/getProfileQuery";
 
-const Home = () => {
-  const { data } = useQuery(GET_PROFILE_QUERY, {
-    variables: { address: localStorage.getItem("user_address") },
-  });
+const Home: React.FC = () => {
+  // console.log(data);
 
-  return <IonContent></IonContent>;
+  return (
+    <IonContent>
+      <IonHeader>
+        <IonToolbar>
+          <IonButtons slot="secondary">
+            <IonButton>
+              <IonIcon slot="start" name="star" />
+            </IonButton>
+          </IonButtons>
+
+          <IonButtons slot="primary">
+            <IonButton>
+              <IonIcon name="create" />
+            </IonButton>
+          </IonButtons>
+        </IonToolbar>
+      </IonHeader>
+    </IonContent>
+  );
 };
 
 export default Home;
