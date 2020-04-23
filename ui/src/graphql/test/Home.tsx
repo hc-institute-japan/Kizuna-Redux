@@ -16,15 +16,15 @@ import {
 //   import "./Home.css";
   
   import { useQuery, useMutation } from '@apollo/react-hooks';
-  import REGISTER_USERNAME_MUTATION from '../graphql/registerUsernameMutation';
-  import CREATE_PROFILE_MUTATION from '../graphql/createProfileMutation';
-  import LIST_PROFILES_QUERY from '../graphql/listProfilesQuery';
-  import SEARCH_USERNAME_QUERY from '../graphql/searchUsernameQuery';
-  import REGISTER_MUTATION from '../graphql/registerMutation';
-  import GET_LINKED_QUERY from '../graphql/getLinkedProfileQuery';
-  import GET_HASHED_EMAILS from '../graphql/getHashedEmails';
-  import COMPARE_HASHES from '../graphql/compareHashesQuery';
-  import IS_EMAIL_REGISTERED from '../graphql/isEmailRegisteredQuery';
+  import REGISTER_USERNAME_MUTATION from './registerUsernameMutation';
+  import CREATE_PROFILE_MUTATION from './createProfileMutation';
+  import LIST_PROFILES_QUERY from './listProfilesQuery';
+  import SEARCH_USERNAME_QUERY from './searchUsernameQuery';
+  import REGISTER_MUTATION from './registerMutation';
+  import GET_LINKED_QUERY from './getLinkedProfileQuery';
+  import GET_HASHED_EMAILS from './getHashedEmails';
+  import COMPARE_HASHES from './compareHashesQuery';
+  import IS_EMAIL_REGISTERED from './isEmailRegisteredQuery';
   
   interface Profile {
     username: String,
