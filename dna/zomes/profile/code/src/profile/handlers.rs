@@ -196,7 +196,7 @@ pub fn get_my_private_profile() -> ZomeApiResult<Vec<PrivateProfile>> {
 pub fn get_my_public_profile() -> ZomeApiResult<Vec<PublicProfile>> {
     hdk::get_links(
         &AGENT_ADDRESS, 
-        LinkMatch::Exactly(AGENT_PRIVATE_LINK_TYPE), 
+        LinkMatch::Exactly(AGENT_PUBLIC_LINK_TYPE), 
         LinkMatch::Exactly("public_profile")
     )?.addresses().into_iter().map(|profile_address| {
         get_public_profile(profile_address)
