@@ -105,7 +105,11 @@ pub fn check_username(username: String) -> ZomeApiResult<bool> {
         LinkMatch::Exactly(PUBLIC_PROFILE_LINK_TYPE), 
         LinkMatch::Exactly(&username)
     )?.addresses().is_empty();
-    Ok(username_checker)
+    let mut result = false;
+    if username_checker == false {
+        result = true;
+    }
+    Ok(result)
 }
 
 

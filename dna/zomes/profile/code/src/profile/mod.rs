@@ -1,4 +1,3 @@
-
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
@@ -69,7 +68,6 @@ pub struct PrivateProfileEntry {
 #[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
 #[serde(rename_all = "snake_case")]
 pub struct PublicProfileEntry {
-    agent_id: Address,
     username: String,
 }
 // Hashed Email

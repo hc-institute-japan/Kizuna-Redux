@@ -28,9 +28,6 @@ module.exports = (scenario, conductorConfig) => {
     const create_public_profile_result_bob = await bob.call("kizuna_dna", "profile", "create_public_profile", {"input" : {
         "username":"Alexander"
     }})
-    const create_public_profile_result_bob = await alice.call("kizuna_dna", "profile", "create_public_profile", {"input" : {
-        "username":"Alexander"
-    }})
 
     // TATS: check if all calls above returns Ok from rust
     await s.consistency()
@@ -75,7 +72,7 @@ module.exports = (scenario, conductorConfig) => {
     t.deepEqual(list_result_a.Ok.length, 2)
   })
 
-  scenario("check_username", async (s, t) => {
+  scenario("search_username", async (s, t) => {
     const {alice, bob} = await s.players({alice: conductorConfig, bob: conductorConfig}, true)
     const create_public_profile_result_alice= await alice.call("kizuna_dna", "profile", "create_public_profile", {"input" : {
         "username":"aLiCeGiRl"

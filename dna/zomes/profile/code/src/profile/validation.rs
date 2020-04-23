@@ -35,8 +35,8 @@ pub fn validate_public_profile_create(entry: PublicProfileEntry, validation_data
   match check_username(entry.username) {
     Ok(t) => {
       match t {
-        true => Ok(()),
-        false => Err("Username is already registered".to_string())
+        true => Err("Username is already registered".to_string()),
+        false => Ok(())
       }
     },
     Err(e) => Err(format!("An error occurred. -> {}", e.to_string()))
@@ -47,7 +47,7 @@ pub fn validate_private_profile_create(entry: PrivateProfileEntry, validation_da
   hdk::debug(format!("validate_entry_create_entry: {:?}", entry)).ok();
   hdk::debug(format!("validate_entry_create_validation_data: {:?}", validation_data)).ok();
   if !get_my_private_profile()?.is_empty() {
-    return Err("This agent already has a public profile".to_string())
+    return Err("This agent already has a private profile".to_string())
   }
   // Email must be unique
   match check_email(entry.email) {
