@@ -27,6 +27,10 @@ use crate::profile::handlers::{
 pub fn validate_public_profile_create(entry: PublicProfileEntry, validation_data: hdk::ValidationData) -> Result<(), String> {
   hdk::debug(format!("validate_entry_create_entry: {:?}", entry)).ok();
   hdk::debug(format!("validate_entry_create_validation_data: {:?}", validation_data)).ok();
+  // Public profile must be created after a private profile has been created
+  if get_my_private_profile()?.is_empty() {
+    return Err("A private profile for this user does not exist yet.".to_string())
+  }
   // Only 1 profile each agent
   if !get_my_public_profile()?.is_empty() {
     return Err("This agent already has a public profile".to_string())
@@ -40,10 +44,6 @@ pub fn validate_public_profile_create(entry: PublicProfileEntry, validation_data
       }
     },
     Err(e) => Err(format!("An error occurred. -> {}", e.to_string()))
-  }
-  // Public profile must be created after a private profile has been created
-  if get_my_private_profile()?.is_empty() {
-    return Err("A private profile for this user does not exist yet.".to_string())
   }
 }
 
