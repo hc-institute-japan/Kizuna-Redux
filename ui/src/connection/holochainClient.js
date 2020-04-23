@@ -123,21 +123,21 @@ export function createZomeCall(zomeCallPath, callOpts = {}) {
 
       const result = rawOk;
 
-      // if (opts.logging) {
-      //   const detailsFormat = "font-weight: bold; color: rgb(220, 208, 120)";
+      if (opts.logging) {
+        const detailsFormat = "font-weight: bold; color: rgb(220, 208, 120)";
 
-      //   console.groupCollapsed(
-      //     `👍 ${zomeCallPath}%c zome call complete`,
-      //     "font-weight: normal; color: rgb(160, 160, 160)"
-      //   );
-      //   console.groupCollapsed("%cArgs", detailsFormat);
-      //   console.log(args);
-      //   console.groupEnd();
-      //   console.groupCollapsed("%cResult", detailsFormat);
-      //   console.log(result);
-      //   console.groupEnd();
-      //   console.groupEnd();
-      // }
+        console.groupCollapsed(
+          `👍 ${zomeCallPath}%c zome call complete`,
+          "font-weight: normal; color: rgb(160, 160, 160)"
+        );
+        console.groupCollapsed("%cArgs", detailsFormat);
+        console.log(args);
+        console.groupEnd();
+        console.groupCollapsed("%cResult", detailsFormat);
+        console.log(result);
+        console.groupEnd();
+        console.groupEnd();
+      }
       return result;
     } catch (error) {
       // console.log(

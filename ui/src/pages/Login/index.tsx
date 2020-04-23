@@ -10,6 +10,8 @@ import React, { useState } from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { isEmailFormatValid } from "../../utils/helpers/regex";
 import styles from "./style.module.css";
+import { useQuery } from "@apollo/react-hooks";
+import IS_EMAIL_REGISTERED from "../../graphql/query/isEmailRegisteredQuery";
 
 /**
  * @name Login
@@ -20,6 +22,15 @@ const Login: React.SFC<RouteComponentProps> = ({ history }) => {
   const [email, setEmail] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(false);
 
+  const isEmailRegistered = useQuery(IS_EMAIL_REGISTERED, {
+    variables: {
+      skip: !isEmailValid,
+      email,
+    },
+  });
+
+  // console.log(isEmailRegistered);
+
   // const profile = useQuery(GET_PRIVATE_PROFILE, {
   //   variables: {
   //     skip: !data,
@@ -27,16 +38,13 @@ const Login: React.SFC<RouteComponentProps> = ({ history }) => {
   //   },
   // });
 
-  const handleOnSubmit = () => {
-    const isRegistered = true;
-
+  const handleOnSubmit = () =>
     history.push({
-      pathname: `/${isRegistered ? "register" : "complete"}`,
+      pathname: `/${isEmailRegistered ? "register" : "complete"}`,
       state: {
         email,
       },
     });
-  };
 
   const handleOnChange = (e: any) => {
     const string = e.target.value.trim();

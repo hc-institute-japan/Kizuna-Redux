@@ -18,14 +18,15 @@ const resolvers = {
   Query: {
     address: async () =>
       await createZomeCall("/test-instance/profile/get_agent_id")(),
-    isEmailRegistered: async (_, email) =>
-        await createZomeCall('/test-instance/profile/is_email_registered')({ 
-          email: email.email 
-        }),
+    isEmailRegistered: async (_, { email }) =>
+      await createZomeCall("/test-instance/profile/is_email_registered")({
+        email,
+      }),
     getPrivateProfile: async (_, { id }) =>
       await createZomeCall("/test-instance/profile/get_private_profile")({
         id,
       }),
+
     usernames: async (_, { username }) => {
       const result = await createZomeCall(
         "/test-instance/profile/search_username"
@@ -34,8 +35,6 @@ const resolvers = {
       });
       return result;
     },
-    listProfiles: async () =>
-      await createZomeCall("/test-instance/profile/list_public_profiles")(),
   },
 
   Mutation: {

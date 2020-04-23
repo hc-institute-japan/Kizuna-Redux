@@ -11,8 +11,8 @@ public_address = 'HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhm
 test_agent = true
 
 [[dnas]]
-file = '/home/holo/Desktop/KizunaFork/Kizuna/dna/dist/dna.dna.json'
-hash = 'QmRPEF6DphDZ8CiwuagqMqsjsrQdzVB6rbQnbzYwB6Wee6'
+file = '/Users/neilsongardose/Documents/projects/beyonder/fork/Kizuna/dna/dist/dna.dna.json'
+hash = 'QmPC81cRbBpqohft9FS4suEqMk7rssUSLw13V1Ug81pwms'
 id = 'hc-run-dna'
 
 [[instances]]
@@ -35,7 +35,7 @@ port = 8888
 type = 'websocket'
 
 [logger]
-state_dump = true
+state_dump = false  
 type = 'debug'
 
 [logger.rules]

@@ -40,7 +40,9 @@ export default gql`
 
   type Query {
     address: String
-    isEmailRegistered(email: String): BooleanReturn
+    getPrivateProfile(id: String): PrivateProfile
+    usernames(username: String): [PublicProfile]
+    isEmailRegistered(email: String): Boolean
   }
 
   type Mutation {
