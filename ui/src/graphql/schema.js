@@ -24,10 +24,6 @@ export default gql`
     email: String
   }
 
-  type HashedEmail {
-    email_hash: Int
-  }
-
   type BooleanReturn {
     value: Boolean
   }
@@ -43,15 +39,12 @@ export default gql`
   }
 
   type Query {
-    listProfiles: [PublicProfile]
     address: String
-    getPrivateProfile(id: String): PrivateProfile
-    usernames(username: String): [PublicProfile]
+    isEmailRegistered(email: String): BooleanReturn
   }
 
   type Mutation {
-    registerUsername(profile_input: PublicProfileEntry): PublicProfile
-    createPrivateProfile(profile_input: PrivateProfileEntry): PrivateProfile
     createPublicProfile(profile_input: PublicProfileEntry): PublicProfile
+    createPrivateProfile(profile_input: PrivateProfileEntry): PrivateProfile
   }
 `;
