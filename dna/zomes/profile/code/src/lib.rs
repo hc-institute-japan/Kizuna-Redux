@@ -102,37 +102,4 @@ mod profile_zome {
     // fn get_agent_id() -> ZomeApiResult<Address> {
     //     Ok(hdk::AGENT_ADDRESS.clone())
     // }
-
-    // #[zome_fn("hc_public")]
-    // fn list_public_profiles(username: String) -> ZomeApiResult<Vec<PublicProfile>> {
-    //     profile::handlers::list_public_profiles(username)
-    // }
-
-
-    // BACKEND FUNCTIONS
-
-    // #[zome_fn("hc_public")]
-    // fn get_public_profile(id: Address) -> ZomeApiResult<PublicProfile> {
-    //     profile::handlers::get_public_profile(id)
-    // }
-
-    // #[zome_fn("hc_public")]
-    // fn get_private_profile(id: Address) -> ZomeApiResult<PrivateProfile> {
-    //     profile::handlers::get_private_profile(id)
-    // }
-
-    // #[zome_fn("hc_public")]
-    // fn search_username(username: String) -> ZomeApiResult<Vec<PublicProfile>> {
-    //     profile::handlers::search_username(username)
-    // }
-
-    // #[zome_fn("hc_public")]
-    // pub fn compare_hashes (input_email_hash: u64) -> ZomeApiResult<bool>{
-    //     profile::handlers::compare_hashes(input_email_hash)
-    // }
-
-    // #[zome_fn("hc_public")]
-    // pub fn get_hashed_emails(email: String) -> ZomeApiResult<Vec<HashedEmail>> {
-    //     profile::handlers::get_hashed_emails(email)
-    // }
 }
