@@ -12,25 +12,11 @@ use crate::profile::{
   ProfileEntry
 };
 use crate::profile::handlers::{
-  search_username,
-  check_email
+  check_username,
+  check_email,
+  get_my_public_profile,
+  get_my_private_profile
 };
-
-pub fn validate_entry_create<T: ProfileEntry + std::fmt::Debug>(entry: T, validation_data: hdk::ValidationData) -> Result<(), String> {
-    hdk::debug(format!("validate_entry_create_entry: {:?}", entry)).ok();
-    hdk::debug(format!("validate_entry_create_validation_data: {:?}", validation_data)).ok();
-    if let Some(p) = validation_data.package.chain_header.provenances().get(0) {
-      if AGENT_ADDRESS.to_string() == p.source().to_string() {
-        Ok(())
-      }
-      else {
-        Err("Another agent is trying to create a profile for this agent".to_string())
-      }
-    }
-    else {
-      Err("No provenance on this validation_data".to_string())
-    }
-}
 
 /*
   Checks for profile creation:
@@ -38,17 +24,32 @@ pub fn validate_entry_create<T: ProfileEntry + std::fmt::Debug>(entry: T, valida
     2. Usernames must be unique
     3. Emails must be unique
 */
-pub fn validate_public_profile_create(entry: PublicProfileEntry, _validation_data: hdk::ValidationData) -> Result<(), String> {
+pub fn validate_public_profile_create(entry: PublicProfileEntry, validation_data: hdk::ValidationData) -> Result<(), String> {
+  hdk::debug(format!("validate_entry_create_entry: {:?}", entry)).ok();
+  hdk::debug(format!("validate_entry_create_validation_data: {:?}", validation_data)).ok();
+  // Only 1 profile each agent
+  if !get_my_public_profile()?.is_empty() {
+    return Err("This agent already has a public profile".to_string())
+  }
   // Usernmes must be unique
-  let username_match = search_username(entry.username)?;
-  if username_match.is_empty() {
-    Ok(())
-  } else {
-    Err("Username already exists".to_string())
+  match check_username(entry.username) {
+    Ok(t) => {
+      match t {
+        true => Ok(()),
+        false => Err("Username is already registered".to_string())
+      }
+    },
+    Err(e) => Err(format!("An error occurred. -> {}", e.to_string()))
   }
 }
 
-pub fn validate_private_profile_create(entry: PrivateProfileEntry, _validation_data: hdk::ValidationData) -> Result<(), String> {
+pub fn validate_private_profile_create(entry: PrivateProfileEntry, validation_data: hdk::ValidationData) -> Result<(), String> {
+  hdk::debug(format!("validate_entry_create_entry: {:?}", entry)).ok();
+  hdk::debug(format!("validate_entry_create_validation_data: {:?}", validation_data)).ok();
+  if !get_my_private_profile()?.is_empty() {
+    return Err("This agent already has a public profile".to_string())
+  }
+  // Email must be unique
   match check_email(entry.email) {
     Ok(t) => {
       match t {
@@ -108,3 +109,5 @@ pub fn validate_link_remove(link: LinkData, validation_data: hdk::ValidationData
     hdk::debug(format!("validate_link_remove_validation_data: {:?}", validation_data)).ok();
     Ok(())
 }
+
+// HELPER FUNCTIONS

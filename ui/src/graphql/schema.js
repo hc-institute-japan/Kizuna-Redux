@@ -15,6 +15,7 @@ Schema
 
 export default gql`
   type PublicProfile {
+    agent_id: String
     username: String
   }
 
@@ -39,7 +40,7 @@ export default gql`
   }
 
   type Query {
-    address: String
+    isUsernameRegistered(username: String): BooleanReturn
     isEmailRegistered(email: String): BooleanReturn
   }
 

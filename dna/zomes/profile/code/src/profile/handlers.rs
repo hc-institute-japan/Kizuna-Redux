@@ -53,9 +53,9 @@ fn anchor_profile(anchor_type: String, anchor_text: String, username: String) ->
     let text_string = format!("{}{}{}", anchor_text, "_", first_letter);
     anchor(type_string.to_string(), text_string.to_string())
 }
-fn anchor_profile_2(anchor_type: String, anchor_text: String) -> ZomeApiResult<Address> {
-    anchor(anchor_type.to_string(), anchor_text.to_string())
-}
+// fn anchor_profile_2(anchor_type: String, anchor_text: String) -> ZomeApiResult<Address> {
+//     anchor(anchor_type.to_string(), anchor_text.to_string())
+// }
 
 pub fn calculate_hash<T: Hash>(t: &T) -> u64 {
     let mut s = DefaultHasher::new();
@@ -73,7 +73,7 @@ pub fn compare_hashes (hash: u64) -> ZomeApiResult<bool> {
         LinkMatch::Exactly(HASHED_EMAIL_LINK_TYPE),
         LinkMatch::Any
     )?.addresses().into_iter();
-    let mut result = true;
+    let mut result = false;
     for address in matches {
         let entry = get_hashed_email(address)?;
         if entry.email_hash == hash {
@@ -92,6 +92,22 @@ pub fn check_email (email: String) -> ZomeApiResult<bool> {
     compare_hashes(input_email_hash)
 }
 
+// search_username()
+// argument(s): PublicProfileEntry
+// return value: Vector of PublicProfile
+pub fn check_username(username: String) -> ZomeApiResult<bool> {
+    let username_checker = hdk::get_links(
+        &anchor_profile(
+            PUBLIC_PROFILES_ANCHOR_TYPE.to_string(), 
+            PUBLIC_PROFILES_ANCHOR_TEXT.to_string(),
+            username.clone()
+        )?, 
+        LinkMatch::Exactly(PUBLIC_PROFILE_LINK_TYPE), 
+        LinkMatch::Exactly(&username)
+    )?.addresses().is_empty();
+    Ok(username_checker)
+}
+
 
 // create_private_profile(), create_public_profile()
 // argument(s): PrivateProfileEntry, PublicProfileEntry
@@ -99,25 +115,16 @@ pub fn check_email (email: String) -> ZomeApiResult<bool> {
 pub fn create_private_profile(input: PrivateProfileEntry) -> ZomeApiResult<PrivateProfile> {
     // create an entry with entry() then commits the entry to the DHT and gets the address of the committed entry
     let address = hdk::commit_entry(&input.clone().entry())?;
-    // links the entry using the specified anchors and tags
-    hdk::link_entries(
-        &anchor_profile_2(
-            PRIVATE_PROFILES_ANCHOR_TYPE.to_string(), // PRIVATE_PROFILE
-            PRIVATE_PROFILES_ANCHOR_TEXT.to_string(), // PRIVATE_PROFILES
-        )?, 
-        &address,                                     // address of entry in the dht
-        PRIVATE_PROFILE_LINK_TYPE,                    // PRIVATE_PROFILE_LINK
-        ""                                            // tag: <any string>
-    )?;
     hdk::link_entries(
         &AGENT_ADDRESS,                                 // base
         &address,                                       // target
-        AGENT_PRIVATE_LINK_TYPE,                              // link_type
+        AGENT_PRIVATE_LINK_TYPE,                        // link_type
         "private_profile"                               // tag
     )?;
     create_hashed_email(input.clone())?;
     PrivateProfile::new(address, input)
 }
+
 pub fn create_public_profile(input: PublicProfileEntry) -> ZomeApiResult<PublicProfile> {
     let address = hdk::commit_entry(&input.clone().entry())?;
     hdk::link_entries(
@@ -138,6 +145,7 @@ pub fn create_public_profile(input: PublicProfileEntry) -> ZomeApiResult<PublicP
     )?;
     PublicProfile::new(address, input)
 }
+
 pub fn create_hashed_email(input: PrivateProfileEntry) -> ZomeApiResult<HashedEmail> {
     let email_hash = calculate_hash(&input);
     let new_hashed_email_entry = Entry::App(HASHED_EMAIL_ENTRY_NAME.into(), HashedEmail::from(email_hash).into());
@@ -165,26 +173,49 @@ pub fn get_private_profile(id: Address) -> ZomeApiResult<PrivateProfile> {
     // create a new PrivateProfile structure and populate the details from the entry
     PrivateProfile::new(id, entry)
 }
+
 pub fn get_public_profile(id: Address) -> ZomeApiResult<PublicProfile> {
     let entry: PublicProfileEntry = hdk::utils::get_as_type(id.clone())?;
     PublicProfile::new(id, entry)
 }
-pub fn get_hashed_email(id: Address) -> ZomeApiResult<HashedEmail> {
+
+pub fn get_my_private_profile() -> ZomeApiResult<Vec<PrivateProfile>> {
+    hdk::get_links(
+        &AGENT_ADDRESS, 
+        LinkMatch::Exactly(AGENT_PRIVATE_LINK_TYPE), 
+        LinkMatch::Exactly("private_profile")
+    )?.addresses().into_iter().map(|profile_address| {
+        get_private_profile(profile_address)
+    }).collect()
+  }
+
+pub fn get_my_public_profile() -> ZomeApiResult<Vec<PublicProfile>> {
+    hdk::get_links(
+        &AGENT_ADDRESS, 
+        LinkMatch::Exactly(AGENT_PRIVATE_LINK_TYPE), 
+        LinkMatch::Exactly("public_profile")
+    )?.addresses().into_iter().map(|profile_address| {
+        get_public_profile(profile_address)
+    }).collect()
+}
+
+fn get_hashed_email(id: Address) -> ZomeApiResult<HashedEmail> {
     let entry: HashedEmailEntry = hdk::utils::get_as_type(id.clone())?;
     HashedEmail::new(id, entry.email_hash)
 }
-pub fn get_hashed_emails (_email: String) -> ZomeApiResult<Vec<HashedEmail>> {
-    hdk::get_links(
-        &anchor_profile_2(
-            HASHED_EMAIL_ANCHOR_TYPE.to_string(),
-            HASHED_EMAIL_ANCHOR_TEXT.to_string(),
-        )?,
-        LinkMatch::Exactly(HASHED_EMAIL_ANCHOR_TYPE),
-        LinkMatch::Any
-    )?.addresses().into_iter().map(|entry_address| {
-        get_hashed_email(entry_address)
-    }).collect()
-}
+
+// pub fn get_hashed_emails (_email: String) -> ZomeApiResult<Vec<HashedEmail>> {
+//     hdk::get_links(
+//         &anchor_profile_2(
+//             HASHED_EMAIL_ANCHOR_TYPE.to_string(),
+//             HASHED_EMAIL_ANCHOR_TEXT.to_string(),
+//         )?,
+//         LinkMatch::Exactly(HASHED_EMAIL_ANCHOR_TYPE),
+//         LinkMatch::Any
+//     )?.addresses().into_iter().map(|entry_address| {
+//         get_hashed_email(entry_address)
+//     }).collect()
+// }
 
 // list_public_profiles()
 // argument(s): none (can be changed to username)
@@ -202,37 +233,4 @@ pub fn list_public_profiles(username: String) -> ZomeApiResult<Vec<PublicProfile
     )?.addresses().into_iter().map(|profile_address| {
         get_public_profile(profile_address)
     }).collect()
-}
-
-// search_username()
-// argument(s): PublicProfileEntry
-// return value: Vector of PublicProfile
-pub fn search_username(username: String) -> ZomeApiResult<Vec<PublicProfile>> {
-    hdk::get_links(
-        &anchor_profile(
-            PUBLIC_PROFILES_ANCHOR_TYPE.to_string(), 
-            PUBLIC_PROFILES_ANCHOR_TEXT.to_string(),
-            username.clone()
-            // "nicko".to_string()
-        )?, 
-        LinkMatch::Exactly(PUBLIC_PROFILE_LINK_TYPE), 
-        LinkMatch::Exactly(&username)
-        // LinkMatch::Exactly(&"nicko".to_string())
-    )?.addresses().into_iter().map(|profile_address| {
-        get_public_profile(profile_address)
-    }).collect()
-}
-
-pub fn get_linked_profile(username: String) -> ZomeApiResult<Option<PrivateProfile>> {
-    let _public_profile = search_username(username)?;
-    hdk::get_links(
-        &AGENT_ADDRESS, 
-        LinkMatch::Exactly(AGENT_PRIVATE_LINK_TYPE), 
-        LinkMatch::Exactly("private_profile")
-    ).map(|result|{
-        result.links().into_iter()
-            .flat_map(|linksresult|{
-                get_private_profile(linksresult.address)
-        }).next()
-    })
 }

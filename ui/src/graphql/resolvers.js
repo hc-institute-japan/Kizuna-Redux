@@ -16,12 +16,16 @@ ZomeCall Structure:
 
 const resolvers = {
   Query: {
-    address: async () =>
-      await createZomeCall("/test-instance/profile/get_agent_id")(),
+    // address: async () =>
+    //   await createZomeCall("/test-instance/profile/get_agent_id")(),
     isEmailRegistered: async (_, email) =>
         await createZomeCall('/test-instance/profile/is_email_registered')({ 
           email: email.email 
         }),
+    isUsernameRegistered: async (_, username) =>
+    await createZomeCall('/test-instance/profile/is_username_registered')({ 
+      username: username.username 
+    }),
     getPrivateProfile: async (_, { id }) =>
       await createZomeCall("/test-instance/profile/get_private_profile")({
         id,

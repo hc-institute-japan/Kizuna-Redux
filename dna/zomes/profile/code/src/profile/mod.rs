@@ -19,6 +19,7 @@ use hdk::{
         json::JsonString,
         error::JsonError,
     },
+    api::AGENT_ADDRESS,
     prelude::*,
     holochain_persistence_api::cas::content::Address
 };
@@ -53,6 +54,7 @@ pub struct PrivateProfile {
 #[serde(rename_all = "snake_case")]
 pub struct PublicProfile {
     id: Address,
+    agent_id: Address,
     username: String,
 }
 // Private Profile Entry
@@ -67,6 +69,7 @@ pub struct PrivateProfileEntry {
 #[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
 #[serde(rename_all = "snake_case")]
 pub struct PublicProfileEntry {
+    agent_id: Address,
     username: String,
 }
 // Hashed Email
@@ -113,6 +116,7 @@ impl PublicProfile {
     pub fn new(id: Address, input: PublicProfileEntry) -> ZomeApiResult<PublicProfile> {
         Ok(PublicProfile {
             id: id.clone(),
+            agent_id: AGENT_ADDRESS.to_string().into(),
             username: input.username
         })
     }
@@ -175,6 +179,9 @@ pub fn private_profile_definition() -> ValidatingEntryType {
         validation: | validation_data: hdk::EntryValidationData<PrivateProfileEntry>| {
             match validation_data {
                 hdk::EntryValidationData::Create{entry, validation_data} => {
+                    if !validation_data.sources().contains(&AGENT_ADDRESS) {
+                        return Err("Other agents cannot create a profile for another agent".to_string());
+                    }
                     validation::validate_private_profile_create(entry, validation_data)
                 },
                 _ => Ok(())
@@ -216,6 +223,9 @@ pub fn public_profile_definition() -> ValidatingEntryType {
         validation: | validation_data: hdk::EntryValidationData<PublicProfileEntry>| {
             match validation_data {
                 hdk::EntryValidationData::Create{entry, validation_data} => {
+                    if !validation_data.sources().contains(&AGENT_ADDRESS) {
+                        return Err("Other agents cannot create a profile for another agent".to_string());
+                    }
                     validation::validate_public_profile_create(entry, validation_data)
                 },
                 _ => Ok(())
