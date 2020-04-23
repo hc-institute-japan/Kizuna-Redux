@@ -7,8 +7,7 @@
 
 # testing
 /coverage
-/graphql/test
-/pages/Home
+/src/graphql/test
 
 # production
 /build
