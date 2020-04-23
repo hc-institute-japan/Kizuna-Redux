@@ -32,15 +32,6 @@ use std::hash::{
 
 
 // HANDLER MODULE UNDER THE PROFILE CRATE
-// contains function implementations; 
-//      anchor_profile()
-//      create_private_profile()
-//      create_public_profile()
-//      get_private_profile()
-//      get_public_profile()
-//      list_public_profiles()
-//      search_public_profile()
-
 
 // anchor_profile()
 // attach anchors to newly created profiles
@@ -207,19 +198,6 @@ fn get_hashed_email(id: Address) -> ZomeApiResult<HashedEmail> {
     let entry: HashedEmailEntry = hdk::utils::get_as_type(id.clone())?;
     HashedEmail::new(id, entry.email_hash)
 }
-
-// pub fn get_hashed_emails (_email: String) -> ZomeApiResult<Vec<HashedEmail>> {
-//     hdk::get_links(
-//         &anchor_profile_2(
-//             HASHED_EMAIL_ANCHOR_TYPE.to_string(),
-//             HASHED_EMAIL_ANCHOR_TEXT.to_string(),
-//         )?,
-//         LinkMatch::Exactly(HASHED_EMAIL_ANCHOR_TYPE),
-//         LinkMatch::Any
-//     )?.addresses().into_iter().map(|entry_address| {
-//         get_hashed_email(entry_address)
-//     }).collect()
-// }
 
 // list_public_profiles()
 // argument(s): none (can be changed to username)
