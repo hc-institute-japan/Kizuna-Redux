@@ -15,6 +15,7 @@ Schema
 
 export default gql`
   type PublicProfile {
+    agent_id: String
     username: String
   }
 
@@ -22,6 +23,10 @@ export default gql`
     first_name: String
     last_name: String
     email: String
+  }
+
+  type BooleanReturn {
+    value: Boolean
   }
 
   input PrivateProfileEntry {
@@ -35,15 +40,12 @@ export default gql`
   }
 
   type Query {
-    listProfiles: [PublicProfile]
-    address: String
-    getPrivateProfile(id: String): PrivateProfile
-    usernames(username: String): [PublicProfile]
+    isUsernameRegistered(username: String): BooleanReturn
+    isEmailRegistered(email: String): BooleanReturn
   }
 
   type Mutation {
-    registerUsername(profile_input: PublicProfileEntry): PublicProfile
-    createPrivateProfile(profile_input: PrivateProfileEntry): PrivateProfile
     createPublicProfile(profile_input: PublicProfileEntry): PublicProfile
+    createPrivateProfile(profile_input: PrivateProfileEntry): PrivateProfile
   }
 `;
