@@ -65,11 +65,20 @@ module.exports = (scenario, conductorConfig) => {
     const invalid_create_public_profile_result_alice = await alice.call("kizuna_dna", "profile", "create_public_profile", {"input" : {
         "username":"abababa"
     }})
+    // committing public profile before committing private profile
+    const invalid_create_public_profile_result_bob = await bob.call("kizuna_dna", "profile", "create_public_profile", {"input" : {
+        "username":"test"
+    }})
+    const create_private_profile_result_bob = await bob.call("kizuna_dna", "profile", "create_private_profile", {"input" : {
+    "first_name":"bob",
+    "last_name":"marley",
+    "email":"okay@abc.com"
+    }})
+    await s.consistency()
     // non-unique username
     const username_invalid_create_public_profile_result_bob = await bob.call("kizuna_dna", "profile", "create_public_profile", {"input" : {
-        "username":"alicegirl"
+        "username":"aLiCeGiRl"
     }})
-    // TATS: check if all calls above returns Ok from rust
     await s.consistency()
     t.ok(create_private_profile_result_alice.Ok)
     let err_1 = JSON.parse(invalid_create_private_profile_result_alice.Err.Internal)
@@ -78,9 +87,12 @@ module.exports = (scenario, conductorConfig) => {
     t.deepEqual(err_2.kind, {"ValidationFailed":"Email is already registered"})
     t.ok(create_public_profile_result_alice.Ok)
     let err_3 = JSON.parse(invalid_create_public_profile_result_alice.Err.Internal)
-    let err_4 = JSON.parse(username_invalid_create_public_profile_result_bob.Err.Internal)
+    let err_4 = JSON.parse(invalid_create_public_profile_result_bob.Err.Internal)
     t.deepEqual(err_3.kind, {"ValidationFailed":"This agent already has a public profile"})
-    t.deepEqual(err_4.kind, {"ValidationFailed":"Username is already registered"})
+    t.deepEqual(err_4.kind, {"ValidationFailed":"A private profile for this user does not exist yet."})
+    t.ok(create_private_profile_result_bob.Ok)
+    let err_5 = JSON.parse(username_invalid_create_public_profile_result_bob.Err.Internal)
+    t.deepEqual(err_5.kind, {"ValidationFailed":"Username is already registered"})
   })
 
   scenario("is_username_registered", async (s, t) => {
