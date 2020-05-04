@@ -12,7 +12,7 @@ test_agent = true
 
 [[dnas]]
 file = '/Users/neilsongardose/Documents/projects/beyonder/fork/Kizuna/dna/dist/dna.dna.json'
-hash = 'QmPC81cRbBpqohft9FS4suEqMk7rssUSLw13V1Ug81pwms'
+hash = 'QmWxC19mH8LLK2x1MS8Bb8C6baGfCLpDo6mDc2WVRvJjwk'
 id = 'hc-run-dna'
 
 [[instances]]
@@ -35,7 +35,7 @@ port = 8888
 type = 'websocket'
 
 [logger]
-state_dump = false  
+state_dump = true
 type = 'debug'
 
 [logger.rules]

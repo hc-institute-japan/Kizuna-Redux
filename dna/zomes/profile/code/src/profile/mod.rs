@@ -1,4 +1,3 @@
-
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
@@ -19,6 +18,7 @@ use hdk::{
         json::JsonString,
         error::JsonError,
     },
+    api::AGENT_ADDRESS,
     prelude::*,
     holochain_persistence_api::cas::content::Address
 };
@@ -53,6 +53,7 @@ pub struct PrivateProfile {
 #[serde(rename_all = "snake_case")]
 pub struct PublicProfile {
     id: Address,
+    agent_id: Address,
     username: String,
 }
 // Private Profile Entry
@@ -113,6 +114,7 @@ impl PublicProfile {
     pub fn new(id: Address, input: PublicProfileEntry) -> ZomeApiResult<PublicProfile> {
         Ok(PublicProfile {
             id: id.clone(),
+            agent_id: AGENT_ADDRESS.to_string().into(),
             username: input.username
         })
     }
@@ -175,6 +177,9 @@ pub fn private_profile_definition() -> ValidatingEntryType {
         validation: | validation_data: hdk::EntryValidationData<PrivateProfileEntry>| {
             match validation_data {
                 hdk::EntryValidationData::Create{entry, validation_data} => {
+                    if !validation_data.sources().contains(&AGENT_ADDRESS) {
+                        return Err("Other agents cannot create a profile for another agent".to_string());
+                    }
                     validation::validate_private_profile_create(entry, validation_data)
                 },
                 _ => Ok(())
@@ -216,6 +221,9 @@ pub fn public_profile_definition() -> ValidatingEntryType {
         validation: | validation_data: hdk::EntryValidationData<PublicProfileEntry>| {
             match validation_data {
                 hdk::EntryValidationData::Create{entry, validation_data} => {
+                    if !validation_data.sources().contains(&AGENT_ADDRESS) {
+                        return Err("Other agents cannot create a profile for another agent".to_string());
+                    }
                     validation::validate_public_profile_create(entry, validation_data)
                 },
                 _ => Ok(())
@@ -271,19 +279,3 @@ pub fn hashed_email_definition() -> ValidatingEntryType {
         ]
     )
 }
-
-
-// HELPER FUNCTION
-// Timestamp: populates timestamp values in structs when in use
-// fn timestamp(address: Address) -> ZomeApiResult<Iso8601> {
-//     let options = GetEntryOptions{status_request: StatusRequestKind::Initial, entry: false, headers: true, timeout: Timeout::new(10000)};
-//     let entry_result = hdk::get_entry_result(&address, options)?;
-//     match entry_result.result {
-//         GetEntryResultType::Single(entry) => {
-//             Ok(entry.headers[0].timestamp().clone())
-//         },
-//         _ => {
-//             unreachable!()
-//         }
-//     }
-// }

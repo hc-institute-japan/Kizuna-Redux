@@ -22,25 +22,16 @@ const Login: React.SFC<RouteComponentProps> = ({ history }) => {
   const [email, setEmail] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(false);
 
-  const isEmailRegistered = useQuery(IS_EMAIL_REGISTERED, {
+  const { data } = useQuery(IS_EMAIL_REGISTERED, {
     variables: {
       skip: !isEmailValid,
       email,
     },
   });
 
-  // console.log(isEmailRegistered);
-
-  // const profile = useQuery(GET_PRIVATE_PROFILE, {
-  //   variables: {
-  //     skip: !data,
-  //     id: data && data.getAddress,
-  //   },
-  // });
-
   const handleOnSubmit = () =>
     history.push({
-      pathname: `/${isEmailRegistered ? "register" : "complete"}`,
+      pathname: `/${data.isEmailRegistered ? "complete" : "register"}`,
       state: {
         email,
       },

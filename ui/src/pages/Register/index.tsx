@@ -12,8 +12,7 @@ import { useDispatch } from "react-redux";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import CREATE_PRIVATE_PROFILE_MUTATION from "../../graphql/mutation/createPrivateProfileMutation";
 import CREATE_PUBLIC_PROFILE_MUTATION from "../../graphql/mutation/createPublicProfileMutation";
-import USERNAMES from "../../graphql/query/usernamesQuery";
-import ADDRESS from "../../graphql/query/addressQuery";
+import IS_USERNAME_REGISTERED from "../../graphql/query/isEmailRegisteredQuery";
 import { authenticate } from "../../redux/auth/actions";
 import { isUsernameFormatValid } from "../../utils/helpers/regex";
 import styles from "./style.module.css";
@@ -23,20 +22,26 @@ type Props = RouteComponentProps<{}, {}, { email: string }>;
 const Register: React.FC<Props> = (props) => {
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
+
   const [usernameError, setUsernameError] = useState("");
   const [firstName, setFirstName] = useState("");
-  const { email } = props.location.state;
+  const { email } = { ...props.location.state };
   const [isInputValid, setIsInputValid] = useState(false);
   const dispatch = useDispatch();
   const [createPrivateProfile] = useMutation(CREATE_PRIVATE_PROFILE_MUTATION);
   const [createPublicProfile] = useMutation(CREATE_PUBLIC_PROFILE_MUTATION);
-  const { data } = useQuery(USERNAMES, {
+  const isUsernameRegisteredQuery = useQuery(IS_USERNAME_REGISTERED, {
     variables: {
-      skip: username.length === 0,
+      skip: !isInputValid,
       username,
     },
   });
-  const addressQuery = useQuery(ADDRESS);
+
+  useEffect(() => {
+    if (!email) {
+      props.history.push("/");
+    }
+  }, [email, props.history]);
 
   useEffect(() => {
     setIsInputValid(
@@ -47,13 +52,11 @@ const Register: React.FC<Props> = (props) => {
         isUsernameFormatValid(username) ? "" : "Invalid username format"
       );
     }
-  }, [username, firstName]);
-
-  useEffect(() => {});
+  }, [username]);
 
   const onSubmitAction = async () => {
-    if (data?.usernames?.length === 0) {
-      await createPrivateProfile({
+    if (!isUsernameRegisteredQuery?.data?.isUsernameRegistered) {
+      const privateProfile = await createPrivateProfile({
         variables: {
           profile_input: {
             first_name: firstName,
@@ -62,23 +65,31 @@ const Register: React.FC<Props> = (props) => {
           },
         },
       });
-      // localStorage.setItem("user_address", returnEntry.data.createProfile);
-
-      await createPublicProfile({
-        variables: {
-          profile_input: {
-            username,
+      if (privateProfile) {
+        const publicProfile = await createPublicProfile({
+          variables: {
+            profile_input: {
+              username,
+            },
           },
-        },
-      });
-
-      localStorage.setItem("agent_address", addressQuery.data.address);
-      dispatch(authenticate(addressQuery.data.address));
-      props.history.push("/home");
+        });
+        if (publicProfile) {
+          localStorage.setItem(
+            "agent_address",
+            publicProfile.data.createPublicProfile.agent_id
+          );
+          dispatch(
+            authenticate(publicProfile.data.createPublicProfile.agent_id)
+          );
+          props.history.push("/home");
+        }
+      }
     } else {
-      setUsernameError("Username already taken");
+      setIsInputValid(false);
+      setUsernameError("Username not available");
     }
   };
+
   return (
     <IonContent>
       <div className={styles.Register}>

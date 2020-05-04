@@ -9,8 +9,10 @@ import { authenticate } from "../../redux/auth/actions";
 /**
  * @name Auth
  *
- * Handles the authentication of the application. Passes different set of routes depending on the authentication
+ * Handles the authentication of the application. Checks if there is an agent_address stored locally in the device's local storage. Passes different set of routes depending on the authentication
  * Route - maps the necessary components to a certain url.
+ *
+ *
  */
 
 const Auth: React.FC = () => {
@@ -21,12 +23,12 @@ const Auth: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // const address = localStorage.getItem("agent_address");
-    // if (address) dispatch(authenticate(address));
+    const address = localStorage.getItem("agent_address");
+    if (address) dispatch(authenticate(address));
   }, [dispatch]);
 
   return (
-    <IonRouterOutlet>
+    <IonRouterOutlet id="content">
       {isAuthenticated ? <Authenticated /> : <Unauthenticated />}
     </IonRouterOutlet>
   );

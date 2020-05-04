@@ -67,12 +67,18 @@ mod profile_zome {
 
     // FRONTEND FUNCTIONS
     #[zome_fn("hc_public")]
-    fn is_email_registered (email: String) -> ZomeApiResult<BooleanReturn> {
-        let result = profile::handlers::check_email(email);
-        Ok(BooleanReturn {value: result.unwrap()})
+    fn is_email_registered (email: String) -> ZomeApiResult<bool> {
+        let result = profile::handlers::check_email(email)?;
+        Ok(result)
     }
 
     #[zome_fn("hc_public")]
+    fn is_username_registered (username: String) -> ZomeApiResult<bool> {
+        let result = profile::handlers::check_username(username)?;
+        Ok(result)
+    }
+
+    // #[zome_fn("hc_public")]
     // fn register(
     //     public_input: PublicProfileEntry, 
     //     private_input: PrivateProfileEntry
@@ -84,6 +90,7 @@ mod profile_zome {
 
     #[zome_fn("hc_public")]
     fn create_private_profile(input: PrivateProfileEntry) -> ZomeApiResult<PrivateProfile> {
+         
         profile::handlers::create_private_profile(input.clone())
     }
     
@@ -92,46 +99,8 @@ mod profile_zome {
         profile::handlers::create_public_profile(input)
     }
     
-    #[zome_fn("hc_public")]
-    fn get_linked_profile(username: String) -> ZomeApiResult<Option<PrivateProfile>> {
-        profile::handlers::get_linked_profile(username)
-    }
-    
-    #[zome_fn("hc_public")]
-    fn get_agent_id() -> ZomeApiResult<Address> {
-        Ok(hdk::AGENT_ADDRESS.clone())
-    }
-
     // #[zome_fn("hc_public")]
-    // fn list_public_profiles(username: String) -> ZomeApiResult<Vec<PublicProfile>> {
-    //     profile::handlers::list_public_profiles(username)
-    // }
-
-
-    // BACKEND FUNCTIONS
-
-    // #[zome_fn("hc_public")]
-    // fn get_public_profile(id: Address) -> ZomeApiResult<PublicProfile> {
-    //     profile::handlers::get_public_profile(id)
-    // }
-
-    // #[zome_fn("hc_public")]
-    // fn get_private_profile(id: Address) -> ZomeApiResult<PrivateProfile> {
-    //     profile::handlers::get_private_profile(id)
-    // }
-
-    // #[zome_fn("hc_public")]
-    // fn search_username(username: String) -> ZomeApiResult<Vec<PublicProfile>> {
-    //     profile::handlers::search_username(username)
-    // }
-
-    // #[zome_fn("hc_public")]
-    // pub fn compare_hashes (input_email_hash: u64) -> ZomeApiResult<bool>{
-    //     profile::handlers::compare_hashes(input_email_hash)
-    // }
-
-    // #[zome_fn("hc_public")]
-    // pub fn get_hashed_emails(email: String) -> ZomeApiResult<Vec<HashedEmail>> {
-    //     profile::handlers::get_hashed_emails(email)
+    // fn get_agent_id() -> ZomeApiResult<Address> {
+    //     Ok(hdk::AGENT_ADDRESS.clone())
     // }
 }

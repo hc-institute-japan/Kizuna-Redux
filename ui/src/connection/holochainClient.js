@@ -22,17 +22,17 @@ async function initAndGetHolochainClient() {
       wsClient: { max_reconnects: 0 },
     });
 
-    // if (HOLOCHAIN_LOGGING) {
-    //   console.log("🎉 Successfully connected to Holochain!");
-    // }
+    if (HOLOCHAIN_LOGGING) {
+      console.log("🎉 Successfully connected to Holochain!");
+    }
     return holochainClient;
   } catch (error) {
-    // if (HOLOCHAIN_LOGGING) {
-    //   console.log(
-    //     "😞 Holochain client connection failed -- ",
-    //     error.toString()
-    //   );
-    // }
+    if (HOLOCHAIN_LOGGING) {
+      console.log(
+        "😞 Holochain client connection failed -- ",
+        error.toString()
+      );
+    }
     throw error;
   }
 }
@@ -94,7 +94,7 @@ export const callZome = (
 
 export function createZomeCall(zomeCallPath, callOpts = {}) {
   const DEFAULT_OPTS = {
-    // logging: HOLOCHAIN_LOGGING,
+    logging: HOLOCHAIN_LOGGING,
   };
   const opts = {
     ...DEFAULT_OPTS,
@@ -106,12 +106,12 @@ export function createZomeCall(zomeCallPath, callOpts = {}) {
       // console.log(args);
       const { instanceId, zome, zomeFunc } = parseZomeCallPath(zomeCallPath);
       let zomeCall;
-      //   if (MOCK_DNA_CONNECTION) {
-      //     zomeCall = mockCallZome(instanceId, zome, zomeFunc);
-      //   } else {
+      // if (MOCK_DNA_CONNECTION) {
+      //   zomeCall = mockCallZome(instanceId, zome, zomeFunc);
+      // } else {
       await initAndGetHolochainClient();
       zomeCall = holochainClient.callZome(instanceId, zome, zomeFunc);
-      //   }
+      // }
 
       const rawResult = await zomeCall(args);
       const jsonResult = JSON.parse(rawResult);
@@ -140,14 +140,14 @@ export function createZomeCall(zomeCallPath, callOpts = {}) {
       }
       return result;
     } catch (error) {
-      // console.log(
-      //   `👎 %c${zomeCallPath}%c zome call ERROR using args: `,
-      //   "font-weight: bold; color: rgb(220, 208, 120); color: red",
-      //   "font-weight: normal; color: rgb(160, 160, 160)",
-      //   args,
-      //   " -- ",
-      //   error
-      // );
+      console.log(
+        `👎 %c${zomeCallPath}%c zome call ERROR using args: `,
+        "font-weight: bold; color: rgb(220, 208, 120); color: red",
+        "font-weight: normal; color: rgb(160, 160, 160)",
+        args,
+        " -- ",
+        error
+      );
     }
   };
 }

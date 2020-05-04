@@ -16,35 +16,24 @@ ZomeCall Structure:
 
 const resolvers = {
   Query: {
-    address: async () =>
-      await createZomeCall("/test-instance/profile/get_agent_id")(),
     isEmailRegistered: async (_, { email }) =>
       await createZomeCall("/test-instance/profile/is_email_registered")({
         email,
       }),
-    getPrivateProfile: async (_, { id }) =>
-      await createZomeCall("/test-instance/profile/get_private_profile")({
-        id,
-      }),
-
-    usernames: async (_, { username }) => {
-      const result = await createZomeCall(
-        "/test-instance/profile/search_username"
-      )({
+    isUsernameRegistered: async (_, { username }) =>
+      await createZomeCall("/test-instance/profile/is_username_registered")({
         username,
-      });
-      return result;
-    },
+      }),
   },
 
   Mutation: {
-    createPrivateProfile: async (_, { profile_input }) =>
+    createPrivateProfile: async (_, profileInput) =>
       await createZomeCall("/test-instance/profile/create_private_profile")({
-        input: profile_input,
+        input: profileInput.profile_input,
       }),
-    createPublicProfile: async (_, { profile_input }) =>
+    createPublicProfile: async (_, username) =>
       await createZomeCall("/test-instance/profile/create_public_profile")({
-        input: profile_input,
+        input: username.profile_input,
       }),
   },
 };

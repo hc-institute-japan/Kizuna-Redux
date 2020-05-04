@@ -14,7 +14,6 @@ import "@ionic/react/css/typography.css";
 import React from "react";
 import Container from "./containers";
 import Auth from "./pages/Auth";
-import Home from "./pages/Home";
 /* Theme variables */
 import "./theme/variables.css";
 
