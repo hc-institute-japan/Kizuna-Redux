@@ -67,15 +67,15 @@ mod profile_zome {
 
     // FRONTEND FUNCTIONS
     #[zome_fn("hc_public")]
-    fn is_email_registered (email: String) -> ZomeApiResult<bool> {
+    fn is_email_registered (email: String) -> ZomeApiResult<BooleanReturn> {
         let result = profile::handlers::check_email(email)?;
-        Ok(result)
+        Ok(BooleanReturn {value: result})
     }
 
     #[zome_fn("hc_public")]
-    fn is_username_registered (username: String) -> ZomeApiResult<bool> {
+    fn is_username_registered (username: String) -> ZomeApiResult<BooleanReturn> {
         let result = profile::handlers::check_username(username)?;
-        Ok(result)
+        Ok(BooleanReturn {value: result})
     }
 
     // #[zome_fn("hc_public")]
@@ -90,7 +90,6 @@ mod profile_zome {
 
     #[zome_fn("hc_public")]
     fn create_private_profile(input: PrivateProfileEntry) -> ZomeApiResult<PrivateProfile> {
-         
         profile::handlers::create_private_profile(input.clone())
     }
     
