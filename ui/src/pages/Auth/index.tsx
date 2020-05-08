@@ -1,5 +1,5 @@
 import { IonRouterOutlet } from "@ionic/react";
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from '@apollo/react-hooks';
 import ME from '../../graphql/query/meQuery';
 import Authenticated from "../../routes/Authenticated";
@@ -24,13 +24,19 @@ const Auth: React.FC = () => {
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const address = localStorage.getItem("agent_address");
-    // TODO: may need refactoring for better error handling
-    if (address && meQuery.data?.me?.username) dispatch(authenticate(address));
-  }, [dispatch]);
+  const username = (meQuery.data !== undefined) ? meQuery.data.me.username : null; 
 
-  return (
+  useEffect(() => {
+      const address = localStorage.getItem("agent_address");
+      // TODO: may need refactoring for better error handling
+      if (address && username) {
+        // console.log(address);
+        // console.log(meQuery.data?.me?.username);
+        dispatch(authenticate(address));
+      }
+  }, [dispatch, username]);
+
+  return ( 
     <IonRouterOutlet>
       {isAuthenticated ? <Authenticated /> : <Unauthenticated />}
     </IonRouterOutlet>

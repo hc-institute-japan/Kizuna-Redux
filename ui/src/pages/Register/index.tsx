@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@apollo/react-hooks";
+import { useMutation } from "@apollo/react-hooks";
 import {
   IonButton,
   IonCol,
@@ -39,6 +39,7 @@ const Register: React.FC<Props> = (props) => {
   useEffect(() => {});
 
   const onSubmitAction = async () => {
+    // need to handle zomeapierror
       const profile_result = await createProfile({
         variables: { username: username},
       });
