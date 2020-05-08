@@ -2,7 +2,6 @@ import React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Complete from "../pages/Complete";
 import Landing from "../pages/Landing";
-import Login from "../pages/Login";
 import Register from "../pages/Register";
 
 /**
@@ -19,9 +18,6 @@ const Unauthenticated: React.FC = (_) => (
   <Switch>
     <Route path="/" exact>
       <Landing />
-    </Route>
-    <Route path="/login" exact>
-      <Login />
     </Route>
     <Route path="/register" exact>
       <Register />

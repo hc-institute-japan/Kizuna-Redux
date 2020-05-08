@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@apollo/react-hooks";
+import { useMutation } from "@apollo/react-hooks";
 import {
   IonButton,
   IonCol,
@@ -10,10 +10,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { RouteComponentProps, withRouter } from "react-router-dom";
-import CREATE_PRIVATE_PROFILE_MUTATION from "../../graphql/mutation/createPrivateProfileMutation";
-import CREATE_PUBLIC_PROFILE_MUTATION from "../../graphql/mutation/createPublicProfileMutation";
-import USERNAMES from "../../graphql/query/usernamesQuery";
-import ADDRESS from "../../graphql/query/addressQuery";
+import CREATE_PROFILE_MUTATION from "../../graphql/mutation/createProfileMutation";
 import { authenticate } from "../../redux/auth/actions";
 import { isUsernameFormatValid } from "../../utils/helpers/regex";
 import styles from "./style.module.css";
@@ -21,101 +18,39 @@ import styles from "./style.module.css";
 type Props = RouteComponentProps<{}, {}, { email: string }>;
 
 const Register: React.FC<Props> = (props) => {
-  const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
   const [usernameError, setUsernameError] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const { email } = props.location.state;
   const [isInputValid, setIsInputValid] = useState(false);
   const dispatch = useDispatch();
-  const [createPrivateProfile] = useMutation(CREATE_PRIVATE_PROFILE_MUTATION);
-  const [createPublicProfile] = useMutation(CREATE_PUBLIC_PROFILE_MUTATION);
-  const { data } = useQuery(USERNAMES, {
-    variables: {
-      skip: username.length === 0,
-      username,
-    },
-  });
-  const addressQuery = useQuery(ADDRESS);
+  const [createProfile] = useMutation(CREATE_PROFILE_MUTATION);
 
   useEffect(() => {
     setIsInputValid(
       isUsernameFormatValid(username) && username.trim().length > 0
     );
     if (username.length > 0) {
+      // better regex handling
       setUsernameError(
         isUsernameFormatValid(username) ? "" : "Invalid username format"
       );
     }
-  }, [username, firstName]);
+  }, [username]);
 
   useEffect(() => {});
 
   const onSubmitAction = async () => {
-    if (data?.usernames?.length === 0) {
-      await createPrivateProfile({
-        variables: {
-          profile_input: {
-            first_name: firstName,
-            last_name: lastName,
-            email,
-          },
-        },
+    // need to handle zomeapierror
+      const profile_result = await createProfile({
+        variables: { username: username},
       });
       // localStorage.setItem("user_address", returnEntry.data.createProfile);
-
-      await createPublicProfile({
-        variables: {
-          profile_input: {
-            username,
-          },
-        },
-      });
-
-      localStorage.setItem("agent_address", addressQuery.data.address);
-      dispatch(authenticate(addressQuery.data.address));
+      localStorage.setItem("agent_address", profile_result.data.createProfile.id);
+      dispatch(authenticate(profile_result.data.createProfile.id));
       props.history.push("/home");
-    } else {
-      setUsernameError("Username already taken");
-    }
   };
   return (
     <IonContent>
       <div className={styles.Register}>
-        <IonLabel>
-          <h2>First Name *</h2>
-        </IonLabel>
-        <IonRow
-          className={`${styles.RegisterInput} ion-justify-content-center ion-margin-bottom`}
-        >
-          <IonCol>
-            <IonInput
-              type="text"
-              value={firstName}
-              onIonChange={(e) =>
-                setFirstName((e.target as HTMLInputElement).value)
-              }
-              placeholder="John"
-            ></IonInput>
-          </IonCol>
-        </IonRow>
-        <IonLabel>
-          <h2>Last Name</h2>
-        </IonLabel>
-        <IonRow
-          className={`${styles.RegisterInput} ion-justify-content-center ion-margin-bottom`}
-        >
-          <IonCol>
-            <IonInput
-              type="text"
-              value={lastName}
-              onIonChange={(e) =>
-                setLastName((e.target as HTMLInputElement).value)
-              }
-              placeholder="Doe"
-            ></IonInput>
-          </IonCol>
-        </IonRow>
         <IonLabel>
           <h2>Username *</h2>
         </IonLabel>
@@ -147,7 +82,7 @@ const Register: React.FC<Props> = (props) => {
           disabled={!isInputValid}
           className={styles.Next}
         >
-          Next
+          Register
         </IonButton>
       </div>
     </IonContent>

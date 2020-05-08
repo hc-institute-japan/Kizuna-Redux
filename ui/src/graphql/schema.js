@@ -14,7 +14,7 @@ Schema
 export default gql`
   type Profile {
     id: ID!
-    username: String!
+    username: String
   }
 
   type Username {
@@ -27,10 +27,10 @@ export default gql`
 
   type Query {
     allAgents: [Username!]!
-    me: Profile
+    me: Profile!
   }
 
   type Mutation {
-    createProfile(username: String): Profile!
+    createProfile(username: String!): Profile!
   }
 `;
