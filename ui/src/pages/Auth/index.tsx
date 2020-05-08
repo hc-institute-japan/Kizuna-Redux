@@ -1,5 +1,7 @@
 import { IonRouterOutlet } from "@ionic/react";
 import React, { useEffect } from "react";
+import { useQuery } from '@apollo/react-hooks';
+import ME from '../../graphql/query/meQuery';
 import Authenticated from "../../routes/Authenticated";
 import Unauthenticated from "../../routes/Unauthenticated";
 import { useSelector, useDispatch } from "react-redux";
@@ -14,6 +16,8 @@ import { authenticate } from "../../redux/auth/actions";
  */
 
 const Auth: React.FC = () => {
+  const meQuery = useQuery(ME);
+
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
@@ -22,7 +26,8 @@ const Auth: React.FC = () => {
 
   useEffect(() => {
     const address = localStorage.getItem("agent_address");
-    if (address) dispatch(authenticate(address));
+    // TODO: may need refactoring for better error handling
+    if (address && meQuery.data?.me?.username) dispatch(authenticate(address));
   }, [dispatch]);
 
   return (

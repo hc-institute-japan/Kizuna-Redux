@@ -27,10 +27,16 @@ const resolvers = {
       const my_profile = await createZomeCall('/test-instance/profiles/get_profile')({
         agent_address: agent_id
       });
-      // TODO: handle when result is null
-      return {
-        id: my_profile.agent_id,
-        username: my_profile.username
+      if (my_profile) {
+        return {
+          id: agent_id,
+          username: my_profile.username
+        }
+      } else {
+        return {
+          id: agent_id,
+          username: null,
+        }
       }
     },
     // address: async () =>
