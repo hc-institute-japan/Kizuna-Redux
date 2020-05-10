@@ -1,0 +1,18 @@
+.profile {
+  width: 100%;
+  border-bottom: 1px solid var(--ion-color-light);
+}
+
+.profile ion-text > * {
+  margin: 0;
+}
+
+.profileName {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.test {
+  background-color: red;
+}

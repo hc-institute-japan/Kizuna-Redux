@@ -106,12 +106,12 @@ export function createZomeCall(zomeCallPath, callOpts = {}) {
       // console.log(args);
       const { instanceId, zome, zomeFunc } = parseZomeCallPath(zomeCallPath);
       let zomeCall;
-        // if (MOCK_DNA_CONNECTION) {
-        //   zomeCall = mockCallZome(instanceId, zome, zomeFunc);
-        // } else {
+      // if (MOCK_DNA_CONNECTION) {
+      //   zomeCall = mockCallZome(instanceId, zome, zomeFunc);
+      // } else {
       await initAndGetHolochainClient();
       zomeCall = holochainClient.callZome(instanceId, zome, zomeFunc);
-        // }
+      // }
 
       const rawResult = await zomeCall(args);
       const jsonResult = JSON.parse(rawResult);

@@ -1,34 +1,23 @@
 import {
-  IonButton,
   IonButtons,
-  IonContent,
   IonHeader,
-  IonIcon,
+  IonMenuButton,
+  IonPage,
   IonToolbar,
 } from "@ionic/react";
 import React from "react";
 
 const Home: React.FC = () => {
-  // console.log(data);
-
   return (
-    <IonContent>
+    <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="secondary">
-            <IonButton>
-              <IonIcon slot="start" name="star" />
-            </IonButton>
-          </IonButtons>
-
-          <IonButtons slot="primary">
-            <IonButton>
-              <IonIcon name="create" />
-            </IonButton>
+          <IonButtons slot="start">
+            <IonMenuButton />
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-    </IonContent>
+    </IonPage>
   );
 };
 

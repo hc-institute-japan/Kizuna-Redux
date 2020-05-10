@@ -40,12 +40,13 @@ export default gql`
   }
 
   type Query {
-    isUsernameRegistered(username: String): BooleanReturn
-    isEmailRegistered(email: String): BooleanReturn
+    isUsernameRegistered(username: String): Boolean
+    isEmailRegistered(email: String): Boolean
   }
 
   type Mutation {
     createPublicProfile(profile_input: PublicProfileEntry): PublicProfile
     createPrivateProfile(profile_input: PrivateProfileEntry): PrivateProfile
+    deleteProfile(username: String): Boolean
   }
 `;
