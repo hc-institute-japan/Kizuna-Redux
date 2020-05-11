@@ -12,7 +12,7 @@ test_agent = true
 
 [[dnas]]
 file = '/Users/lc/Desktop/Kizuna/dna/dist/dna.dna.json'
-hash = 'QmQ2sfaMssqutVMeB2141ge9G5YBDwtMWtrieA3brdsDhC'
+hash = 'QmXgqoaUTwAL2bGX7V9aomQNBedX6Vhpns5z9SdyQ78HsE'
 id = 'hc-run-dna'
 
 [[instances]]

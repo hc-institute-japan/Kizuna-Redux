@@ -2,51 +2,82 @@
 /// See the tryorama README [https://github.com/holochain/tryorama]
 /// for a potentially more accurate example
 
-//  TATS: Watch 9:30 to 20:00 of this video from devcamp to know more about tryorama
-//　https://www.youtube.com/watch?v=OX9jsY24S9A&list=PLJgZAXKruDXf9QbFzebpPvA0UV7e35OWQ&index=7&t=0s
-//  patterned the folder structure from the test files of react-graphql-template
 //  for less verbose test output. use TRYORAMA_LOG_LEVEL=error hc test -s
 
-const path = require('path')
-const {  Orchestrator, Config, combine, localOnly, tapeExecutor } = require('@holochain/tryorama')
+const path = require("path");
 
-const dnaPath = path.join(__dirname, "../dist/dna.dna.json")
+const {
+  Orchestrator,
+  Config,
+  combine,
+  singleConductor,
+  localOnly,
+  tapeExecutor,
+} = require("@holochain/tryorama");
 
-// Instatiate a test orchestrator.
-// It comes loaded with a lot default behavior which can be overridden, including:
-// * custom conductor spawning
-// * custom test result reporting
-// * scenario middleware, including integration with other test harnesses
-const orchestrator = new Orchestrator({
-  middleware: combine(
-    // use the tape harness to run the tests, injects the tape API into each scenario
-    // as the second argument
-    tapeExecutor(require('tape')),
+process.on("unhandledRejection", (error) => {
+  // Will print "unhandledRejection err is not defined"
+  console.error("got unhandledRejection:", error);
+});
 
-    // specify that all "players" in the test are on the local machine, rather than
-    // on remote machines
-    localOnly,
-  )
-})
+const dnaPath = path.join(__dirname, "../dist/dna.dna.json");
 
-const dna = Config.dna(dnaPath, 'kizuna_dna')
+const dna = Config.dna(dnaPath, "scaffold-test");
 const conductorConfig = Config.gen(
+  { profiles: dna },
   {
-    kizuna_dna: dna
-  },
-  {
-    // use a sim2h network (see conductor config options for all valid network types)
-    // TATS: So sim2h is the simulated network that we use for testing our zome calls. 
-    // More info on the video link I shared above. Basically acts like a switchboard that allows
-    // 2 agents to talk to one another.
-    // IMPORTANT: Make sure to open a new terminal and get inside the nix-shell and run 'sim2h-server'
-    // to instantiate a sim2h_server. Default server is 9000.
     network: {
-      type: 'sim2h',
-      sim2h_url: 'ws://localhost:9000',
+      type: "sim2h",
+      sim2h_url: "ws://localhost:9000",
     },
-  })
+  }
+);
+
+const orchestrator = new Orchestrator({
+  waiter: {
+    softTimeout: 20000,
+    hardTimeout: 30000,
+  },
+});
+
+function setUsername(username) {
+  return (caller) =>
+    caller.call("profiles", "profiles", "set_username", {
+      username,
+    });
+}
+
+function getAllAgents() {
+  return (caller) => caller.call("profiles", "profiles", "get_all_agents", {});
+}
+
+orchestrator.registerScenario("description of example test", async (s, t) => {
+  const { alice, bob } = await s.players(
+    { alice: conductorConfig, bob: conductorConfig },
+    true
+  );
+
+  const aliceAddress = alice.instance("profiles").agentAddress;
+  const bobAddress = bob.instance("profiles").agentAddress;
+
+  let result = await getAllAgents()(alice);
+  t.equal(result.Ok.length, 0);
+
+  result = await setUsername("alice")(alice);
+  t.ok(result.Ok);
+  await s.consistency();
+
+  result = await getAllAgents()(bob);
+  t.equal(result.Ok.length, 1);
+
+  result = await setUsername("bob")(bob);
+  t.ok(result.Ok);
+  await s.consistency();
+
+  result = await getAllAgents()(alice);
+  t.equal(result.Ok.length, 2);
+});
 
 require('./profiles')(orchestrator.registerScenario, conductorConfig)
 
-orchestrator.run()
+orchestrator.run();

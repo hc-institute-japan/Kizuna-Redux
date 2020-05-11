@@ -14,6 +14,7 @@ import "@ionic/react/css/typography.css";
 import React from "react";
 import Container from "./containers";
 import Auth from "./pages/Auth";
+// import Home from "./graphql/test/Home";
 /* Theme variables */
 import "./theme/variables.css";
 

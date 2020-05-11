@@ -12,7 +12,7 @@ const Landing = () => {
       <IonButton
         color="primary"
         className={styles.LandingButton}
-        routerLink="/login"
+        routerLink="/register"
       >
         Start Messaging
       </IonButton>
