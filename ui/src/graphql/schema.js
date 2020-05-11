@@ -47,5 +47,6 @@ export default gql`
   type Mutation {
     createPublicProfile(profile_input: PublicProfileEntry): PublicProfile
     createPrivateProfile(profile_input: PrivateProfileEntry): PrivateProfile
+    deleteProfile(username: String): Boolean
   }
 `;

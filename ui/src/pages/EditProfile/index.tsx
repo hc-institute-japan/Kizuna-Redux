@@ -31,7 +31,7 @@ const EditProfile = () => {
           <Input
             key={profileKey}
             label={profileKey}
-            placeholder={profile[profileKey]}
+            // placeholder={profile[profileKey]}
           ></Input>
         ))}
         <IonButton className="ion-margin-top" expand="block">

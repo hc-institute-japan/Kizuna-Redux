@@ -39,6 +39,9 @@ const ProfileHeader = ({ url }: { url: string }) => {
           <IonItem button href="/edit-profile">
             Edit profile
           </IonItem>
+          <IonItem button href="/delete-profile">
+            Delete profile
+          </IonItem>
         </IonList>
       </Popover>
     </div>

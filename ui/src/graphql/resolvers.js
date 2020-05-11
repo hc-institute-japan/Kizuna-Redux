@@ -35,6 +35,10 @@ const resolvers = {
       await createZomeCall("/test-instance/profile/create_public_profile")({
         input: username.profile_input,
       }),
+    deleteProfile: async (_, username) =>
+      await createZomeCall("/profiles/profile/delete_profile")({
+        input: username.username
+      })
   },
 };
 
