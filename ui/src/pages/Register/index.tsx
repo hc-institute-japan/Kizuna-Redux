@@ -19,7 +19,6 @@ type Props = RouteComponentProps<{}, {}, { email: string }>;
 
 const Register: React.FC<Props> = (props) => {
   const [username, setUsername] = useState("");
-
   const [usernameError, setUsernameError] = useState("");
   const [isInputValid, setIsInputValid] = useState(false);
   const dispatch = useDispatch();
@@ -41,15 +40,14 @@ const Register: React.FC<Props> = (props) => {
 
   const onSubmitAction = async () => {
     // need to handle zomeapierror
-    const profile_result = await createProfile({
-      variables: { username },
-    });
-    // localStorage.setItem("user_address", returnEntry.data.createProfile);
-    localStorage.setItem("agent_address", profile_result.data.createProfile.id);
-    dispatch(authenticate(profile_result.data.createProfile.id));
-    props.history.push("/home");
+      const profile_result = await createProfile({
+        variables: { username: username},
+      });
+      // localStorage.setItem("user_address", returnEntry.data.createProfile);
+      localStorage.setItem("agent_address", profile_result.data.createProfile.id);
+      dispatch(authenticate(profile_result.data.createProfile.id));
+      props.history.push("/home");
   };
-
   return (
     <IonContent>
       <div className={styles.Register}>
