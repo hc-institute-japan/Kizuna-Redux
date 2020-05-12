@@ -20,7 +20,7 @@ const ProfileDetails = ({ profile }: any) => {
     <div className={styles.profileDetails}>
       <IonList>
         {profileKeys.map((key) => (
-          <IonItem color="none" lines="none">
+          <IonItem key={key} color="none" lines="none">
             <div className={styles.ionItem}>
               <IonNote>{key}</IonNote>
 

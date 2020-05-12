@@ -1,35 +1,44 @@
-import React from "react";
 import {
-  IonGrid,
-  IonRow,
-  IonCol,
   IonAvatar,
-  IonText,
+  IonCol,
+  IonGrid,
   IonNote,
+  IonRow,
+  IonText,
 } from "@ionic/react";
-import styles from "./style.module.css";
+import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/reducers";
+import styles from "./style.module.css";
+import { withRouter } from "react-router-dom";
 
-const MenuHeader = () => {
-  const profile = useSelector((state: RootState) => state.profile);
+const MenuHeader = ({ history, close }: any) => {
+  const profile = useSelector((state: RootState) => state.profile.profile);
+
+  const handleOnClick = () => {
+    close();
+    history.push("/profile");
+  };
   return (
-    <div className={`${styles.profile} ion-padding`}>
+    <div
+      onClick={handleOnClick}
+      className={`${styles.profile} ion-padding ion-activatable`}
+    >
       <IonGrid>
-        <IonRow>
+        {/* <IonRow>
           <IonCol>
             <IonAvatar>
               <img src={profile.profilePicture}></img>
             </IonAvatar>
           </IonCol>
-        </IonRow>
+        </IonRow> */}
+
         <IonText color="dark">
-          <h3>{`${profile.firstName} ${profile.lastName}`}</h3>
+          <h3>{`${profile.username}`}</h3>
         </IonText>
-        <IonNote>{profile.email}</IonNote>
       </IonGrid>
     </div>
   );
 };
 
-export default MenuHeader;
+export default withRouter(MenuHeader);

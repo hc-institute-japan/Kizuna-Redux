@@ -1,16 +1,16 @@
 import {
+  IonBackButton,
   IonButton,
-  IonIcon,
-  IonPopover,
-  IonList,
-  IonItem,
-  IonToolbar,
   IonButtons,
+  IonIcon,
+  IonItem,
+  IonList,
+  IonToolbar,
 } from "@ionic/react";
-import { arrowBack, ellipsisVertical } from "ionicons/icons";
+import { ellipsisVertical } from "ionicons/icons";
 import React, { useRef, useState } from "react";
-import styles from "./style.module.css";
 import Popover from "../../components/Popover";
+import styles from "./style.module.css";
 
 const ProfileHeader = ({ url }: { url: string }) => {
   const [showPopover, setIsPopoverVisible] = useState(false);
@@ -20,9 +20,10 @@ const ProfileHeader = ({ url }: { url: string }) => {
     <div className={styles.profile} style={{ backgroundImage: `url(${url})` }}>
       <IonToolbar>
         <IonButtons>
-          <IonButton>
+          <IonBackButton defaultHref="/home" />
+          {/* <IonButton>
             <IonIcon icon={arrowBack} />
-          </IonButton>
+          </IonButton> */}
         </IonButtons>
         <IonButtons slot="end">
           <IonButton

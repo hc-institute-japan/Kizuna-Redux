@@ -14,16 +14,29 @@ Schema
 export default gql`
   type Profile {
     id: ID!
-    username: String
+    username: String!
+  }
+
+  input ProfileInput {
+    username: String!
+  }
+
+  type Username {
+    username: String!
+  }
+
+  type BooleanReturn {
+    value: Boolean
   }
 
   type Query {
-    allAgents: [Profile!]!
-    me: Profile!
+    allAgents: [Username!]!
+    me: Profile
   }
 
   type Mutation {
-    createProfile(username: String!): Profile!
+    createProfile(username: String): Profile!
     deleteProfile(username: String): Boolean
+    updateProfile(profile: ProfileInput): Boolean
   }
 `;

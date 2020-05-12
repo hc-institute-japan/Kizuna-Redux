@@ -7,7 +7,7 @@ import styles from "./style.module.css";
 import ProfileDetails from "./ProfileDetails";
 
 const Profile = () => {
-  const profile = useSelector((state: RootState) => state.profile);
+  const { profile } = useSelector((state: RootState) => state.profile);
 
   return (
     <IonPage>

@@ -1,9 +1,11 @@
 import { IonRouterOutlet } from "@ionic/react";
 import React, { useState, useEffect } from "react";
-import { useQuery } from '@apollo/react-hooks';
-import ME from '../../graphql/query/meQuery';
+import { useQuery } from "@apollo/react-hooks";
+import ME from "../../graphql/query/meQuery";
 import Authenticated from "../../routes/Authenticated";
 import Unauthenticated from "../../routes/Unauthenticated";
+import CREATE_PROFILE_MUTATION from "../../graphql/mutation/createProfile";
+import { useMutation } from "@apollo/react-hooks";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/reducers";
 import { authenticate } from "../../redux/auth/actions";
@@ -18,27 +20,29 @@ import { authenticate } from "../../redux/auth/actions";
  */
 
 const Auth: React.FC = () => {
-  const meQuery = useQuery(ME);
-
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
-
   const dispatch = useDispatch();
 
-  const username = (meQuery.data !== undefined) ? meQuery.data.me.username : null; 
+  const [createProfile] = useMutation(CREATE_PROFILE_MUTATION);
+
+  // useEffect(() => {
+  //   createProfile({
+  //     variables: {
+  //       username: "j.cole",
+  //     },
+  //   });
+  // }, []);
 
   useEffect(() => {
-      const address = localStorage.getItem("agent_address");
-      // TODO: may need refactoring for better error handling
-      if (address && username) {
-        // console.log(address);
-        // console.log(meQuery.data?.me?.username);
-        dispatch(authenticate(address));
-      }
-  }, [dispatch, username]);
+    const address = localStorage.getItem("agent_address");
+    if (address) {
+      dispatch(authenticate(address));
+    }
+  }, [dispatch]);
 
-  return ( 
+  return (
     <IonRouterOutlet>
       {isAuthenticated ? <Authenticated /> : <Unauthenticated />}
     </IonRouterOutlet>

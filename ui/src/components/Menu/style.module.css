@@ -1,6 +1,12 @@
 .profile {
   width: 100%;
   border-bottom: 1px solid var(--ion-color-light);
+  pointer-events: auto !important;
+  transition: 0.5s;
+}
+
+.profile:hover {
+  background-color: var(--ion-color-light);
 }
 
 .profile ion-text > * {

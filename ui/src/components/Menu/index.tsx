@@ -1,4 +1,4 @@
-import { IonContent, IonMenu } from "@ionic/react";
+import { IonContent, IonMenu, IonButton } from "@ionic/react";
 import React from "react";
 import MenuHeader from "./MenuHeader";
 
@@ -11,12 +11,16 @@ import MenuHeader from "./MenuHeader";
  *
  */
 
-const Menu: React.FC = () => (
-  <IonMenu type="overlay" contentId="content">
-    <IonContent>
-      <MenuHeader />
-    </IonContent>
-  </IonMenu>
-);
+const Menu: React.FC = () => {
+  const menuRef = React.useRef<any>(null);
+
+  return (
+    <IonMenu ref={menuRef} type="overlay" contentId="content">
+      <IonContent>
+        <MenuHeader close={() => menuRef.current?.close()} />
+      </IonContent>
+    </IonMenu>
+  );
+};
 
 export default Menu;

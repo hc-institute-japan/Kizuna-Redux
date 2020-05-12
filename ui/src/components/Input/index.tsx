@@ -15,6 +15,8 @@ import PropTypes from "prop-types";
 interface Props {
   label?: string;
   error?: string;
+  placeholder?: string;
+  onIonChange(value: string): void;
 }
 
 const Input: React.FC<Props> = (props) => {
@@ -31,7 +33,10 @@ const Input: React.FC<Props> = (props) => {
             : {}
         }
         className={styles.input}
-        {...props}
+        placeholder={props.placeholder}
+        onIonChange={(e) => {
+          props.onIonChange((e.target as HTMLInputElement).value);
+        }}
       />
       <IonLabel color="danger">{props.error}</IonLabel>
     </div>
