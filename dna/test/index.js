@@ -2,6 +2,9 @@
 /// See the tryorama README [https://github.com/holochain/tryorama]
 /// for a potentially more accurate example
 
+//  TATS: Watch 9:30 to 20:00 of this video from devcamp to know more about tryorama
+//　https://www.youtube.com/watch?v=OX9jsY24S9A&list=PLJgZAXKruDXf9QbFzebpPvA0UV7e35OWQ&index=7&t=0s
+//  patterned the folder structure from the test files of react-graphql-template
 //  for less verbose test output. use TRYORAMA_LOG_LEVEL=error hc test -s
 
 const path = require("path");
