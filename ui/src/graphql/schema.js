@@ -3,50 +3,35 @@ import gql from "graphql-tag";
 /* 
 Schema
 - Types
--- PublicProfile and PrivateProfile
--- PublicProfileEntry and PrivateProfileEntry
+-- Profile
 - Queries
--- searchResults()
--- listProfiles()
+-- getAllagents()
+-- me()
 - Mutations
--- regsterUsername()
 -- createProfile()
 */
 
 export default gql`
-  type PublicProfile {
-    agent_id: String
+  type Profile {
+    id: ID!
     username: String
   }
 
-  type PrivateProfile {
-    first_name: String
-    last_name: String
-    email: String
+  type Username {
+    username: String!
   }
 
   type BooleanReturn {
     value: Boolean
   }
 
-  input PrivateProfileEntry {
-    first_name: String
-    last_name: String
-    email: String
-  }
-
-  input PublicProfileEntry {
-    username: String
-  }
-
   type Query {
-    isUsernameRegistered(username: String): Boolean
-    isEmailRegistered(email: String): Boolean
+    allAgents: [Username!]!
+    me: Profile!
   }
 
   type Mutation {
-    createPublicProfile(profile_input: PublicProfileEntry): PublicProfile
-    createPrivateProfile(profile_input: PrivateProfileEntry): PrivateProfile
+    createProfile(username: String!): Profile!
     deleteProfile(username: String): Boolean
   }
 `;
