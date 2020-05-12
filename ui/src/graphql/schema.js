@@ -17,16 +17,8 @@ export default gql`
     username: String
   }
 
-  type Username {
-    username: String!
-  }
-
-  type BooleanReturn {
-    value: Boolean
-  }
-
   type Query {
-    allAgents: [Username!]!
+    allAgents: [Profile!]!
     me: Profile!
   }
 

@@ -19,18 +19,19 @@ const resolvers = {
     allAgents: async () => {
       const all_agents = await createZomeCall('/test-instance/profiles/get_all_agents')();
       return all_agents.map(agent => ({
+        id: agent.agent_id,
         username: agent.username
       }))
     },
     me: async () => {
       const agent_id = await createZomeCall('/test-instance/profiles/get_my_address')();
-      const my_profile = await createZomeCall('/test-instance/profiles/get_profile')({
+      const username = await createZomeCall('/test-instance/profiles/get_username')({
         agent_address: agent_id
       });
-      if (my_profile) {
+      if (username) {
         return {
           id: agent_id,
-          username: my_profile.username
+          username,
         }
       } else {
         return {
@@ -53,10 +54,10 @@ const resolvers = {
 
   Mutation: {
     createProfile: async (_, username ) => {
-        const profile = await createZomeCall("/test-instance/profiles/create_profile")(username);
+        const username_entry = await createZomeCall("/test-instance/profiles/set_username")(username);
         return {
-          id: profile.agent_id,
-          username: profile.username,
+          id: username_entry.agent_id,
+          username: username_entry.username,
         }
     },
     deleteProfile: async (_, username) =>
