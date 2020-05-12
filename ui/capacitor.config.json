@@ -1,0 +1,8 @@
+{
+  "appId": "beyonder.kizuna",
+  "appName": "kizuna",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www",
+  "cordova": {}
+}
