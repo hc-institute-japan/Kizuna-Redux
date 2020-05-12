@@ -3,18 +3,12 @@
 use hdk::prelude::*;
 use hdk_proc_macros::zome;
 
+pub mod contacts;
+
 // see https://developer.holochain.org/api/0.0.47-alpha1/hdk/ for info on using the hdk library
 
-// This is a sample zome that defines an entry type "MyEntry" that can be committed to the
-// agent's chain via the exposed function create_my_entry
-
-#[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
-pub struct MyEntry {
-    content: String,
-}
-
 #[zome]
-mod my_zome {
+mod contacts {
 
     #[init]
     fn init() {
@@ -27,29 +21,37 @@ mod my_zome {
     }
 
     #[entry_def]
-    fn my_entry_def() -> ValidatingEntryType {
-        entry!(
-            name: "my_entry",
-            description: "this is a same entry defintion",
-            sharing: Sharing::Public,
-            validation_package: || {
-                hdk::ValidationPackageDefinition::Entry
-            },
-            validation: | _validation_data: hdk::EntryValidationData<MyEntry>| {
-                Ok(())
-            }
-        )
+    fn contacts_def() -> ValidatingEntryType {
+        contacts::contacts_definition()
+    }
+
+    #[entry_def]
+    fn contacts_anchor_def() -> ValidatingEntryType {
+        contacts::contacts_anchor_definition()
     }
 
     #[zome_fn("hc_public")]
-    fn create_my_entry(entry: MyEntry) -> ZomeApiResult<Address> {
-        let entry = Entry::App("my_entry".into(), entry.into());
-        let address = hdk::commit_entry(&entry)?;
-        Ok(address)
+    fn crate_contacts() -> ZomeApiResult<()> {
+
     }
 
     #[zome_fn("hc_public")]
-    fn get_my_entry(address: Address) -> ZomeApiResult<Option<Entry>> {
-        hdk::get_entry(&address)
+    fn add_contacts() -> ZomeApiResult<()> {
+    }
+
+    #[zome_fn("hc_public")]
+    fn remove_contacts() -> ZomeApiResult<()> {
+    }
+
+    #[zome_fn("hc_public")]
+    fn list_contacts() -> ZomeApiResult<()> {
+    }
+
+    #[zome_fn("hc_public")]
+    fn block_contacts() -> ZomeApiResult<()> {
+    }
+
+    #[zome_fn("hc_public")]
+    fn remove_blocked_contacts() -> ZomeApiResult<()> {
     }
 }
