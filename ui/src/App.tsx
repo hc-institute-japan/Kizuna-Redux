@@ -14,8 +14,6 @@ import "@ionic/react/css/typography.css";
 import React from "react";
 import Container from "./containers";
 import Auth from "./pages/Auth";
-// import Home from "./graphql/test/Home";
-/* Theme variables */
 import "./theme/variables.css";
 
 /**
@@ -27,7 +25,6 @@ import "./theme/variables.css";
 const App: React.FC = () => (
   <Container>
     <Auth />
-    {/* <Home /> */}
   </Container>
 );
 

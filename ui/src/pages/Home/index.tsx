@@ -1,35 +1,17 @@
 import {
-  IonButton,
   IonButtons,
-  IonContent,
   IonHeader,
-  IonIcon,
+  IonMenuButton,
+  IonPage,
   IonToolbar,
 } from "@ionic/react";
 import React from "react";
+import HomeHeader from "../../components/Header/HomeHeader";
 
-const Home: React.FC = () => {
-  // console.log(data);
-
-  return (
-    <IonContent>
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot="secondary">
-            <IonButton>
-              <IonIcon slot="start" name="star" />
-            </IonButton>
-          </IonButtons>
-
-          <IonButtons slot="primary">
-            <IonButton>
-              <IonIcon name="create" />
-            </IonButton>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
-    </IonContent>
-  );
-};
+const Home: React.FC = () => (
+  <IonPage>
+    <HomeHeader />
+  </IonPage>
+);
 
 export default Home;
