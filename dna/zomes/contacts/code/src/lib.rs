@@ -31,27 +31,22 @@ mod contacts {
     }
 
     #[zome_fn("hc_public")]
-    fn crate_contacts() -> ZomeApiResult<()> {
-
+    fn add_contact() -> ZomeApiResult<()> {
     }
 
-    #[zome_fn("hc_public")]
-    fn add_contacts() -> ZomeApiResult<()> {
-    }
+    // #[zome_fn("hc_public")]
+    // fn remove_contacts() -> ZomeApiResult<()> {
+    // }
 
-    #[zome_fn("hc_public")]
-    fn remove_contacts() -> ZomeApiResult<()> {
-    }
+    // #[zome_fn("hc_public")]
+    // fn list_contacts() -> ZomeApiResult<()> {
+    // }
 
-    #[zome_fn("hc_public")]
-    fn list_contacts() -> ZomeApiResult<()> {
-    }
+    // #[zome_fn("hc_public")]
+    // fn block_contacts() -> ZomeApiResult<()> {
+    // }
 
-    #[zome_fn("hc_public")]
-    fn block_contacts() -> ZomeApiResult<()> {
-    }
-
-    #[zome_fn("hc_public")]
-    fn remove_blocked_contacts() -> ZomeApiResult<()> {
-    }
+    // #[zome_fn("hc_public")]
+    // fn remove_blocked_contacts() -> ZomeApiResult<()> {
+    // }
 }
