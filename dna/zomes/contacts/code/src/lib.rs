@@ -8,7 +8,7 @@ pub mod contacts;
 // see https://developer.holochain.org/api/0.0.47-alpha1/hdk/ for info on using the hdk library
 
 #[zome]
-mod contacts {
+mod contacts_zome {
 
     #[init]
     fn init() {
@@ -30,6 +30,10 @@ mod contacts {
         contacts::contacts_anchor_definition()
     }
 
+    #[zome_fn("hc_public")]
+    fn create_contact(timestamp: usize) -> ZomeApiResult<Address> {
+        contacts::handlers::create(timestamp)
+    }
     #[zome_fn("hc_public")]
     fn add_contact() -> ZomeApiResult<()> {
     }
