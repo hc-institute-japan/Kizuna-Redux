@@ -25,12 +25,21 @@ impl HolochainEntry for Contacts {
 impl Contacts {
     fn new(timestamp: usize) -> Self {
         Contacts {
-            agent_id: AGENT_ADDRESS,
-            timestamp: usize,
-            contacts: Vec::new(),
-            blocked: Vec::new(),
+            agent_id: AGENT_ADDRESS.to_string().into(),
+            timestamp,
+            contacts: Vec::default(),
+            blocked: Vec::default(),
         }
-    } 
+    }
+    
+    fn from(timestamp: usize, contacts: Vec<Address>, blocked: Vec<Address>) -> Self {
+        Contacts {
+            agent_id: AGENT_ADDRESS.to_string().into(),
+            timestamp,
+            contacts,
+            blocked,
+        }
+    }
 }
 
 pub fn contacts_definition() -> ValidatingEntryType {
@@ -45,15 +54,17 @@ pub fn contacts_definition() -> ValidatingEntryType {
             Ok(())
         },
         // Is there any attack vector from linking private entries considering that links are a public entry?
-        from!(
-            "%agent_id",
-            link_type: AGENT_CONTACTS_LINK_TYPE,
-            validation_package: || {
-                hdk::ValidationPackageDefinition::Entry
-            },
-            validation: | _validation_data: hdk::LinkValidationData | {
-                Ok(())
-            }
-        )  
+        links: [
+            from!(
+                "%agent_id",
+                link_type: AGENT_CONTACTS_LINK_TYPE,
+                validation_package: || {
+                    hdk::ValidationPackageDefinition::Entry
+                },
+                validation: | _validation_data: hdk::LinkValidationData | {
+                    Ok(())
+                }
+            )  
+        ]
     )
 }
