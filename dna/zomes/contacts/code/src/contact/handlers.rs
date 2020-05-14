@@ -11,11 +11,7 @@ use super::{
 // TODO: call a get_username from profile zome to check if this address has a username
 pub fn add(contact_address: Address, timestamp: usize) -> ZomeApiResult<Address> {
 
-    let link_result = hdk::get_links(
-        &AGENT_ADDRESS,
-        LinkMatch::Exactly(AGENT_CONTACTS_LINK_TYPE),
-        LinkMatch::Exactly("contacts")
-    )?;
+    let link_result = contacts_link_result()?;
 
     match link_result.links().len() {
         0 => {
@@ -51,11 +47,7 @@ pub fn add(contact_address: Address, timestamp: usize) -> ZomeApiResult<Address>
 }
 
 pub fn remove(contact_address: Address, timestamp: usize) -> ZomeApiResult<bool> {
-    let link_result = hdk::get_links(
-        &AGENT_ADDRESS,
-        LinkMatch::Exactly(AGENT_CONTACTS_LINK_TYPE),
-        LinkMatch::Exactly("contacts")
-    )?;
+    let link_result = contacts_link_result()?;
 
     match link_result.links().len() {
         1 => {
@@ -89,11 +81,7 @@ pub fn remove(contact_address: Address, timestamp: usize) -> ZomeApiResult<bool>
 }
 
 pub fn list_contacts() -> ZomeApiResult<Vec<Address>> {
-    let link_result = hdk::get_links(
-        &AGENT_ADDRESS,
-        LinkMatch::Exactly(AGENT_CONTACTS_LINK_TYPE),
-        LinkMatch::Exactly("contacts")
-    )?;
+    let link_result = contacts_link_result()?;
 
     match link_result.links().len() {
         1 => {
@@ -111,4 +99,12 @@ pub fn list_contacts() -> ZomeApiResult<Vec<Address>> {
             )))
         },
     }
+}
+
+fn contacts_link_result() -> ZomeApiResult<GetLinksResult> {
+        hdk::get_links(
+            &AGENT_ADDRESS,
+            LinkMatch::Exactly(AGENT_CONTACTS_LINK_TYPE),
+            LinkMatch::Exactly("contacts")
+        )
 }
