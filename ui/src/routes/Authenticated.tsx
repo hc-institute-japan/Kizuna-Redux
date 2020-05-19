@@ -9,6 +9,8 @@ import { useQuery } from "@apollo/react-hooks";
 import ME from "../graphql/query/meQuery";
 import { useDispatch } from "react-redux";
 import { setProfile } from "../redux/profile/actions";
+import Blocked from "../pages/Contacts/Blocked";
+import Add from "../pages/Add";
 
 const Authenticated = () => {
   const profile = useQuery(ME);
@@ -36,6 +38,12 @@ const Authenticated = () => {
         </Route>
         <Route path="/delete-profile" exact>
           <DeleteProfile />
+        </Route>
+        <Route path="/blocked" exact>
+          <Blocked />
+        </Route>
+        <Route path="/add" exact>
+          <Add />
         </Route>
       </Switch>
     </>

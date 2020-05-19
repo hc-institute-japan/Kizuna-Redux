@@ -37,6 +37,7 @@ const Auth: React.FC = () => {
 
   useEffect(() => {
     const address = localStorage.getItem("agent_address");
+    // localStorage.removeItem("agent_address");
     if (address) {
       dispatch(authenticate(address));
     }

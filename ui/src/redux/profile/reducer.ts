@@ -15,7 +15,7 @@ export default (state = initialState, action: ActionType) => {
   switch (action.type) {
     case actions.SET_PROFILE:
       const profile = action.profile;
-      delete profile.id;
+      // delete profile.id;
       delete profile.__typename;
       return {
         ...state,
