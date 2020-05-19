@@ -22,7 +22,7 @@ const Blocked: React.FC<any> = () => {
       <IonContent>
         <IonList className={`${styles.homeContent} has-tabs`}>
           {blocked.map((block: any) => (
-            <IonItem button key={block.username}>
+            <IonItem key={block.username}>
               <IonLabel>{block.username}</IonLabel>
               <IonButton
                 onClick={() => {
