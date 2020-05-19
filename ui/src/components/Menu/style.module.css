@@ -1,11 +1,24 @@
 .profile {
   width: 100%;
   border-bottom: 1px solid var(--ion-color-light);
-  pointer-events: auto !important;
   transition: 0.5s;
 }
 
+.enablePointer {
+  pointer-events: auto !important;
+  background-color: var(--ion-background-color);
+}
+
+.item {
+  border-bottom: var(--ion-color-light) 1px solid;
+}
+
+.item:hover {
+  background-color: var(--ion-color-light);
+}
+
 .profile:hover {
+  pointer-events: auto !important;
   background-color: var(--ion-color-light);
 }
 

@@ -11,9 +11,9 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import CREATE_PROFILE_MUTATION from "../../graphql/mutation/createProfileMutation";
-import { authenticate } from "../../redux/auth/actions";
 import { isUsernameFormatValid } from "../../utils/helpers/regex";
 import styles from "./style.module.css";
+import { authenticate } from "../../redux/auth/actions";
 
 type Props = RouteComponentProps<{}, {}, { email: string }>;
 
@@ -36,8 +36,6 @@ const Register: React.FC<Props> = (props) => {
       );
     }
   }, [username]);
-
-  useEffect(() => {});
 
   const onSubmitAction = async () => {
     // need to handle zomeapierror
