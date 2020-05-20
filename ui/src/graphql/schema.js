@@ -14,14 +14,10 @@ Schema
 export default gql`
   type Profile {
     id: ID!
-    username: String!
+    username: String
   }
 
   input ProfileInput {
-    username: String!
-  }
-
-  type Username {
     username: String!
   }
 
@@ -30,7 +26,7 @@ export default gql`
   }
 
   type Query {
-    allAgents: [Username!]!
+    allAgents: [Profile!]!
     me: Profile
   }
 

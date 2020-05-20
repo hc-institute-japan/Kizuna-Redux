@@ -11,6 +11,8 @@ let holochainClient;
 //   process.env.REACT_APP_MOCK_DNA_CONNECTION === "true" ||
 //   false;
 
+// Do we need to close ws connection at some point?
+
 export const HOLOCHAIN_LOGGING = process.env.NODE_ENV === "development";
 
 async function initAndGetHolochainClient() {
