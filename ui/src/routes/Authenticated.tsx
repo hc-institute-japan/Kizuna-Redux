@@ -27,6 +27,9 @@ const Authenticated = () => {
     <>
       <Menu />
       <Switch>
+        <Route path="/" exact>
+          <Home />
+        </Route>
         <Route path="/home" exact>
           <Home />
         </Route>
