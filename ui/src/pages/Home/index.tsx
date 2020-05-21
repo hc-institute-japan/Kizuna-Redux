@@ -1,34 +1,17 @@
-import {
-  IonButton,
-  IonButtons,
-  IonContent,
-  IonHeader,
-  IonIcon,
-  IonToolbar,
-} from "@ionic/react";
-import React from "react";
+import { IonPage, IonBackdrop, IonContent } from "@ionic/react";
+import React, { useState } from "react";
+import HomeHeader from "../../components/Header/HomeHeader";
+import HomeTabBar from "../../components/Tab/HomeTabBar";
+import HomeContent from "./HomeContent";
 
 const Home: React.FC = () => {
-  // console.log(data);
-
+  const [tab, setTab] = useState(1);
   return (
-    <IonContent>
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot="secondary">
-            <IonButton>
-              <IonIcon slot="start" name="star" />
-            </IonButton>
-          </IonButtons>
+    <IonPage>
+      <HomeContent tab={tab} />
 
-          <IonButtons slot="primary">
-            <IonButton>
-              <IonIcon name="create" />
-            </IonButton>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
-    </IonContent>
+      <HomeTabBar tab={tab} setTab={setTab} />
+    </IonPage>
   );
 };
 

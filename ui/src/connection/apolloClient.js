@@ -8,6 +8,10 @@ import { onError } from "apollo-link-error";
 import typeDefs from "../graphql/schema";
 import resolvers from "../graphql/resolvers";
 
+// This needs to be refactored so that the connection to holochain is established
+// even before any query or mutation is called from the components.
+// also, it would be better to include the callZome as a context.
+
 const schemaLink = new SchemaLink({
   schema: makeExecutableSchema({ typeDefs, resolvers }),
 });

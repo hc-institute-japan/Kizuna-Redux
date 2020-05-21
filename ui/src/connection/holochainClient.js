@@ -11,6 +11,8 @@ let holochainClient;
 //   process.env.REACT_APP_MOCK_DNA_CONNECTION === "true" ||
 //   false;
 
+// Do we need to close ws connection at some point?
+
 export const HOLOCHAIN_LOGGING = process.env.NODE_ENV === "development";
 
 async function initAndGetHolochainClient() {
@@ -106,12 +108,12 @@ export function createZomeCall(zomeCallPath, callOpts = {}) {
       // console.log(args);
       const { instanceId, zome, zomeFunc } = parseZomeCallPath(zomeCallPath);
       let zomeCall;
-        // if (MOCK_DNA_CONNECTION) {
-        //   zomeCall = mockCallZome(instanceId, zome, zomeFunc);
-        // } else {
+      // if (MOCK_DNA_CONNECTION) {
+      //   zomeCall = mockCallZome(instanceId, zome, zomeFunc);
+      // } else {
       await initAndGetHolochainClient();
       zomeCall = holochainClient.callZome(instanceId, zome, zomeFunc);
-        // }
+      // }
 
       const rawResult = await zomeCall(args);
       const jsonResult = JSON.parse(rawResult);
