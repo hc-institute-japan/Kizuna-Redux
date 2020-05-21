@@ -62,6 +62,50 @@ const resolvers = {
       await createZomeCall("/profiles/profile/delete_profile")({
         input: username.username,
       }),
+    addContact: async (_, input) => {
+      const contacts = await createZomeCall(
+        "/test-instance/contacts/add_contact"
+      )({username: input.username, timestamp: input.timestamp});
+      return {
+        agent_id: contacts.agent_id,
+        timestamp: contacts.timestamp,
+        contacts: contacts.contacts,
+        blocked: contacts.blocked
+      };
+    },
+    removeContact: async (_, input) => {
+      const contacts = await createZomeCall(
+        "/test-instance/contacts/remove_contact"
+      )({username: input.username, timestamp: input.timestamp});
+      return {
+        agent_id: contacts.agent_id,
+        timestamp: contacts.timestamp,
+        contacts: contacts.contacts,
+        blocked: contacts.blocked
+      };
+    },
+    blockContact: async (_, input) => {
+      const contacts = await createZomeCall(
+        "/test-instance/contacts/block"
+      )({username: input.username, timestamp: input.timestamp});
+      return {
+        agent_id: contacts.agent_id,
+        timestamp: contacts.timestamp,
+        contacts: contacts.contacts,
+        blocked: contacts.blocked
+      };
+    },
+    unblockContact: async (_, input) => {
+      const contacts = await createZomeCall(
+        "/test-instance/contacts/unblock"
+      )({username: input.username, timestamp: input.timestamp});
+      return {
+        agent_id: contacts.agent_id,
+        timestamp: contacts.timestamp,
+        contacts: contacts.contacts,
+        blocked: contacts.blocked
+      };
+    },
   },
 };
 
