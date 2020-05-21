@@ -19,6 +19,13 @@ function getAllAgents() {
 function deleteUsername(username) {
   return (caller) => caller.call("lobby", "profiles", "delete_my_username", {"username":username})
 }
+
+function getUserAddress(username) {
+  return (caller) => caller.call("lobby", "profiles", "get_address_from_username", {
+    username: username
+  })
+}
+
 module.exports = (scenario, conductorConfig) => {
   scenario("set_username", async (s, t) => {
     const {alice, bob} = await s.players({alice: conductorConfig, bob: conductorConfig}, true);
@@ -64,6 +71,21 @@ module.exports = (scenario, conductorConfig) => {
     t.deepEqual(get_all_agents_result.Ok.length, 2);
     t.deepEqual(get_username_alice_result.Ok, "alice");
   })
+
+  // scenario("get address from username", async (s, t) => {
+  //   const {alice} = await s.players({alice: conductorConfig}, true);
+  //   const aliceAddress = alice.instance("lobby").agentAddress;
+
+  //   const set_username_result_alice　= await setUsername("alice")(alice);
+  //   await s.consistency()
+    
+  //   const user_address = await getUserAddress("alice")(alice);
+  //   await s.consistency()
+
+  //   t.ok(user_address)
+  //   t.deepEqual(user_address, aliceAddress)
+
+  // })
 
   // scenario("delete_username", async (s, t) => {
   //   const {alice, bob} = await s.players({alice: conductorConfig, bob: conductorConfig}, true);

@@ -149,8 +149,6 @@ pub fn username_address(username: String) -> ZomeApiResult<Address> {
         call_input.into()
     )?;
 
-    // let object = json!(user_address_string);
-
     let username_address: Address = serde_json::from_str(&user_address_string.to_string()).unwrap();
 
     Ok(username_address)
@@ -164,6 +162,7 @@ pub fn block(contact_address: Address, timestamp: usize) -> ZomeApiResult<Contac
             "Cannot block yourself",
         )))
     }
+
     let query_result = hdk::api::query(Contacts::entry_type().into(), 0, 0)?;
     
     match query_result.len() {
@@ -212,6 +211,13 @@ pub fn block(contact_address: Address, timestamp: usize) -> ZomeApiResult<Contac
 }
 
 pub fn unblock(contact_address: Address, timestamp: usize) -> ZomeApiResult<Contacts> {
+
+    if contact_address.to_string() == AGENT_ADDRESS.to_string() {
+        return Err(ZomeApiError::from(String::from(
+            "Unblocking own agent id",
+        )))
+    }
+
     let query_result = hdk::api::query(Contacts::entry_type().into(), 0, 0)?;
     
     match query_result.len() {
