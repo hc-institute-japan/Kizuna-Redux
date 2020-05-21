@@ -48,11 +48,19 @@ mod contacts {
             contact::handlers::list_address()
     }
 
-    // #[zome_fn("hc_public")]
-    // fn block_contacts() -> ZomeApiResult<()> {
-    // }
+    #[zome_fn("hc_public")]
+    fn username_address(username: String) -> ZomeApiResult<Address> {
+        contact::handlers::username_address(username)
+    }
 
-    // #[zome_fn("hc_public")]
-    // fn remove_blocked_contacts() -> ZomeApiResult<()> {
-    // }
+    #[zome_fn("hc_public")]
+    fn block(username: String, timestamp: usize) -> ZomeApiResult<Contacts> {
+        let contact_address = contact::handlers::username_address(username)?;
+        contact::handlers::block(contact_address, timestamp)
+    }
+
+    #[zome_fn("hc_public")]
+    fn unblock(contact_address: Address, timestamp: usize) -> ZomeApiResult<Contacts> {
+        contact::handlers::unblock(contact_address, timestamp)
+    }
 }
