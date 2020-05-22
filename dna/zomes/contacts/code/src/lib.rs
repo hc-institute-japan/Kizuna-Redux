@@ -61,4 +61,9 @@ mod contacts {
         let contact_address = contact::handlers::username_address(username)?;
         contact::handlers::unblock(contact_address, timestamp)
     }
+
+    #[zome_fn("hc_public")]
+    fn list_blocked() -> ZomeApiResult<Vec<Address>> {
+        contact::handlers::list_blocked()
+    }
 }

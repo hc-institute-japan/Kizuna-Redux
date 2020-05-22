@@ -103,7 +103,6 @@ pub fn remove(contact_address: Address, timestamp: usize) -> ZomeApiResult<Conta
 
 pub fn list_contacts() -> ZomeApiResult<Vec<Address>> {
     let query_result = hdk::api::query(Contacts::entry_type().into(), 0, 0)?;
-    
 
     match query_result.len() {
         0 => {
@@ -120,6 +119,29 @@ pub fn list_contacts() -> ZomeApiResult<Vec<Address>> {
             Ok(contacts.contacts)
         },
     }
+
+}
+
+pub fn list_blocked() -> ZomeApiResult<Vec<Address>> {
+    let query_result = hdk::api::query(Contacts::entry_type().into(), 0, 0)?;
+
+    match query_result.len() {
+        0 => {
+            // Ok()
+            return Err(ZomeApiError::from(String::from(
+                "This agent has no contacts entry",
+            )))
+        },
+        _ => {
+            // may need refactoring on getting the most recent address
+            let contacts_address = query_result[0].clone();
+            let contacts: Contacts = hdk::utils::get_as_type(contacts_address)?;
+            // call get_username here to return Vec<username: String>
+            Ok(contacts.blocked)
+        },
+    }
+
+    
 }
 
 // fn contacts_link_result() -> ZomeApiResult<GetLinksResult> {

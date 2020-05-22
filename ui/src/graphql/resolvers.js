@@ -46,6 +46,18 @@ const resolvers = {
         };
       }
     },
+    listContacts: async () => {
+      const contacts = await createZomeCall(
+        "/test-instance/profiles/list_contacts"
+      )();
+      return contacts;
+    },
+    listBlocked: async () => {
+      const contacts = await createZomeCall(
+        "/test-instance/profiles/list_blocked"
+      )();
+      return contacts;
+    }
   },
 
   Mutation: {
