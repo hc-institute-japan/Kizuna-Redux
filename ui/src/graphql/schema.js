@@ -36,7 +36,8 @@ export default gql`
     allAgents: [Profile!]!
     me: Profile
 
-    listContacts: Contacts
+    listContacts: [ID]
+    listBlocked: [ID]
   }
 
   type Mutation {
