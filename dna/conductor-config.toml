@@ -12,7 +12,7 @@ test_agent = true
 
 [[dnas]]
 file = '/Users/lc/Desktop/Kizuna/dna/dist/dna.dna.json'
-hash = 'QmR6tQWU28YoQxAdTh5SQPNVm4WzGM6DKPnRTcV9ucYeqm'
+hash = 'QmbQcVmRJ5LrnuRcXSzsgHnHk7HhRJcwbH6c8r4qXhXPVB'
 id = 'hc-run-dna'
 
 [[instances]]
@@ -32,7 +32,7 @@ id = 'test-instance'
 
 [interfaces.driver]
 port = 8888
-type = 'websocket'
+type = 'http'
 
 [logger]
 state_dump = true

@@ -107,10 +107,8 @@ pub fn list_contacts() -> ZomeApiResult<Vec<Address>> {
 
     match query_result.len() {
         0 => {
-            // Ok()
-            return Err(ZomeApiError::from(String::from(
-                "This agent has no contacts entry",
-            )))
+            let empty_contacts: Vec<Address> = Vec::default();
+            Ok(empty_contacts)
         },
         _ => {
             // may need refactoring on getting the most recent address
