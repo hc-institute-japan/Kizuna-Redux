@@ -1,12 +1,4 @@
-import React, { useEffect, createRef, useRef } from "react";
-import {
-  IonToolbar,
-  IonButton,
-  IonButtons,
-  IonIcon,
-  IonSearchbar,
-} from "@ionic/react";
-import { arrowBack } from "ionicons/icons";
+import React from "react";
 import SearchHeader from "../../../components/Header/SearchHeader";
 interface Props {
   hideSearch(): void;
@@ -17,6 +9,10 @@ const Searching: React.FC<Props> = ({ hideSearch, search, setSearch }) => (
   <SearchHeader
     onSearchChange={(e) => setSearch((e.target as HTMLInputElement).value)}
     value={search}
+    onBack={() => {
+      setSearch("");
+      hideSearch();
+    }}
     placeholder="Search Contacts"
   />
 );

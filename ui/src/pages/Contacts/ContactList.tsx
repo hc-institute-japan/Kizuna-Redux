@@ -1,4 +1,11 @@
-import { IonItemDivider, IonItemGroup, IonLabel } from "@ionic/react";
+import {
+  IonItemDivider,
+  IonItemGroup,
+  IonLabel,
+  IonFooter,
+  IonToolbar,
+  IonTitle,
+} from "@ionic/react";
 import React from "react";
 import ContactItem from "./ContactItem";
 
@@ -22,20 +29,26 @@ const ContactList: React.FC<any> = ({ indexedContacts, search }) => {
             ))}
         </IonItemGroup>
       ) : (
-        Object.keys(indexedContacts).map((index) => {
-          const contacts = indexedContacts[index];
-          const el = (
-            <IonItemGroup key={index}>
-              <IonItemDivider>
-                <IonLabel>{index}</IonLabel>
-              </IonItemDivider>
-              {contacts.map((contact: any) => (
-                <ContactItem key={contact.username} contact={contact} />
-              ))}
-            </IonItemGroup>
-          );
-          return el;
-        })
+        <>
+          {Object.keys(indexedContacts).map((index) => {
+            const contacts = indexedContacts[index];
+            const el = (
+              <IonItemGroup key={index}>
+                <IonItemDivider>
+                  <IonLabel>{index}</IonLabel>
+                </IonItemDivider>
+                {contacts.map((contact: any) => (
+                  <ContactItem key={contact.username} contact={contact} />
+                ))}
+              </IonItemGroup>
+            );
+
+            return el;
+          })}
+          <IonFooter className="ion-no-border">
+            <IonToolbar></IonToolbar>
+          </IonFooter>
+        </>
       )}
     </>
   );

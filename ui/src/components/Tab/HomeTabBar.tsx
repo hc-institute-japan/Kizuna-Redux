@@ -7,37 +7,22 @@ import {
   IonTabs,
 } from "@ionic/react";
 import { chatbox, personCircle } from "ionicons/icons";
-import React from "react";
+import React, { useState } from "react";
 
-interface Props {
-  tab: number;
-  setTab(tab: number): void;
-}
-
-const HomeTabBar: React.FC<Props> = ({ tab, setTab }) => {
-  return (
-    <IonTabs>
-      <IonRouterOutlet></IonRouterOutlet>
-      <IonTabBar slot="bottom">
-        <IonTabButton
-          selected={tab === 0}
-          onClick={() => setTab(0)}
-          tab="messages"
-        >
-          <IonIcon icon={chatbox} />
-          <IonLabel>Messages</IonLabel>
-        </IonTabButton>
-        <IonTabButton
-          selected={tab === 1}
-          onClick={() => setTab(1)}
-          tab="contacts"
-        >
-          <IonIcon icon={personCircle} />
-          <IonLabel>Contacts</IonLabel>
-        </IonTabButton>
-      </IonTabBar>
-    </IonTabs>
-  );
-};
+const HomeTabBar: React.FC = ({ children }) => (
+  <IonTabs>
+    <IonRouterOutlet>{children}</IonRouterOutlet>
+    <IonTabBar slot="bottom">
+      <IonTabButton href="/home/messages" tab="">
+        <IonIcon icon={chatbox} />
+        <IonLabel>Messages</IonLabel>
+      </IonTabButton>
+      <IonTabButton href="/home/contacts" tab="contacts">
+        <IonIcon icon={personCircle} />
+        <IonLabel>Contacts</IonLabel>
+      </IonTabButton>
+    </IonTabBar>
+  </IonTabs>
+);
 
 export default HomeTabBar;

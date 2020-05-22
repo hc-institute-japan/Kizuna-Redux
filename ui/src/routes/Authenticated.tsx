@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import Home from "../pages/Home";
 import Menu from "../components/Menu";
 import Profile from "../pages/Profile";
@@ -18,7 +18,6 @@ const Authenticated = () => {
 
   useEffect(() => {
     const me = { ...profile?.data?.me };
-    console.log(me);
     if (Object.prototype.hasOwnProperty.call(me, "id")) {
       dispatch(setProfile(me));
     }
@@ -27,10 +26,7 @@ const Authenticated = () => {
     <>
       <Menu />
       <Switch>
-        <Route path="/" exact>
-          <Home />
-        </Route>
-        <Route path="/home" exact>
+        <Route path="/home">
           <Home />
         </Route>
         <Route path="/profile" exact>
@@ -48,6 +44,7 @@ const Authenticated = () => {
         <Route path="/add" exact>
           <Add />
         </Route>
+        <Redirect from="*" to="/home" />
       </Switch>
     </>
   ) : null;

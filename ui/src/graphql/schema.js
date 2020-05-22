@@ -27,7 +27,7 @@ export default gql`
 
   type Contacts {
     agent_id: ID!
-    timestamp: Int
+    timestamp: Float
     contacts: [ID]
     blocked: [ID]
   }
@@ -36,7 +36,9 @@ export default gql`
     allAgents: [Profile!]!
     me: Profile
 
-    listContacts: [ID]
+    contacts: [Profile!]
+    username(address: String): String!
+
     listBlocked: [ID]
   }
 
@@ -44,10 +46,9 @@ export default gql`
     createProfile(username: String): Profile!
     deleteProfile(username: String): Boolean
     updateProfile(profile: ProfileInput): Boolean
-    
-    addContact(username: String, timestamp: Int): Contacts
-    removeContact(username: String, timestamp: Int): Contacts
-    blockContact(username: String, timestamp: Int): Contacts
-    unblockContact(username: String, timestamp: Int): Contacts
+    addContact(username: String, timestamp: Float): Boolean
+    removeContact(username: String, timestamp: Float): Contacts
+    blockContact(username: String, timestamp: Float): Contacts
+    unblockContact(username: String, timestamp: Float): Contacts
   }
 `;

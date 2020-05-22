@@ -1,7 +1,7 @@
-import React from "react";
-import { IonInput, IonLabel, IonText, IonContent } from "@ionic/react";
-import styles from "./style.module.css";
+import { IonInput, IonLabel } from "@ionic/react";
 import PropTypes from "prop-types";
+import React from "react";
+import styles from "./style.module.css";
 
 /**
  * @name Input
@@ -21,6 +21,7 @@ interface Props {
 
 const Input: React.FC<Props> = (props) => {
   const { error, label } = { ...props };
+
   return (
     <div className="ion-margin-bottom">
       <IonLabel>{label}</IonLabel>
