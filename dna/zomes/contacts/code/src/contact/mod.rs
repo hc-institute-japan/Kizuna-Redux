@@ -11,7 +11,7 @@ use holochain_entry_utils::HolochainEntry;
 #[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
 pub struct Contacts {
     agent_id: Address,
-    timestamp: usize,
+    timestamp: u64,
     contacts: Vec<Address>,
     blocked: Vec<Address>,
 }
@@ -23,7 +23,7 @@ impl HolochainEntry for Contacts {
 }
 
 impl Contacts {
-    fn new(timestamp: usize) -> Self {
+    fn new(timestamp: u64) -> Self {
         Contacts {
             agent_id: AGENT_ADDRESS.to_string().into(),
             timestamp,
@@ -32,7 +32,7 @@ impl Contacts {
         }
     }
     
-    fn from(timestamp: usize, contacts: Vec<Address>, blocked: Vec<Address>) -> Self {
+    fn from(timestamp: u64, contacts: Vec<Address>, blocked: Vec<Address>) -> Self {
         Contacts {
             agent_id: AGENT_ADDRESS.to_string().into(),
             timestamp,

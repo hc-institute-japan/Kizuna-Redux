@@ -29,13 +29,13 @@ mod contacts {
     }
 
     #[zome_fn("hc_public")]
-    fn add_contact(username: String, timestamp: usize) -> ZomeApiResult<Contacts> {
+    fn add_contact(username: String, timestamp: u64) -> ZomeApiResult<Contacts> {
         let contact_address = contact::handlers::username_address(username)?;
         contact::handlers::add(contact_address, timestamp)
     }
 
     #[zome_fn("hc_public")]
-    fn remove_contact(username: String, timestamp: usize) -> ZomeApiResult<Contacts> {
+    fn remove_contact(username: String, timestamp: u64) -> ZomeApiResult<Contacts> {
         let contact_address = contact::handlers::username_address(username)?;
         contact::handlers::remove(contact_address, timestamp)
     }
@@ -51,13 +51,13 @@ mod contacts {
     }
 
     #[zome_fn("hc_public")]
-    fn block(username: String, timestamp: usize) -> ZomeApiResult<Contacts> {
+    fn block(username: String, timestamp: u64) -> ZomeApiResult<Contacts> {
         let contact_address = contact::handlers::username_address(username)?;
         contact::handlers::block(contact_address, timestamp)
     }
 
     #[zome_fn("hc_public")]
-    fn unblock(username: String, timestamp: usize) -> ZomeApiResult<Contacts> {
+    fn unblock(username: String, timestamp: u64) -> ZomeApiResult<Contacts> {
         let contact_address = contact::handlers::username_address(username)?;
         contact::handlers::unblock(contact_address, timestamp)
     }
