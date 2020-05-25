@@ -169,9 +169,8 @@ pub fn username_address(username: String) -> ZomeApiResult<Address> {
         call_input.into()
     )?;
 
-    let username_address: Address = serde_json::from_str(&user_address_string.to_string()).unwrap();
-
-    Ok(username_address)
+    let converted: ZomeApiResult<Address> = serde_json::from_str(&user_address_string.to_string()).unwrap();
+    converted
     
 }
 
