@@ -134,41 +134,9 @@ module.exports = (scenario, conductorConfig) => {
 
     t.ok(add_contact_alice_result.Ok);
     t.ok(add_contact_alice_result_2.Ok);
-    t.deepEqual(error_list_contacts.Err, {
-      Internal: "This agent has no contacts entry",
-    });
+    t.deepEqual(error_list_contacts.Ok.length, 0);
     t.deepEqual(list_contacts.Ok.length, 2);
   });
-
-  // scenario("get user address", async (s, t) => {
-  //   const {alice} = await s.players({alice: conductorConfig}, true);
-  //   const aliceAddress = alice.instance("lobby").agentAddress;
-  //   // const bobAddress = bob.instance("lobby").agentAddress;
-
-  //   const set_username_result_alice　= await setUsername("alice")(alice);
-  //   await s.consistency()
-
-  //   const get_user_address = await usernameAddress("alice")(alice);
-  //   await s.consistency();
-
-  //   console.log("return nicko");
-  //   console.log(get_user_address.Ok)
-
-  //   t.ok(get_user_address.Ok)
-  //   t.deepEqual(get_user_address.Ok, aliceAddress)
-  //   t.deepEqual(get_user_address.Err, undefined)
-
-  //   const get_user_address_invalid = await usernameAddress("bob")(alice);
-  //   await s.consistency()
-
-  //   console.log("return invalid")
-  //   console.log(get_user_address_invalid.Ok)
-
-  //   console.log("nicko2")
-  //   console.log(get_user_address_invalid)
-  //   t.deepEqual(get_user_address_invalid.Err != undefined, true)
-
-  // })
 
   scenario("block contact", async (s, t) => {
     const { alice, bob, charlie } = await s.players(

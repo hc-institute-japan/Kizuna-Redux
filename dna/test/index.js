@@ -40,7 +40,7 @@ const orchestrator = new Orchestrator({
   },
 });
 
-// require('./profiles')(orchestrator.registerScenario, conductorConfig)
+require('./profiles')(orchestrator.registerScenario, conductorConfig)
 require('./contacts')(orchestrator.registerScenario, conductorConfig)
 
 orchestrator.run();

@@ -41,13 +41,13 @@ mod contacts {
     }
 
     #[zome_fn("hc_public")]
-    fn list_contacts() -> ZomeApiResult<Vec<Address>> {
-        contact::handlers::list_contacts()
+    fn username_address(username: String) -> ZomeApiResult<Address> {
+        contact::handlers::username_address(username)
     }
 
     #[zome_fn("hc_public")]
-    fn list_address() -> ZomeApiResult<Vec<Address>> {
-        contact::handlers::list_address()
+    fn list_contacts() -> ZomeApiResult<Vec<Address>> {
+        contact::handlers::list_contacts()
     }
 
     #[zome_fn("hc_public")]

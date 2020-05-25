@@ -72,20 +72,20 @@ module.exports = (scenario, conductorConfig) => {
     t.deepEqual(get_username_alice_result.Ok, "alice");
   })
 
-  // scenario("get address from username", async (s, t) => {
-  //   const {alice} = await s.players({alice: conductorConfig}, true);
-  //   const aliceAddress = alice.instance("lobby").agentAddress;
+  scenario("get address from username", async (s, t) => {
+    const {alice} = await s.players({alice: conductorConfig}, true);
+    const aliceAddress = alice.instance("lobby").agentAddress;
 
-  //   const set_username_result_alice　= await setUsername("alice")(alice);
-  //   await s.consistency()
+    await setUsername("alice")(alice);
+    await s.consistency()
     
-  //   const user_address = await getUserAddress("alice")(alice);
-  //   await s.consistency()
+    const user_address = await getUserAddress("alice")(alice);
+    await s.consistency()
 
-  //   t.ok(user_address)
-  //   t.deepEqual(user_address, aliceAddress)
+    t.ok(user_address.Ok)
+    t.deepEqual(user_address.Ok, aliceAddress)
 
-  // })
+  })
 
   // scenario("delete_username", async (s, t) => {
   //   const {alice, bob} = await s.players({alice: conductorConfig, bob: conductorConfig}, true);

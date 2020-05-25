@@ -25,7 +25,7 @@ impl HolochainEntry for Contacts {
 impl Contacts {
     fn new(timestamp: u64) -> Self {
         Contacts {
-            agent_id: AGENT_ADDRESS.to_string().into(),
+            agent_id: AGENT_ADDRESS.to_owned().into(),
             timestamp,
             contacts: Vec::default(),
             blocked: Vec::default(),
@@ -34,7 +34,7 @@ impl Contacts {
     
     fn from(timestamp: u64, contacts: Vec<Address>, blocked: Vec<Address>) -> Self {
         Contacts {
-            agent_id: AGENT_ADDRESS.to_string().into(),
+            agent_id: AGENT_ADDRESS.to_owned().into(),
             timestamp,
             contacts,
             blocked,
