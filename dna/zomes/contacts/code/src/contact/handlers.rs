@@ -9,22 +9,26 @@ use hdk::{
 // };
 use super::{
     Contacts,
+    Profile,
     HolochainEntry,
 };
 // use serde::Serialize;
 
 // TODO: call a get_username from profile zome to check if this address has a username
-pub fn add(contact_address: Address, timestamp: u64) -> ZomeApiResult<Contacts> {
+pub fn add(username: String, timestamp: u64) -> ZomeApiResult<Profile> {
+    // checks if there is an existing username and reutnr its agent_address when there is
+    let contact_address = username_address(username.clone())?;
 
     let query_result = hdk::api::query(Contacts::entry_type().into(), 0, 0)?;
 
     match query_result.len() {
         0 => {
             let mut new_contacts = Contacts::new(timestamp.clone());
-            new_contacts.contacts.push(contact_address);
-            let contacts_entry = new_contacts.clone().entry();
+            new_contacts.contacts.push(contact_address.clone());
+            let contacts_entry = new_contacts.entry();
             hdk::commit_entry(&contacts_entry)?;
-            Ok(new_contacts)
+            let added_profile = Profile::new(contact_address, username);
+            Ok(added_profile)
         },
         _ => {
             // gets the most recent address but may need refactoring
@@ -34,14 +38,15 @@ pub fn add(contact_address: Address, timestamp: u64) -> ZomeApiResult<Contacts> 
             // check if the address to be added is already existing
             if let false = contacts.contacts.iter().any(|v| &v.to_owned() == &contact_address.to_owned()) {
                 if contacts.timestamp != timestamp && contacts.timestamp < timestamp {
-                    contacts.contacts.push(contact_address);
+                    contacts.contacts.push(contact_address.clone());
                     let new_contacts = Contacts::from(
                         timestamp,
                         contacts.contacts.clone(),
                         contacts.blocked.clone()
                     );
-                    hdk::update_entry(new_contacts.clone().entry(), &recent_contacts_address)?;
-                    Ok(new_contacts)
+                    hdk::update_entry(new_contacts.entry(), &recent_contacts_address)?;
+                    let added_profile = Profile::new(contact_address, username);
+                    Ok(added_profile)
                 } else {
                     return Err(ZomeApiError::from("The timestamp is the same with or less than the previous timestamp".to_owned()))
                 }
@@ -52,7 +57,8 @@ pub fn add(contact_address: Address, timestamp: u64) -> ZomeApiResult<Contacts> 
     }
 }
 
-pub fn remove(contact_address: Address, timestamp: u64) -> ZomeApiResult<Contacts> {
+pub fn remove(username: String, timestamp: u64) -> ZomeApiResult<Profile> {
+    let contact_address = username_address(username.clone())?;
     let query_result = hdk::api::query(Contacts::entry_type().into(), 0, 0)?;
 
     match query_result.len() {
@@ -64,14 +70,15 @@ pub fn remove(contact_address: Address, timestamp: u64) -> ZomeApiResult<Contact
             let contacts_address = query_result[0].clone();
             let mut contacts: Contacts = hdk::utils::get_as_type(contacts_address.clone())?;
             if let true = contacts.contacts.iter().any(|v| &v.to_owned() == &contact_address.to_owned()) {
-                if contacts.timestamp != timestamp && contacts.timestamp < timestamp {
+                if contacts.timestamp < timestamp {
                     contacts.contacts.retain(|v| &v.to_owned() != &contact_address.to_owned());
                     let new_contacts = Contacts::from(
                         timestamp,
                         contacts.contacts.clone(),
                         contacts.blocked.clone());
-                    hdk::update_entry(new_contacts.clone().entry(), &contacts_address)?;
-                    Ok(new_contacts)
+                    hdk::update_entry(new_contacts.entry(), &contacts_address)?;
+                    let removed_profile = Profile::new(contact_address, username);
+                    Ok(removed_profile)
                 } else {
                     return Err(ZomeApiError::from("The timestamp is the same with or less than the previous timestamp".to_owned()))
                 }
@@ -100,26 +107,8 @@ pub fn list_contacts() -> ZomeApiResult<Vec<Address>> {
 
 }
 
-pub fn list_blocked() -> ZomeApiResult<Vec<Address>> {
-    let query_result = hdk::api::query(Contacts::entry_type().into(), 0, 0)?;
-
-    match query_result.len() {
-        0 => {
-            let empty_blocked: Vec<Address> = Vec::default();
-            Ok(empty_blocked)
-        },
-        _ => {
-            // may need refactoring on getting the most recent address
-            let contacts_address = query_result[0].clone();
-            let contacts: Contacts = hdk::utils::get_as_type(contacts_address)?;
-            Ok(contacts.blocked)
-        },
-    }
-
-    
-}
-
-pub fn block(contact_address: Address, timestamp: u64) -> ZomeApiResult<Contacts> {
+pub fn block(username: String, timestamp: u64) -> ZomeApiResult<Profile> {
+    let contact_address = username_address(username.clone())?;
 
     if contact_address.to_owned() == AGENT_ADDRESS.to_owned() {
         return Err(ZomeApiError::from("Cannot block yourself".to_owned()))
@@ -130,10 +119,11 @@ pub fn block(contact_address: Address, timestamp: u64) -> ZomeApiResult<Contacts
     match query_result.len() {
         0 => {
             let mut new_contacts = Contacts::new(timestamp.clone());
-            new_contacts.blocked.push(contact_address);
-            let contacts_entry = new_contacts.clone().entry();
+            new_contacts.blocked.push(contact_address.clone());
+            let contacts_entry = new_contacts.entry();
             hdk::commit_entry(&contacts_entry)?;
-            Ok(new_contacts)
+            let blocked_profile = Profile::new(contact_address, username);
+            Ok(blocked_profile)
         },
         _ => {
             let contacts_address = query_result[0].clone();
@@ -156,8 +146,9 @@ pub fn block(contact_address: Address, timestamp: u64) -> ZomeApiResult<Contacts
                         new_contacts.contacts.retain(|v| &v.to_owned() != &contact_address.to_owned());
                     }
 
-                    let _new_contacts_address = hdk::update_entry(new_contacts.clone().entry(), &contacts_address)?;
-                    Ok(new_contacts)
+                    hdk::update_entry(new_contacts.entry(), &contacts_address)?;
+                    let blocked_profile = Profile::new(contact_address, username);
+                    Ok(blocked_profile)
                 } else {
                     return Err(ZomeApiError::from("The contact is already in the list of blocked contacts".to_owned()))
                 } 
@@ -168,7 +159,8 @@ pub fn block(contact_address: Address, timestamp: u64) -> ZomeApiResult<Contacts
     }
 }
 
-pub fn unblock(contact_address: Address, timestamp: u64) -> ZomeApiResult<Contacts> {
+pub fn unblock(username: String, timestamp: u64) -> ZomeApiResult<Profile> {
+    let contact_address = username_address(username.clone())?;
 
     if contact_address.to_owned() == AGENT_ADDRESS.to_owned() {
         return Err(ZomeApiError::from("Unblocking own agent id".to_owned()))
@@ -195,8 +187,9 @@ pub fn unblock(contact_address: Address, timestamp: u64) -> ZomeApiResult<Contac
                         contacts.contacts.clone(),
                         contacts.blocked.clone(),
                     );
-                    let _new_contacts_address = hdk::update_entry(new_contacts.clone().entry(), &contacts_address)?;
-                    Ok(new_contacts)
+                    hdk::update_entry(new_contacts.entry(), &contacts_address)?;
+                    let unblocked_profile = Profile::new(contact_address, username);
+                    Ok(unblocked_profile)
                 } else {
                     return Err(ZomeApiError::from("The contact is not in the list of blocked contacts".to_owned()))
                 } 
@@ -207,7 +200,25 @@ pub fn unblock(contact_address: Address, timestamp: u64) -> ZomeApiResult<Contac
     }
 }
 
-pub fn username_address(username: String) -> ZomeApiResult<Address> {
+pub fn list_blocked() -> ZomeApiResult<Vec<Address>> {
+    let query_result = hdk::api::query(Contacts::entry_type().into(), 0, 0)?;
+
+    match query_result.len() {
+        0 => {
+            let empty_blocked: Vec<Address> = Vec::default();
+            Ok(empty_blocked)
+        },
+        _ => {
+            // may need refactoring on getting the most recent address
+            let contacts_address = query_result[0].clone();
+            let contacts: Contacts = hdk::utils::get_as_type(contacts_address)?;
+            Ok(contacts.blocked)
+        },
+    } 
+}
+
+// CROSS ZOME HELPER FUNCTION
+fn username_address(username: String) -> ZomeApiResult<Address> {
 
     #[derive(Serialize, Deserialize, Debug, DefaultJson)]
     struct ZomeInput {

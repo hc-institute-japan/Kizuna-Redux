@@ -9,11 +9,26 @@ use strings::*;
 use holochain_entry_utils::HolochainEntry;
 
 #[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
+pub struct Profile {
+    agent_id: Address,
+    username: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
 pub struct Contacts {
     agent_id: Address,
     timestamp: u64,
     contacts: Vec<Address>,
     blocked: Vec<Address>,
+}
+
+impl Profile {
+    fn new (agent_address: Address, username: String) -> Self {
+        Profile {
+            agent_id: agent_address,
+            username,
+        }
+    }
 }
 
 impl HolochainEntry for Contacts {

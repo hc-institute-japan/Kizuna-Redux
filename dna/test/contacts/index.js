@@ -43,6 +43,10 @@ function unblockContact(username, timestamp) {
     });
 }
 
+function listBlocked() {
+  return (caller) => caller.call("lobby", "contacts", "list_blocked", {});
+}
+
 module.exports = (scenario, conductorConfig) => {
   scenario("add a contact", async (s, t) => {
     const { alice, bob } = await s.players(
@@ -68,8 +72,10 @@ module.exports = (scenario, conductorConfig) => {
     const add_contact_result_2 = await addContacts("alice", 2)(alice);
 
     await s.consistency();
-    t.deepEqual(add_contact_result.Ok.contacts.length, 1);
-    t.deepEqual(add_contact_result_2.Ok.contacts.length, 2);
+    t.deepEqual(add_contact_result.Ok.agent_id, bobAddress);
+    t.deepEqual(add_contact_result.Ok.username, "bob");
+    t.deepEqual(add_contact_result_2.Ok.agent_id, aliceAddress);
+    t.deepEqual(add_contact_result_2.Ok.username, "alice");
     t.deepEqual(invalid_add_contact_result.Err, {
       Internal: "This address is already added in contacts",
     });
@@ -110,7 +116,8 @@ module.exports = (scenario, conductorConfig) => {
       Internal:
         "The timestamp is the same with or less than the previous timestamp",
     });
-    t.deepEqual(remove_contact_alice_reult.Ok.contacts.length, 1);
+    t.deepEqual(remove_contact_alice_reult.Ok.agent_id, bobAddress);
+    t.deepEqual(remove_contact_alice_reult.Ok.username, "bob");
   });
 
   scenario("list contacts", async (s, t) => {
@@ -125,7 +132,7 @@ module.exports = (scenario, conductorConfig) => {
     const set_username_bob = await setUsername("bob")(bob);
     await s.consistency();
 
-    const error_list_contacts = await listContacts()(alice);
+    const empty_list_contacts = await listContacts()(alice);
     const add_contact_alice_result = await addContacts("bob", 1)(alice);
     await s.consistency();
     const add_contact_alice_result_2 = await addContacts("alice", 2)(alice);
@@ -134,7 +141,7 @@ module.exports = (scenario, conductorConfig) => {
 
     t.ok(add_contact_alice_result.Ok);
     t.ok(add_contact_alice_result_2.Ok);
-    t.deepEqual(error_list_contacts.Ok.length, 0);
+    t.deepEqual(empty_list_contacts.Ok.length, 0);
     t.deepEqual(list_contacts.Ok.length, 2);
   });
 
@@ -151,9 +158,9 @@ module.exports = (scenario, conductorConfig) => {
     const bobAddress = bob.instance("lobby").agentAddress;
     const charlieAddress = charlie.instance("lobby").agentAddress;
 
-    const set_username_alice = await setUsername("alice")(alice);
-    const set_username_bob = await setUsername("bob")(bob);
-    const set_username_charlie = await setUsername("charlie")(charlie);
+    await setUsername("alice")(alice);
+    await setUsername("bob")(bob);
+    await setUsername("charlie")(charlie);
     await s.consistency();
 
     //BLOCK OWN SELF
@@ -169,18 +176,16 @@ module.exports = (scenario, conductorConfig) => {
     //BLOCK A CONTACT NOT IN CONTACTS (ALSO INSTANTIATES CONTACTS)
     const block_contact_result_0 = await blockContact("charlie", 0)(alice);
     await s.consistency();
-    t.deepEqual(block_contact_result_0.Ok.blocked.length, 1);
-    t.deepEqual(block_contact_result_0.Ok.blocked[0], charlieAddress);
-    t.deepEqual(block_contact_result_0.Ok.contacts.length, 0);
+    t.deepEqual(block_contact_result_0.Ok.agent_id, charlieAddress);
+    t.deepEqual(block_contact_result_0.Ok.username, "charlie");
 
     //BLOCK A CONTACT IN CONTACTS
     const add_contact_result = await addContacts("bob", 1)(alice);
     await s.consistency();
     const block_contact_result = await blockContact("bob", 2)(alice);
     await s.consistency();
-    t.deepEqual(block_contact_result.Ok.blocked.length, 2);
-    t.deepEqual(block_contact_result.Ok.blocked[1], bobAddress);
-    t.deepEqual(block_contact_result.Ok.contacts.length, 0);
+    t.deepEqual(block_contact_result.Ok.agent_id, bobAddress);
+    t.deepEqual(block_contact_result.Ok.username, "bob");
 
     //UPDATE BLOCKED LIST WITH AN INVALID TIMESTAMP
     const invalid_block_contact_result_1 = await blockContact("bob", 1)(alice);
@@ -206,21 +211,23 @@ module.exports = (scenario, conductorConfig) => {
     const aliceAddress = alice.instance("lobby").agentAddress;
     const bobAddress = bob.instance("lobby").agentAddress;
 
-    const set_username_alice = await setUsername("alice")(alice);
-    const set_username_bob = await setUsername("bob")(bob);
+    await setUsername("alice")(alice);
+    await setUsername("bob")(bob);
     await s.consistency();
 
-    const add_contact_result = await addContacts("bob", 1)(alice);
+    await addContacts("bob", 1)(alice);
     await s.consistency();
 
     const block_contact_result = await blockContact("bob", 2)(alice);
     await s.consistency();
-    t.deepEqual(block_contact_result.Ok.blocked.length, 1);
+    t.deepEqual(block_contact_result.Ok.agent_id, bobAddress);
+    t.deepEqual(block_contact_result.Ok.username, "bob");
 
     //UNBLOCK BLOCKED CONTACT
     const unblock_contact_result = await unblockContact("bob", 3)(alice);
     await s.consistency();
-    t.deepEqual(unblock_contact_result.Ok.blocked.length, 0);
+    t.deepEqual(unblock_contact_result.Ok.agent_id, bobAddress);
+    t.deepEqual(unblock_contact_result.Ok.username, "bob");
 
     //UPDATE BLOCKED LIST WITH AN INVALID TIMESTAMP
     const invalid_unblock_contact_result_1 = await unblockContact(
@@ -242,5 +249,32 @@ module.exports = (scenario, conductorConfig) => {
     t.deepEqual(invalid_unblock_contact_result_2.Err, {
       Internal: "The contact is not in the list of blocked contacts",
     });
+  });
+
+  scenario("list blocked contacts", async (s, t) => {
+    const { alice, bob, charlie } = await s.players(
+      { alice: conductorConfig, bob: conductorConfig, charlie: conductorConfig},
+      true
+    );
+    const aliceAddress = alice.instance("lobby").agentAddress;
+    const bobAddress = bob.instance("lobby").agentAddress;
+
+    const add_contact_alice_result = await setUsername("alice")(alice);
+    const add_contact_alice_result_2 = await setUsername("bob")(bob);
+    const add_contact_alice_result_3 = await setUsername("charlie")(charlie);
+    await s.consistency();
+
+    const empty_list_blocked = await listContacts()(alice);
+    await blockContact("bob", 1)(alice);
+    await s.consistency();
+    await blockContact("charlie", 2)(alice);
+    await s.consistency();
+    const list_blocked = await listBlocked()(alice);
+
+    t.ok(add_contact_alice_result.Ok);
+    t.ok(add_contact_alice_result_2.Ok);
+    t.ok(add_contact_alice_result_3.Ok);
+    t.deepEqual(empty_list_blocked.Ok.length, 0);
+    t.deepEqual(list_blocked.Ok.length, 2);
   });
 };

@@ -5,7 +5,8 @@ use hdk_proc_macros::zome;
 
 pub mod contact;
 use contact::{
-    Contacts,
+    Profile,
+    // Contacts,
 };
 
 // see https://developer.holochain.org/api/0.0.47-alpha1/hdk/ for info on using the hdk library
@@ -29,20 +30,13 @@ mod contacts {
     }
 
     #[zome_fn("hc_public")]
-    fn add_contact(username: String, timestamp: u64) -> ZomeApiResult<Contacts> {
-        let contact_address = contact::handlers::username_address(username)?;
-        contact::handlers::add(contact_address, timestamp)
+    fn add_contact(username: String, timestamp: u64) -> ZomeApiResult<Profile> {
+        contact::handlers::add(username, timestamp)
     }
 
     #[zome_fn("hc_public")]
-    fn remove_contact(username: String, timestamp: u64) -> ZomeApiResult<Contacts> {
-        let contact_address = contact::handlers::username_address(username)?;
-        contact::handlers::remove(contact_address, timestamp)
-    }
-
-    #[zome_fn("hc_public")]
-    fn username_address(username: String) -> ZomeApiResult<Address> {
-        contact::handlers::username_address(username)
+    fn remove_contact(username: String, timestamp: u64) -> ZomeApiResult<Profile> {
+        contact::handlers::remove(username, timestamp)
     }
 
     #[zome_fn("hc_public")]
@@ -51,15 +45,13 @@ mod contacts {
     }
 
     #[zome_fn("hc_public")]
-    fn block(username: String, timestamp: u64) -> ZomeApiResult<Contacts> {
-        let contact_address = contact::handlers::username_address(username)?;
-        contact::handlers::block(contact_address, timestamp)
+    fn block(username: String, timestamp: u64) -> ZomeApiResult<Profile> {
+        contact::handlers::block(username, timestamp)
     }
 
     #[zome_fn("hc_public")]
-    fn unblock(username: String, timestamp: u64) -> ZomeApiResult<Contacts> {
-        let contact_address = contact::handlers::username_address(username)?;
-        contact::handlers::unblock(contact_address, timestamp)
+    fn unblock(username: String, timestamp: u64) -> ZomeApiResult<Profile> {
+        contact::handlers::unblock(username, timestamp)
     }
 
     #[zome_fn("hc_public")]
