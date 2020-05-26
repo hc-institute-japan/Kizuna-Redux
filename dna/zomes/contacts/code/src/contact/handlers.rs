@@ -37,7 +37,7 @@ pub fn add(username: String, timestamp: u64) -> ZomeApiResult<Profile> {
 
             // check if the address to be added is already existing
             if let false = contacts.contacts.iter().any(|v| &v.to_owned() == &contact_address.to_owned()) {
-                if contacts.timestamp != timestamp && contacts.timestamp < timestamp {
+                if contacts.timestamp < timestamp {
                     contacts.contacts.push(contact_address.clone());
                     let new_contacts = Contacts::from(
                         timestamp,
@@ -136,7 +136,7 @@ pub fn block(username: String, timestamp: u64) -> ZomeApiResult<Profile> {
                     contacts.blocked.push(contact_address.clone());
 
                     let mut new_contacts = Contacts::from(
-                        timestamp.clone(),
+                        timestamp,
                         contacts.contacts.clone(),
                         contacts.blocked.clone(),
                     );
@@ -183,7 +183,7 @@ pub fn unblock(username: String, timestamp: u64) -> ZomeApiResult<Profile> {
                     contacts.blocked.retain(|v| &v.to_owned() != &contact_address.to_owned());
 
                     let new_contacts = Contacts::from(
-                        timestamp.clone(),
+                        timestamp,
                         contacts.contacts.clone(),
                         contacts.blocked.clone(),
                     );
