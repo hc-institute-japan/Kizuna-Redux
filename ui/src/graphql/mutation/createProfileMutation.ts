@@ -5,6 +5,8 @@ export default gql`
     createProfile(username: $username) {
       id
       username
+      existing
+      registered
     }
   }
 `;

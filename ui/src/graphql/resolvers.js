@@ -85,14 +85,33 @@ const resolvers = {
   Mutation: {
     //complete
     createProfile: async (_, username) => {
-      const username_entry = await createZomeCall(
-        "/test-instance/profiles/set_username"
-      )(username);
-      console.log(username_entry)
-      return {
-        id: username_entry.agent_id,
-        username: username_entry.username,
-      };
+      try {
+        const username_entry = await createZomeCall(
+          "/test-instance/profiles/set_username"
+        )(username);
+        return {
+          id: username_entry.agent_id,
+          username: username_entry.username,
+          existing: false,
+          registered: false,
+        };
+      } catch (e) {
+        if (e.message.includes("This agent already has a username")) {
+          return {
+            id: null,
+            username: null,
+            existing: false,
+            registered: true,
+          }
+        } else if (e.message.includes("This username is already existing")) {
+          return {
+            id: null,
+            username: null,
+            exisiting: true,
+            registered: false,
+          }
+        }
+      }
     },
     //complete
     deleteProfile: async (_, username) =>

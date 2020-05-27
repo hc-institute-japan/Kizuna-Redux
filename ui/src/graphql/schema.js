@@ -13,8 +13,10 @@ Schema
 
 export default gql`
   type Profile {
-    id: ID!
+    id: ID
     username: String
+    existing: Boolean
+    registered: Boolean
   }
 
   type Contacts {

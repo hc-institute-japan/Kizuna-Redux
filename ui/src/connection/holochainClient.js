@@ -150,7 +150,7 @@ export function createZomeCall(zomeCallPath, callOpts = {}) {
         " -- ",
         error
       );
-      return error;
+      throw new Error(JSON.stringify(error))
     }
   };
 }
