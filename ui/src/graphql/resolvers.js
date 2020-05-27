@@ -14,6 +14,16 @@ ZomeCall Structure:
 * argument key should be the same as the declared input name in the holochain function declarations
 */
 
+let agent_id;
+
+const get_my_agent_id = async () => {
+  if (agent_id) return agent_id;
+  agent_id = await createZomeCall(
+    "/test-instance/profiles/get_my_address"
+  )();
+  return agent_id;
+}
+
 const resolvers = {
   Query: {
     //complete
@@ -49,24 +59,33 @@ const resolvers = {
     },
     //complete
     me: async () => {
-      const agent_id = await createZomeCall(
-        "/test-instance/profiles/get_my_address"
-      )();
-      const username = await createZomeCall(
-        "/test-instance/profiles/get_username"
-      )({
-        agent_address: agent_id,
-      });
-      if (username) {
-        return {
-          id: agent_id,
-          username,
-        };
-      } else {
-        return {
-          id: agent_id,
-          username: null,
-        };
+      try {
+        const my_agent_id = await get_my_agent_id();
+        const username = await createZomeCall(
+          "/test-instance/profiles/get_username"
+        )({
+          agent_address: my_agent_id,
+        });
+        if (username) {
+          return {
+            id: my_agent_id,
+            username,
+          };
+        } else {
+          return {
+            id: my_agent_id,
+            username: null,
+          };
+        }
+      } catch (e) {
+        if (e.message.includes("Agent has more than one username registered")) {
+          const my_agent_id = await get_my_agent_id();
+          return {
+            id: my_agent_id,
+            username: null,
+            multiple:true,
+          }
+        }
       }
     },
 
@@ -92,22 +111,22 @@ const resolvers = {
         return {
           id: username_entry.agent_id,
           username: username_entry.username,
-          existing: false,
-          registered: false,
         };
       } catch (e) {
         if (e.message.includes("This agent already has a username")) {
+          const my_agent_id = await get_my_agent_id();
           return {
-            id: null,
+            id: my_agent_id,
             username: null,
             existing: false,
             registered: true,
           }
         } else if (e.message.includes("This username is already existing")) {
+          const my_agent_id = await get_my_agent_id();
           return {
-            id: null,
+            id: my_agent_id,
             username: null,
-            exisiting: true,
+            existing: true,
             registered: false,
           }
         }
