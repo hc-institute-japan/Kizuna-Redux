@@ -88,6 +88,7 @@ const resolvers = {
       const username_entry = await createZomeCall(
         "/test-instance/profiles/set_username"
       )(username);
+      console.log(username_entry)
       return {
         id: username_entry.agent_id,
         username: username_entry.username,

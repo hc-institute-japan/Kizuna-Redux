@@ -17,14 +17,6 @@ export default gql`
     username: String
   }
 
-  input ProfileInput {
-    username: String!
-  }
-
-  type BooleanReturn {
-    value: Boolean
-  }
-
   type Contacts {
     agent_id: ID!
     timestamp: Float
@@ -45,7 +37,7 @@ export default gql`
   type Mutation {
     createProfile(username: String): Profile!
     deleteProfile(username: String): Boolean
-    updateProfile(profile: ProfileInput): Boolean
+    updateProfile(username: String): Boolean
     addContact(username: String, timestamp: Float): Boolean
     removeContact(username: String, timestamp: Float): Contacts
     blockContact(username: String, timestamp: Float): Contacts

@@ -150,6 +150,7 @@ export function createZomeCall(zomeCallPath, callOpts = {}) {
         " -- ",
         error
       );
+      return error;
     }
   };
 }
