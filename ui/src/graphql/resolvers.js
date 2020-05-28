@@ -139,49 +139,262 @@ const resolvers = {
       }),
     //complete
     addContact: async (_, input) => {
-      const contacts = await createZomeCall(
-        "/test-instance/contacts/add_contact"
-      )({ username: input.username, timestamp: input.timestamp });
-      console.log(input, contacts);
-      return true;
+      try {
+        const contacts = await createZomeCall(
+          "/test-instance/contacts/add_contact"
+        )({username: input.username, timestamp: input.timestamp});
+        return {
+          id: contacts.agent_id,
+          username: contacts.username,
+          //profiles zome error fields
+          existing: false,
+          registered: false,
+          multiple: false,
+          //contacts zome error fields
+          duplicate: false,
+          outoforder: false,
+          uninitialized: false,
+          notfound: false ,
+          invalidop: false
+        };
+      } catch (error) {
+        if (error.message.includes("This address is already added in contacts")) {
+          return {
+            id: null,
+            username: input.username,
+            //profiles zome error fields
+            existing: false,
+            registered: false,
+            multiple: false,
+            //contacts zome error fields
+            duplicate: true,
+            outoforder: false,
+            uninitialized: false,
+            notfound: false,
+            invalidop: false
+          }
+        } else if (error.message.includes("The timestamp is the same with or less than the previous timestamp")) {
+          return {
+            id: null,
+            username: null,
+            //profiles zome error fields
+            existing: false,
+            registered: false,
+            multiple: false,
+            //contacts zome error fields
+            duplicate: false,
+            outoforder: true,
+            uninitialized: false,
+            notfound: false,
+            invalidop: false
+          }
+        }
+      }
     },
-    //complete
     removeContact: async (_, input) => {
-      const contacts = await createZomeCall(
-        "/test-instance/contacts/remove_contact"
-      )({ username: input.username, timestamp: input.timestamp });
-      return {
-        agent_id: contacts.agent_id,
-        timestamp: contacts.timestamp,
-        contacts: contacts.contacts,
-        blocked: contacts.blocked,
-      };
+      try {
+        const contacts = await createZomeCall(
+          "/test-instance/contacts/remove_contact"
+        )({username: input.username, timestamp: input.timestamp});
+        return {
+          id: contacts.agent_id,
+          username: contacts.username,
+          //profiles zome error fields
+          existing: false,
+          registered: false,
+          multiple: false,
+          //contacts zome error fields
+          duplicate: false,
+          outoforder: false,
+          uninitialized: false,
+          notfound: false,
+          invalidop: false
+        };
+      } catch (error) {
+        if (error.message.includes("This address wasn't found in the contract")) {
+          return {
+            id: null,
+            username: null,
+            //profiles zome error fields
+            existing: false,
+            registered: false,
+            multiple: false,
+            //contacts zome error fields
+            duplicate: false,
+            outoforder: false,
+            uninitialized: false,
+            notfound: true,
+            invalidop: false
+          }
+        } else if (error.message.includes("The timestamp is the same with or less than the previous timestamp")) {
+          return {
+            id: null,
+            username: null,
+            //profiles zome error fields
+            existing: false,
+            registered: false,
+            multiple: false,
+            //contacts zome error fields
+            duplicate: false,
+            outoforder: true,
+            uninitialized: false,
+            notfound: false,
+            invalidop: false
+          } 
+        } else if (error.message.includes("This agent has no contacts yet")) {
+          return {
+            id: null,
+            username: null,
+            //profiles zome error fields
+            existing: false,
+            registered: false,
+            multiple: false,
+            //contacts zome error fields
+            duplicate: false,
+            outoforder: false,
+            uninitialized: true,
+            notfound: false,
+            invalidop: false
+          }
+        }
+      }
     },
-    //complete
     blockContact: async (_, input) => {
-      const contacts = await createZomeCall("/test-instance/contacts/block")({
-        username: input.username,
-        timestamp: input.timestamp,
-      });
-      return {
-        agent_id: contacts.agent_id,
-        timestamp: contacts.timestamp,
-        contacts: contacts.contacts,
-        blocked: contacts.blocked,
-      };
+      try {
+        const contacts = await createZomeCall(
+          "/test-instance/contacts/block"
+        )({username: input.username, timestamp: input.timestamp});
+        return {
+          id: contacts.agent_id,
+          username: contacts.username,
+          //profiles zome error fields
+          existing: false,
+          registered: false,
+          multiple: false,
+          //contacts zome error fields
+          duplicate: false,
+          outoforder: false,
+          uninitialized: false,
+          notfound: false,
+          invalidop: false
+        };
+      } catch (error) {
+        if (error.message.includes("The contact is already in the list of blocked contacts")) {
+          return {
+            id: null,
+            username: null,
+            //profiles zome error fields
+            existing: false,
+            registered: false,
+            multiple: false,
+            //contacts zome error fields
+            duplicate: true,
+            outoforder: false,
+            uninitialized: false,
+            notfound: false,
+            invalidop: false
+          }
+        } else if (error.message.includes("The timestamp is the same with or less than the previous timestamp")) {
+          return {
+            id: null,
+            username: null,
+            //profiles zome error fields
+            existing: false,
+            registered: false,
+            multiple: false,
+            //contacts zome error fields
+            // error fields
+            duplicate: false,
+            outoforder: true,
+            uninitialized: false,
+            notfound: false,
+            invalidop: false
+          } 
+        } else if (error.message.includes("Cannot block yourself")) {
+          return {
+            id: null,
+            username: null,
+            //profiles zome error fields
+            existing: false,
+            registered: false,
+            multiple: false,
+            //contacts zome error fields
+            duplicate: false,
+            outoforder: false,
+            uninitialized: false,
+            notfound: false,
+            invalidop: true
+          }
+        }
+      }
     },
-
     unblockContact: async (_, input) => {
-      const contacts = await createZomeCall("/test-instance/contacts/unblock")({
-        username: input.username,
-        timestamp: input.timestamp,
-      });
-      return {
-        agent_id: contacts.agent_id,
-        timestamp: contacts.timestamp,
-        contacts: contacts.contacts,
-        blocked: contacts.blocked,
-      };
+      try {
+        const contacts = await createZomeCall(
+          "/test-instance/contacts/unblock"
+        )({username: input.username, timestamp: input.timestamp});
+        return {
+          id: contacts.agent_id,
+          username: contacts.username,
+          //profiles zome error fields
+          existing: false,
+          registered: false,
+          multiple: false,
+          //contacts zome error fields
+          duplicate: true,
+          outoforder: false,
+          uninitialized: false,
+          notfound: false,
+          invalidop: false
+        };
+      } catch (error) {
+        if (error.message.includes("The contact is already in the list of blocked contacts")) {
+          return {
+            id: null,
+            username: null,
+            //profiles zome error fields
+            existing: false,
+            registered: false,
+            multiple: false,
+            //contacts zome error fields
+            duplicate: true,
+            outoforder: false,
+            uninitialized: false,
+            notfound: false,
+            invalidop: false
+          }
+        } else if (error.message.includes("The timestamp is the same with or less than the previous timestamp")) {
+          return {
+            id: null,
+            username: null,
+            //profiles zome error fields
+            existing: false,
+            registered: false,
+            multiple: false,
+            //contacts zome error fields
+            duplicate: false,
+            outoforder: true,
+            uninitialized: false,
+            notfound: false,
+            invalidop: false
+          } 
+        } else if (error.message.includes("Unblocking own agent id")) {
+          return {
+            id: null,
+            username: null,
+            //profiles zome error fields
+            existing: false,
+            registered: false,
+            multiple: false,
+            //contacts zome error fields
+            duplicate: false,
+            outoforder: false,
+            uninitialized: false,
+            notfound: false,
+            invalidop: true
+          }
+        }
+      }
     },
   },
 };
