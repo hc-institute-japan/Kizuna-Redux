@@ -23,7 +23,7 @@ const Register: React.FC<Props> = (props) => {
   const [usernameError, setUsernameError] = useState("");
   const [isInputValid, setIsInputValid] = useState(false);
   const dispatch = useDispatch();
-  const [createProfile] = useMutation(CREATE_PROFILE_MUTATION);
+  const [createProfile, {data, loading, error}] = useMutation(CREATE_PROFILE_MUTATION);
 
   useEffect(() => {
     setIsInputValid(
@@ -39,13 +39,35 @@ const Register: React.FC<Props> = (props) => {
 
   const onSubmitAction = async () => {
     // need to handle zomeapierror
-    const profile_result = await createProfile({
-      variables: { username },
-    });
-    // localStorage.setItem("user_address", returnEntry.data.createProfile);
-    localStorage.setItem("agent_address", profile_result.data.createProfile.id);
-    dispatch(authenticate(profile_result.data.createProfile.id));
-    props.history.push("/home");
+    try {
+      const profile_result = await createProfile({
+        variables: { username },
+      });
+      if (error) throw error;
+      // localStorage.setItem("user_address", returnEntry.data.createProfile);
+      localStorage.setItem("agent_address", profile_result.data.createProfile.id);
+      dispatch(authenticate(profile_result.data.createProfile.id));
+      props.history.push("/home");
+      // catch the error from createZomeCall
+    } catch (e) {
+      // errors from holochain will be in graphQLErrors. 
+      // networkError should be handled as well
+      const {graphQLErrors, networkError, message, extraInfo} = e;
+      if (graphQLErrors) {
+        // parse into object if the error is an object with "code" and "message" field.
+        // If not, return generic error maybe
+        let error = JSON.parse(graphQLErrors[0].message);
+        if (error.code) {
+          // do something with series of error.code
+        } else {
+          // return generic error
+        }
+        console.log(error); 
+      };
+      if (networkError) {
+        // give generic error when there is networkError
+      }
+    }
   };
 
   return (
