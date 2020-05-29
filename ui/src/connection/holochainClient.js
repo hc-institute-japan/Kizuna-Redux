@@ -150,11 +150,12 @@ export function createZomeCall(zomeCallPath, callOpts = {}) {
         " -- ",
         error
       );
-      if (JSON.stringify(error).includes("Internal")) {
-        throw new Error(JSON.parse(error.Internal))
-      } else {
-        throw new Error(JSON.stringify(error))
-      }
+      throw new Error(JSON.stringify(error))
+      // if (JSON.stringify(error).includes("Internal")) {
+      //   throw new Error(JSON.parse(error.Internal))
+      // } else {
+      //   throw new Error(JSON.stringify(error))
+      // }
     }
   };
 }

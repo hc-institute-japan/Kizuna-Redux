@@ -48,10 +48,12 @@ pub fn add(username: String, timestamp: u64) -> ZomeApiResult<Profile> {
                     let added_profile = Profile::new(contact_address, username);
                     Ok(added_profile)
                 } else {
-                    return Err(ZomeApiError::from("The timestamp is the same with or less than the previous timestamp".to_owned()))
+                    // temporary code
+                    return Err(ZomeApiError::from("{\"code\": \"0\", \"message\": \"The timestamp is the same with or less than the previous timestamp\"}".to_owned()))
                 }
             } else {
-                return Err(ZomeApiError::from("{\"code\": \"15\", \"message\": \"This address is already added in contacts\"}".to_owned()))
+                // temporary code
+                return Err(ZomeApiError::from("{\"code\": \"0\", \"message\": \"This address is already added in contacts\"}".to_owned()))
             }
         },
     }
@@ -80,10 +82,10 @@ pub fn remove(username: String, timestamp: u64) -> ZomeApiResult<Profile> {
                     let removed_profile = Profile::new(contact_address, username);
                     Ok(removed_profile)
                 } else {
-                    return Err(ZomeApiError::from("The timestamp is the same with or less than the previous timestamp".to_owned()))
+                    return Err(ZomeApiError::from("{\"code\": \"0\", \"message\": \"The timestamp is the same with or less than the previous timestamp\"}".to_owned()))
                 }
             } else {
-                return Err(ZomeApiError::from("This address wasn't found in the contract".to_owned()))
+                return Err(ZomeApiError::from("{\"code\": \"0\", \"message\": \"This address wasn't found in the contract\"}".to_owned()))
             }
         },
     }
@@ -150,10 +152,10 @@ pub fn block(username: String, timestamp: u64) -> ZomeApiResult<Profile> {
                     let blocked_profile = Profile::new(contact_address, username);
                     Ok(blocked_profile)
                 } else {
-                    return Err(ZomeApiError::from("The contact is already in the list of blocked contacts".to_owned()))
+                    return Err(ZomeApiError::from("{\"code\": \"0\", \"message\": \"The contact is already in the list of blocked contacts\"}".to_owned()))
                 } 
             } else {
-                return Err(ZomeApiError::from("The timestamp is the same with or less than the previous timestamp".to_owned()))
+                return Err(ZomeApiError::from("{\"code\": \"0\", \"message\": \"The timestamp is the same with or less than the previous timestamp\"}".to_owned()))
             }  
         }
     }
@@ -163,14 +165,14 @@ pub fn unblock(username: String, timestamp: u64) -> ZomeApiResult<Profile> {
     let contact_address = username_address(username.clone())?;
 
     if contact_address.to_owned() == AGENT_ADDRESS.to_owned() {
-        return Err(ZomeApiError::from("Unblocking own agent id".to_owned()))
+        return Err(ZomeApiError::from("{\"code\": \"0\", \"message\": \"Unblocking own agent id\"}".to_owned()))
     }
 
     let query_result = hdk::api::query(Contacts::entry_type().into(), 0, 0)?;
     
     match query_result.len() {
         0 => {
-            return Err(ZomeApiError::from("This agent has no contacts yet".to_owned()))
+            return Err(ZomeApiError::from("{\"code\": \"0\", \"message\": \"This agent has no contacts yet\"}".to_owned()))
         },
         _ => {
             let contacts_address = query_result[0].clone();
@@ -191,10 +193,10 @@ pub fn unblock(username: String, timestamp: u64) -> ZomeApiResult<Profile> {
                     let unblocked_profile = Profile::new(contact_address, username);
                     Ok(unblocked_profile)
                 } else {
-                    return Err(ZomeApiError::from("The contact is not in the list of blocked contacts".to_owned()))
+                    return Err(ZomeApiError::from("{\"code\": \"0\", \"message\": \"The contact is not in the list of blocked contacts\"}".to_owned()))
                 } 
             } else {
-                return Err(ZomeApiError::from("The timestamp is the same with or less than the previous timestamp".to_owned()))
+                return Err(ZomeApiError::from("{\"code\": \"0\", \"message\": \"The timestamp is the same with or less than the previous timestamp\"}".to_owned()))
             }  
         }
     }
@@ -238,7 +240,7 @@ fn username_address(username: String) -> ZomeApiResult<Address> {
 
     match serde_json::from_str(&user_address_string.to_string()) {
         Ok(result) => result,
-        _ => Err(ZomeApiError::from("Parsing was unsuccessful".to_owned()))
+        _ => Err(ZomeApiError::from("{\"code\": \"0\", \"message\": \"Parsing was unsuccessful\"}".to_owned()))
     }
     
 }
