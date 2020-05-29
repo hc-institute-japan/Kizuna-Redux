@@ -15,9 +15,6 @@ export default gql`
   type Profile {
     id: ID
     username: String
-    existing: Boolean
-    registered: Boolean
-    multiple: Boolean
     duplicate: Boolean
     outoforder: Boolean
     uninitialized: Boolean

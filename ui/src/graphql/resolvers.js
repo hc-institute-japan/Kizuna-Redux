@@ -59,7 +59,6 @@ const resolvers = {
     },
     //complete
     me: async () => {
-      try {
         const my_agent_id = await get_my_agent_id();
         const username = await createZomeCall(
           "/test-instance/profiles/get_username"
@@ -77,18 +76,7 @@ const resolvers = {
             username: null,
           };
         }
-      } catch (e) {
-        if (e.message.includes("Agent has more than one username registered")) {
-          const my_agent_id = await get_my_agent_id();
-          return {
-            id: my_agent_id,
-            username: null,
-            multiple:true,
-          }
-        }
-      }
     },
-
     username: async (_, input) =>
       await createZomeCall("/test-instance/profile/get_username")({
         agent_address: input,
@@ -104,7 +92,6 @@ const resolvers = {
   Mutation: {
     //complete
     createProfile: async (_, username) => {
-      try {
         const username_entry = await createZomeCall(
           "/test-instance/profiles/set_username"
         )(username);
@@ -112,25 +99,6 @@ const resolvers = {
           id: username_entry.agent_id,
           username: username_entry.username,
         };
-      } catch (e) {
-        if (e.message.includes("This agent already has a username")) {
-          const my_agent_id = await get_my_agent_id();
-          return {
-            id: my_agent_id,
-            username: null,
-            existing: false,
-            registered: true,
-          }
-        } else if (e.message.includes("This username is already existing")) {
-          const my_agent_id = await get_my_agent_id();
-          return {
-            id: my_agent_id,
-            username: null,
-            existing: true,
-            registered: false,
-          }
-        }
-      }
     },
     //complete
     deleteProfile: async (_, username) =>
