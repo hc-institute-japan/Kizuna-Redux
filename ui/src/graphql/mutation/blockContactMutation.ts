@@ -5,14 +5,6 @@ export default gql`
     blockContact(username: $username, timestamp: $timestamp) {
       id
       username
-      existing
-      registered
-      multiple
-      duplicate
-      outoforder
-      uninitialized
-      notfound
-      invalidop
     }
   }
 `;

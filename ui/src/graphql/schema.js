@@ -15,11 +15,6 @@ export default gql`
   type Profile {
     id: ID
     username: String
-    duplicate: Boolean
-    outoforder: Boolean
-    uninitialized: Boolean
-    notfound: Boolean
-    invalidop: Boolean
   }
   type Contacts {
     agent_id: ID!
