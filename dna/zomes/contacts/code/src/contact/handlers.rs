@@ -51,7 +51,7 @@ pub fn add(username: String, timestamp: u64) -> ZomeApiResult<Profile> {
                     return Err(ZomeApiError::from("The timestamp is the same with or less than the previous timestamp".to_owned()))
                 }
             } else {
-                return Err(ZomeApiError::from("This address is already added in contacts".to_owned()))
+                return Err(ZomeApiError::from("{\"code\": \"15\", \"message\": \"This address is already added in contacts\"}".to_owned()))
             }
         },
     }

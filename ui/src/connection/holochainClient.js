@@ -121,9 +121,9 @@ export function createZomeCall(zomeCallPath, callOpts = {}) {
         get("Err", jsonResult) || get("SerializationError", jsonResult);
       const rawOk = get("Ok", jsonResult);
 
-      if (error) throw error;
+      var result = rawOk;
 
-      const result = rawOk;
+      if (error) throw error;
 
       if (opts.logging) {
         const detailsFormat = "font-weight: bold; color: rgb(220, 208, 120)";
@@ -150,7 +150,11 @@ export function createZomeCall(zomeCallPath, callOpts = {}) {
         " -- ",
         error
       );
-      throw new Error(JSON.stringify(error))
+      if (JSON.stringify(error).includes("Internal")) {
+        throw new Error(JSON.parse(error.Internal))
+      } else {
+        throw new Error(JSON.stringify(error))
+      }
     }
   };
 }
