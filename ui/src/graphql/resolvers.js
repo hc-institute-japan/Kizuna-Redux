@@ -1,4 +1,4 @@
-import { createZomeCall } from "../connection/holochainClient";
+import { createZomeCall, initAndGetHolochainClient } from "../connection/holochainClient";
 
 /*
 Holochain structure:
@@ -26,6 +26,53 @@ const get_my_agent_id = async () => {
 
 const resolvers = {
   Query: {
+    hello: async () => {
+      const client = await initAndGetHolochainClient();
+      console.log(client);
+      const dnaResult = await client.call('admin/dna/install_from_file')({
+        id: "dna-dos",
+        path: "/Users/tats/projects/Kizuna/dnados/dist/dnados.dna.json",
+        copy: true,
+      });
+      console.log("OKAY");
+      console.log(dnaResult);
+
+
+      const my_agent_id = await get_my_agent_id();
+      const agentList = await client.call('admin/agent/list')({});
+      const agentName = agentList.find((a) => a.public_address === my_agent_id);
+
+      const instanceResult = await client.call('admin/instance/add')({
+        id: "test-instance-dos",
+        agent_id: agentName.id,
+        dna_id: "dna-dos",
+      });
+      console.log("OKAY");
+      console.log(instanceResult);
+  
+      // const interfaceList = await client.call('admin/interface/list', {});
+      // // TODO: review this: what interface to pick?
+      // console.log(interfaceList);
+      // const iface = interfaceList[0];
+  
+      const ifaceResult = client.call('admin/interface/add_instance')({
+        instance_id: "test-instance-dos",
+        interface_id: "websocket-interface",
+      });
+      console.log(ifaceResult);
+  
+      await new Promise((resolve) => setTimeout(() => resolve(), 300));
+      const startResult = await client.call('admin/instance/start')({ id: "test-instance-dos" });
+
+      console.log("OKAY");
+      console.log(startResult);
+
+      const say_hello = await createZomeCall(
+        "/test-instance-dos/messages/say_hello"
+      )();
+      console.log(say_hello)
+      return say_hello
+    },
     //complete
     allAgents: async () => {
       const all_agents = await createZomeCall(

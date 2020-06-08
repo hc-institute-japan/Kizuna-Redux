@@ -23,6 +23,7 @@ export default gql`
     blocked: [ID]
   }
   type Query {
+    hello: String
     allAgents: [Profile!]!
     me: Profile
     contacts: [Profile!]

@@ -15,7 +15,7 @@ let holochainClient;
 
 export const HOLOCHAIN_LOGGING = process.env.NODE_ENV === "development";
 
-async function initAndGetHolochainClient() {
+export async function initAndGetHolochainClient() {
   if (holochainClient) return holochainClient;
 
   try {

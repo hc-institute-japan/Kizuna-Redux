@@ -23,12 +23,24 @@ id = 'test-instance'
 [instances.storage]
 type = 'memory'
 
+[[instances]]
+agent = 'hc-run-agent'
+dna = 'dna-dos'
+id = 'test-instance-dos'
+
+[instances.storage]
+path = 'storage/test-instance-dos'
+type = 'lmdb'
+
 [[interfaces]]
 admin = true
 id = 'websocket-interface'
 
 [[interfaces.instances]]
 id = 'test-instance'
+
+[[interfaces.instances]]
+id = 'test-instance-dos'
 
 [interfaces.driver]
 port = 8888
