@@ -1,8 +1,10 @@
 import { connect as hcWebClientConnect } from "@holochain/hc-web-client";
 import { get } from "lodash/fp";
-// import mockCallZome from "../mock-dnas/mockCallZome";
+import {MicroOrchestrator} from '@uprtcl/micro-orchestrator';
+import { HolochainConnectionModule, HolochainConnection } from '@uprtcl/holochain-provider';
 
 let holochainClient;
+let holochainUprtclClient;
 
 // NB: This should be set to false when you want to run against a Holochain Conductor
 // with a websocket interface running on REACT_APP_DNA_INTERFACE_URL.
@@ -16,6 +18,7 @@ let holochainClient;
 export const HOLOCHAIN_LOGGING = process.env.NODE_ENV === "development";
 
 export async function initAndGetHolochainClient() {
+
   if (holochainClient) return holochainClient;
 
   try {
@@ -44,55 +47,6 @@ export function parseZomeCallPath(zomeCallPath) {
 
   return { instanceId, zome, zomeFunc };
 }
-
-export const callZome = (
-  { instanceId, zome, zomeFunction },
-  opts = {}
-) => async (args = {}) => {
-  try {
-    await initAndGetHolochainClient();
-    holochainClient
-      .callZome(
-        instanceId,
-        zome,
-        zomeFunction
-      )(args)
-      .then((res) => {
-        console.log(res);
-        const final = JSON.parse(res);
-        const { Err, SerializationError, Ok } = final;
-        const err = Err || SerializationError;
-        if (err) throw err;
-
-        if ({ logging: HOLOCHAIN_LOGGING, ...opts }.loggging) {
-          const detailsFormat = "font-weight: bold; color: rgb(220, 208, 120)";
-
-          console.groupCollapsed(
-            `👍 ${instanceId}/${zome}/${zomeFunction}%c zome call complete`,
-            "font-weight: normal; color: rgb(160, 160, 160)"
-          );
-          console.groupCollapsed("%cArgs", detailsFormat);
-          console.log(args);
-          console.groupEnd();
-          console.groupCollapsed("%cResult", detailsFormat);
-          console.log(Ok);
-          console.groupEnd();
-          console.groupEnd();
-
-          return Ok;
-        }
-      });
-  } catch (error) {
-    console.log(
-      `👎 %c${instanceId}/${zome}/${zomeFunction}%c zome call ERROR using args: `,
-      "font-weight: bold; color: rgb(220, 208, 120); color: red",
-      "font-weight: normal; color: rgb(160, 160, 160)",
-      args,
-      " -- ",
-      error
-    );
-  }
-};
 
 export function createZomeCall(zomeCallPath, callOpts = {}) {
   const DEFAULT_OPTS = {
@@ -159,4 +113,22 @@ export function createZomeCall(zomeCallPath, callOpts = {}) {
       }
     }
   };
+}
+
+// see https://github.com/uprtcl/js-uprtcl/tree/master/providers/holochain
+export async function hcUprtcl() {
+  if (holochainUprtclClient) return holochainUprtclClient;
+  holochainUprtclClient = new HolochainConnection({
+    host: process.env.REACT_APP_DNA_INTERFACE_URL,
+    devEnv: {
+      templateDnasPaths: {QmeemT8H9g1qovPVWPL8KSvvL5o2kaswzZaFWRkqaR88XP: "/Users/tats/projects/Kizuna/dnados/dist/dnados.dna.json"}
+    }
+  });
+  console.log(holochainUprtclClient);
+  const hcModule = new HolochainConnectionModule(holochainUprtclClient);
+  console.log(hcModule);
+  const orchestrator = new MicroOrchestrator();
+  console.log(orchestrator);
+  await orchestrator.loadModule(hcModule);
+  return holochainUprtclClient;
 }

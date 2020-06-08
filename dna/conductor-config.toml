@@ -11,9 +11,14 @@ public_address = 'HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhm
 test_agent = true
 
 [[dnas]]
-file = '/Users/lc/Desktop/Kizuna/dna/dist/dna.dna.json'
-hash = 'QmRD6fYPAkCfZH51P7oe5xUdMyguN7gy3wp6JASX5jWvks'
+file = '/Users/tats/projects/Kizuna/dna/dist/dna.dna.json'
+hash = 'QmaXFiW7mcAwuvJhLZgNZNAoZAVT4faJLFhnxcAMehNeR3'
 id = 'hc-run-dna'
+
+[[dnas]]
+file = 'dna/QmVVPaAnthDtgSUCfFy2RBARSdVEHYAeLakC8aq6TBHTT1.dna.json'
+hash = 'QmVVPaAnthDtgSUCfFy2RBARSdVEHYAeLakC8aq6TBHTT1'
+id = 'dna-dos'
 
 [[instances]]
 agent = 'hc-run-agent'
