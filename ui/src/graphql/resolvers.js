@@ -1,5 +1,3 @@
-import { createZomeCall } from "../connection/holochainClient";
-
 /*
 Holochain structure:
 - instance name: test-instance
@@ -10,7 +8,7 @@ Holochain structure:
 -- get_my_address
 -- get_profile
 ZomeCall Structure:
--- createZomeCall('<instance_name>/<zome_name>/<function_name>)(arguments)
+-- callZome('<instance_name>/<zome_name>/<function_name>)(arguments)
 * argument key should be the same as the declared input name in the holochain function declarations
 */
 
@@ -18,19 +16,19 @@ let agent_id;
 
 const get_my_agent_id = async () => {
   if (agent_id) return agent_id;
-  agent_id = await createZomeCall(
-    "/test-instance/profiles/get_my_address"
-  )();
+  agent_id = await callZome("test-instance", "profiles", "get_my_address")();
   return agent_id;
-}
+};
 
 const resolvers = {
   Query: {
     //complete
-    allAgents: async () => {
-      const all_agents = await createZomeCall(
-        "/test-instance/profiles/get_all_agents"
-      )();
+    allAgents: async (_, _, { callZome }) => {
+      const all_agents = await callZome({
+        id: "test-instance",
+        zome: "profiles",
+        func: "get_all_agents",
+      })();
 
       return all_agents.map((agent) => ({
         id: agent.agent_id,
@@ -38,52 +36,63 @@ const resolvers = {
       }));
     },
 
-    contacts: async () => {
-      const address = await createZomeCall(
-        "/test-instance/contacts/list_contacts"
-      )();
+    contacts: async (_, _, { callZome }) => {
+      const address = await callZome({
+        id: "test-instance",
+        zome: "contacts",
+        func: "list_contacts",
+      })();
 
       const contacts = address
         ? await address.map(async (a) => ({
             id: a,
-            username: await createZomeCall(
-              "/test-instance/profiles/get_username"
-            )({
+            username: await callZome({
+              id: "test-instance",
+              zome: "profiles",
+              func: "get_username",
+            })({
               agent_address: a,
             }),
           }))
         : [];
-      console.log(contacts);
 
       return contacts;
     },
     //complete
-    me: async () => {
-        const my_agent_id = await get_my_agent_id();
-        const username = await createZomeCall(
-          "/test-instance/profiles/get_username"
-        )({
-          agent_address: my_agent_id,
-        });
-        if (username) {
-          return {
-            id: my_agent_id,
-            username,
-          };
-        } else {
-          return {
-            id: my_agent_id,
-            username: null,
-          };
-        }
+    me: async (_, _, { callZome }) => {
+      const my_agent_id = await get_my_agent_id();
+      const username = await callZome({
+        id: "test-instance",
+        zome: "profiles",
+        func: "get_username",
+      })({
+        agent_address: my_agent_id,
+      });
+      if (username) {
+        return {
+          id: my_agent_id,
+          username,
+        };
+      } else {
+        return {
+          id: my_agent_id,
+          username: null,
+        };
+      }
     },
-    username: async (_, input) =>
-      await createZomeCall("/test-instance/profile/get_username")({
+    username: async (_, input, { callZome }) =>
+      await callZome({
+        id: "test-instance",
+        zome: "profile",
+        func: "get_username",
+      })({
         agent_address: input,
       }),
-    listBlocked: async () => {
-      const contacts = await createZomeCall(
-        "/test-instance/profiles/list_blocked"
+    listBlocked: async (_, _, { callZome }) => {
+      const contacts = await callZome(
+        "test-instance",
+        "profiles",
+        "list_blocked"
       )();
       return [...contacts];
     },
@@ -91,57 +100,77 @@ const resolvers = {
 
   Mutation: {
     //complete
-    createProfile: async (_, username) => {
-        const username_entry = await createZomeCall(
-          "/test-instance/profiles/set_username"
-        )(username);
-        return {
-          id: username_entry.agent_id,
-          username: username_entry.username,
-        };
+    createProfile: async (_, username, { callZome }) => {
+      const username_entry = await callZome({
+        id: "test-instance",
+        zome: "profiles",
+        func: "set_username",
+      })(username);
+      return {
+        id: username_entry.agent_id,
+        username: username_entry.username,
+      };
     },
     //complete
-    deleteProfile: async (_, username) =>
-      await createZomeCall("/profiles/profile/delete_profile")({
+    deleteProfile: async (_, username, { callZome }) =>
+      await callZome({
+        id: "profiles",
+        zome: "profile",
+        func: "delete_profile",
+      })({
         input: username.username,
       }),
     //complete
-    addContact: async (_, input) => {
-      const contacts = await createZomeCall(
-        "/test-instance/contacts/add_contact"
-      )({username: input.username, timestamp: input.timestamp});
+    addContact: async (_, input, { callZome }) => {
+      const contacts = await callZome({
+        id: "test-instance",
+        zome: "contacts",
+        func: "add_contact",
+      })({ username: input.username, timestamp: input.timestamp });
       return {
         id: contacts.agent_id,
-        username: contacts.username
+        username: contacts.username,
       };
     },
-    removeContact: async (_, input) => {
-      const contacts = await createZomeCall(
-        "/test-instance/contacts/remove_contact"
-      )({username: input.username, timestamp: input.timestamp});
+    removeContact: async (_, input, { callZome }) => {
+      const contacts = await callZome({
+        id: "test-instance",
+        zome: "contacts",
+        func: "remove_contact",
+      })({ username: input.username, timestamp: input.timestamp });
       return {
         id: contacts.agent_id,
-        username: contacts.username
+        username: contacts.username,
       };
     },
-    blockContact: async (_, input) => {
-      const contacts = await createZomeCall(
-        "/test-instance/contacts/block"
-      )({username: input.username, timestamp: input.timestamp});
+    blockContact: async (_, input, { callZome }) => {
+      const contacts = await callZome({
+        id: "test-instance",
+        zome: "contacts",
+        func: "block",
+      })({
+        username: input.username,
+        timestamp: input.timestamp,
+      });
       return {
         id: contacts.agent_id,
-        username: contacts.username
+        username: contacts.username,
       };
     },
-    unblockContact: async (_, input) => {
-      const contacts = await createZomeCall(
-        "/test-instance/contacts/unblock"
-      )({username: input.username, timestamp: input.timestamp});
+    unblockContact: async (_, input, { callZome }) => {
+      const contacts = await callZome({
+        id: "test-instance",
+        zome: "contacts",
+        func: "unblock",
+      })({
+        username: input.username,
+        timestamp: input.timestamp,
+      });
       return {
         id: contacts.agent_id,
-        username: contacts.username
+        username: contacts.username,
       };
-    }
+    },
   },
 };
 

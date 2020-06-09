@@ -1,15 +1,14 @@
 import {
+  IonFooter,
   IonItemDivider,
   IonItemGroup,
   IonLabel,
-  IonFooter,
   IonToolbar,
-  IonTitle,
 } from "@ionic/react";
 import React from "react";
 import ContactItem from "./ContactItem";
 
-const ContactList: React.FC<any> = ({ indexedContacts, search }) => {
+const ContactList: React.FC<any> = ({ indexedContacts, search, contacts }) => {
   const searchContacts =
     search.length > 0 ? indexedContacts[search.charAt(0).toUpperCase()] : null;
 
@@ -25,7 +24,11 @@ const ContactList: React.FC<any> = ({ indexedContacts, search }) => {
               contact.username.toLowerCase().includes(search.toLowerCase())
             )
             .map((contact: any) => (
-              <ContactItem key={contact.username} contact={contact} />
+              <ContactItem
+                contacts={contacts}
+                key={contact.username}
+                contact={contact}
+              />
             ))}
         </IonItemGroup>
       ) : (
@@ -38,7 +41,11 @@ const ContactList: React.FC<any> = ({ indexedContacts, search }) => {
                   <IonLabel>{index}</IonLabel>
                 </IonItemDivider>
                 {contacts.map((contact: any) => (
-                  <ContactItem key={contact.username} contact={contact} />
+                  <ContactItem
+                    contacts={contacts}
+                    key={contact.username}
+                    contact={contact}
+                  />
                 ))}
               </IonItemGroup>
             );

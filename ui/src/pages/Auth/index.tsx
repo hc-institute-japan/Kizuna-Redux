@@ -2,6 +2,7 @@ import { useQuery } from "@apollo/react-hooks";
 import { IonLoading, IonRouterOutlet } from "@ionic/react";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import withToast from "../../components/Toast/withToast";
 import ME from "../../graphql/query/meQuery";
 import { authenticate } from "../../redux/auth/actions";
 import { RootState } from "../../redux/reducers";
@@ -17,7 +18,7 @@ import Unauthenticated from "../../routes/Unauthenticated";
  *
  */
 
-const Auth: React.FC = () => {
+const Auth: React.FC = ({ pushErr }: any) => {
   // right now, once authenticated, the user will always be authenticated. is this ok?
   // may need to deauthenticate once the user has no username already.
   const isAuthenticated = useSelector(
@@ -27,7 +28,7 @@ const Auth: React.FC = () => {
 
   // this query is being called even before the holochain connection is finished establishing.
   // needs error handling
-  const { loading, data } = useQuery(ME);
+  const { loading, data, error } = useQuery(ME);
 
   // localStorage.removeItem("agent_address");
   // localStorage.setItem(
@@ -41,14 +42,18 @@ const Auth: React.FC = () => {
       dispatch(authenticate(address));
     }
   }, [dispatch, data]);
+  // useEffect(() => {
+  //   if (error) pushErr(error);
+  // }, [error, pushErr]);
 
   return !loading ? (
     <IonRouterOutlet>
       {isAuthenticated ? <Authenticated /> : <Unauthenticated />}
+      {/* <Toast /> */}
     </IonRouterOutlet>
   ) : (
     <IonLoading isOpen={loading} message={"Please wait..."} />
   );
 };
 
-export default Auth;
+export default withToast(Auth);

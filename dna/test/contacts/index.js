@@ -253,7 +253,11 @@ module.exports = (scenario, conductorConfig) => {
 
   scenario("list blocked contacts", async (s, t) => {
     const { alice, bob, charlie } = await s.players(
-      { alice: conductorConfig, bob: conductorConfig, charlie: conductorConfig},
+      {
+        alice: conductorConfig,
+        bob: conductorConfig,
+        charlie: conductorConfig,
+      },
       true
     );
     const aliceAddress = alice.instance("lobby").agentAddress;

@@ -43,6 +43,7 @@ export default (state = initialState, action: ActionType) => {
           currArr.push(contact);
         });
       }
+
       return {
         ...state,
         contacts,
