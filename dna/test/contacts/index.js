@@ -76,13 +76,21 @@ module.exports = (scenario, conductorConfig) => {
     t.deepEqual(add_contact_result.Ok.username, "bob");
     t.deepEqual(add_contact_result_2.Ok.agent_id, aliceAddress);
     t.deepEqual(add_contact_result_2.Ok.username, "alice");
-    t.deepEqual(invalid_add_contact_result.Err, {
-      Internal: "This address is already added in contacts",
-    });
-    t.deepEqual(invalid_add_contact_result_2.Err, {
-      Internal:
-        "The timestamp is the same with or less than the previous timestamp",
-    });
+
+    // t.deepEqual(invalid_add_contact_result.Err.Internal, {
+    //   Internal: "This address is already added in contacts",
+    // });
+    // t.deepEqual(invalid_add_contact_result_2.Err, {
+    //   Internal:
+    //     "The timestamp is the same with or less than the previous timestamp",
+    // });
+
+    t.deepEqual(JSON.parse(invalid_add_contact_result.Err.Internal).code, "402");
+    t.deepEqual(JSON.parse(invalid_add_contact_result.Err.Internal).message, "This address is already added in contacts");
+
+    t.deepEqual(JSON.parse(invalid_add_contact_result_2.Err.Internal).code, "321");
+    t.deepEqual(JSON.parse(invalid_add_contact_result_2.Err.Internal).message, "The timestamp is the same with or less than the previous timestamp");
+    
   });
 
   scenario("remove a contact", async (s, t) => {
@@ -102,22 +110,30 @@ module.exports = (scenario, conductorConfig) => {
     const add_contact_alice_result_2 = await addContacts("alice", 2)(alice);
     await s.consistency();
 
-    const remove_contact_alice_reult = await removeContacts("bob", 3)(alice);
+    const remove_contact_alice_result = await removeContacts("bob", 3)(alice);
     // no address exisiting
     const invalid_remove_1 = await removeContacts("bob", 4)(alice);
     // timestamp invalid
     const invalid_remove_2 = await removeContacts("alice", 3)(alice);
     t.ok(add_contact_alice_result.Ok);
     t.ok(add_contact_alice_result_2.Ok);
-    t.deepEqual(invalid_remove_1.Err, {
-      Internal: "This address wasn't found in the contract",
-    });
-    t.deepEqual(invalid_remove_2.Err, {
-      Internal:
-        "The timestamp is the same with or less than the previous timestamp",
-    });
-    t.deepEqual(remove_contact_alice_reult.Ok.agent_id, bobAddress);
-    t.deepEqual(remove_contact_alice_reult.Ok.username, "bob");
+
+    // t.deepEqual(invalid_remove_1.Err, {
+    //   Internal: "This address wasn't found in the contract",
+    // });
+    // t.deepEqual(invalid_remove_2.Err, {
+    //   Internal:
+    //     "The timestamp is the same with or less than the previous timestamp",
+    // });
+
+    t.deepEqual(JSON.parse(invalid_remove_1.Err.Internal).code, "404");
+    t.deepEqual(JSON.parse(invalid_remove_1.Err.Internal).message, "This address wasn't found in the contract");
+
+    t.deepEqual(JSON.parse(invalid_remove_2.Err.Internal).code, "321");
+    t.deepEqual(JSON.parse(invalid_remove_2.Err.Internal).message, "The timestamp is the same with or less than the previous timestamp");
+    
+    t.deepEqual(remove_contact_alice_result.Ok.agent_id, bobAddress);
+    t.deepEqual(remove_contact_alice_result.Ok.username, "bob");
   });
 
   scenario("list contacts", async (s, t) => {
@@ -169,9 +185,12 @@ module.exports = (scenario, conductorConfig) => {
       0
     )(alice);
     await s.consistency();
-    t.deepEqual(invalid_block_contact_result_0.Err, {
-      Internal: "Cannot block yourself",
-    });
+    // t.deepEqual(invalid_block_contact_result_0.Err, {
+    //   Internal: "Cannot block own agent id.",
+    // });
+
+    t.deepEqual(JSON.parse(invalid_block_contact_result_0.Err.Internal).code, "302");
+    t.deepEqual(JSON.parse(invalid_block_contact_result_0.Err.Internal).message, "Cannot block own agent id.");
 
     //BLOCK A CONTACT NOT IN CONTACTS (ALSO INSTANTIATES CONTACTS)
     const block_contact_result_0 = await blockContact("charlie", 0)(alice);
@@ -190,17 +209,23 @@ module.exports = (scenario, conductorConfig) => {
     //UPDATE BLOCKED LIST WITH AN INVALID TIMESTAMP
     const invalid_block_contact_result_1 = await blockContact("bob", 1)(alice);
     await s.consistency();
-    t.deepEqual(invalid_block_contact_result_1.Err, {
-      Internal:
-        "The timestamp is the same with or less than the previous timestamp",
-    });
+    // t.deepEqual(invalid_block_contact_result_1.Err, {
+    //   Internal:
+    //     "The timestamp is the same with or less than the previous timestamp",
+    // });
+
+    t.deepEqual(JSON.parse(invalid_block_contact_result_1.Err.Internal).code, "321");
+    t.deepEqual(JSON.parse(invalid_block_contact_result_1.Err.Internal).message, "The timestamp is the same with or less than the previous timestamp");
 
     //BLOCK AN ALREADY BLOCKED CONTACT
     const invalid_block_contact_result_2 = await blockContact("bob", 3)(alice);
     await s.consistency();
-    t.deepEqual(invalid_block_contact_result_2.Err, {
-      Internal: "The contact is already in the list of blocked contacts",
-    });
+    // t.deepEqual(invalid_block_contact_result_2.Err, {
+    //   Internal: "The contact is already in the list of blocked contacts",
+    // });
+
+    t.deepEqual(JSON.parse(invalid_block_contact_result_2.Err.Internal).code, "402");
+    t.deepEqual(JSON.parse(invalid_block_contact_result_2.Err.Internal).message, "The contact is already in the list of blocked contacts");
   });
 
   scenario("unblock contact", async (s, t) => {
@@ -235,10 +260,13 @@ module.exports = (scenario, conductorConfig) => {
       1
     )(alice);
     await s.consistency();
-    t.deepEqual(invalid_unblock_contact_result_1.Err, {
-      Internal:
-        "The timestamp is the same with or less than the previous timestamp",
-    });
+    // t.deepEqual(invalid_unblock_contact_result_1.Err, {
+    //   Internal:
+    //     "The timestamp is the same with or less than the previous timestamp",
+    // });
+
+    t.deepEqual(JSON.parse(invalid_unblock_contact_result_1.Err.Internal).code, "321");
+    t.deepEqual(JSON.parse(invalid_unblock_contact_result_1.Err.Internal).message, "The timestamp is the same with or less than the previous timestamp");    
 
     //UNBLOCK AN UNBLOCKED CONTACT
     const invalid_unblock_contact_result_2 = await unblockContact(
@@ -246,9 +274,12 @@ module.exports = (scenario, conductorConfig) => {
       4
     )(alice);
     await s.consistency();
-    t.deepEqual(invalid_unblock_contact_result_2.Err, {
-      Internal: "The contact is not in the list of blocked contacts",
-    });
+    // t.deepEqual(invalid_unblock_contact_result_2.Err, {
+    //   Internal: "The contact is not in the list of blocked contacts",
+    // });
+
+    t.deepEqual(JSON.parse(invalid_unblock_contact_result_2.Err.Internal).code, "404");
+    t.deepEqual(JSON.parse(invalid_unblock_contact_result_2.Err.Internal).message, "The contact is not in the list of blocked contacts");
   });
 
   scenario("list blocked contacts", async (s, t) => {

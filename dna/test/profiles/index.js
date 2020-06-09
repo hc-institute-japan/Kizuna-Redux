@@ -48,8 +48,15 @@ module.exports = (scenario, conductorConfig) => {
     const set_username_result_bob = await setUsername("bob")(bob);
     await s.consistency()
     t.ok(set_username_result_alice.Ok)
-    t.deepEqual(invalid_set_username_result_alice.Err, {"Internal":"This agent already has a username"})
-    t.deepEqual(invalid_set_username_result_bob.Err, {"Internal":"This username is already existing"})
+    // t.deepEqual(invalid_set_username_result_alice.Err, {"Internal":"This agent already has a username"})
+    // t.deepEqual(invalid_set_username_result_bob.Err, {"Internal":"This username is already existing"})
+
+    t.deepEqual(JSON.parse(invalid_set_username_result_alice.Err.Internal).code, "302");
+    t.deepEqual(JSON.parse(invalid_set_username_result_alice.Err.Internal).message, "This agent already has a username");
+
+    t.deepEqual(JSON.parse(invalid_set_username_result_bob.Err.Internal).code, "202");
+    t.deepEqual(JSON.parse(invalid_set_username_result_bob.Err.Internal).message, "This username is already existing");
+
     t.ok(set_username_result_bob.Ok)
   })
 
@@ -84,6 +91,12 @@ module.exports = (scenario, conductorConfig) => {
 
     t.ok(user_address.Ok)
     t.deepEqual(user_address.Ok, aliceAddress)
+
+    const user_address_not_found = await getUserAddress("bob")(alice);
+    await s.consistency()
+
+    t.deepEqual(JSON.parse(user_address_not_found.Err.Internal).code, "204");
+    t.deepEqual(JSON.parse(user_address_not_found.Err.Internal).message, "No user with that username exists");
 
   })
 
