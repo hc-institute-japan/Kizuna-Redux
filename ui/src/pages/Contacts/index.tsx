@@ -35,11 +35,6 @@ const Contacts = ({ history, pushErr }: any) => {
     }
   }, [loading, contacts, data, dispatch]);
 
-  useEffect(() => {
-    if (error) {
-      pushErr(error);
-    }
-  }, [error, pushErr]);
   return (
     <IonPage>
       <ContactsHeader search={search} setSearch={setSearch} />

@@ -42,7 +42,7 @@ export default (state = initialState, action: ActionType) => {
           const currArr = indexedContacts[currChar];
           currArr.push(contact);
         });
-      }
+      } else if (contacts.length === 0) indexedContacts = {};
 
       return {
         ...state,
