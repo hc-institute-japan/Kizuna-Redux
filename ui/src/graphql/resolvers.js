@@ -31,8 +31,6 @@ const resolvers = {
       // instantiate holochainConnection
       // see https://uprtcl.github.io/js-uprtcl/modules/providers/uprtcl-holochain-provider.html#usage
       const hc_uprtcl = await hcUprtcl();
-      console.log("HAHAHAH");
-      console.log(hc_uprtcl);
 
       const my_agent_id = await get_my_agent_id();
       const agentConfig = await hc_uprtcl.getAgentConfig(my_agent_id);
