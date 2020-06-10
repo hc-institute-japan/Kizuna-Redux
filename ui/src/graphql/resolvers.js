@@ -26,30 +26,30 @@ const get_my_agent_id = async () => {
 
 const resolvers = {
   Query: {
-    // cloneDnaExample: async () => {
-    //   await initAndGetHolochainClient();
-    //   // instantiate holochainConnection
-    //   // see https://uprtcl.github.io/js-uprtcl/modules/providers/uprtcl-holochain-provider.html#usage
-    //   const hc_uprtcl = await hcUprtcl();
+    cloneDnaExample: async () => {
+      await initAndGetHolochainClient();
+      // instantiate holochainConnection
+      // see https://uprtcl.github.io/js-uprtcl/modules/providers/uprtcl-holochain-provider.html#usage
+      const hc_uprtcl = await hcUprtcl();
 
-    //   const my_agent_id = await get_my_agent_id();
-    //   const agentConfig = await hc_uprtcl.getAgentConfig(my_agent_id);
+      const my_agent_id = await get_my_agent_id();
+      const agentConfig = await hc_uprtcl.getAgentConfig(my_agent_id);
 
-    //   // parameters here other than agentId should be taken from the arguments
-    //   await hc_uprtcl.cloneDna(
-    //     agentConfig.id,
-    //     "dna-dos",
-    //     "test-instance-dos",
-    //     "QmeD6PiScYCjQ3XZHhULHt1g4Yw8FoCMz5aLMCea7VeMhk",
-    //     {},
-    //     (interfaces) => interfaces.find((iface) => iface.id === "websocket-interface")
-    //   );
+      // parameters here other than agentId should be taken from the arguments
+      await hc_uprtcl.cloneDna(
+        agentConfig.id,
+        "dna-dos",
+        "test-instance-dos",
+        "QmR3sFbMo771b6zA9yhDRQx8aGV87yhzetm7Dnptj52WL4",
+        {},
+        (interfaces) => interfaces.find((iface) => iface.id === "websocket-interface")
+      );
 
-    //   const hello = await createZomeCall(
-    //     "/test-instance-dos/messages/hello"
-    //   )();
-    //   return hello
-    // },
+      const hello = await createZomeCall(
+        "/test-instance-dos/messages/hello"
+      )();
+      return hello
+    },
     //complete
     allAgents: async () => {
       const all_agents = await createZomeCall(
