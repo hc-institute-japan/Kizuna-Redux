@@ -23,7 +23,7 @@ export default gql`
     blocked: [ID]
   }
   type Query {
-    hello: String
+    cloneDnaExample: String
     allAgents: [Profile!]!
     me: Profile
     contacts: [Profile!]

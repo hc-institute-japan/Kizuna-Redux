@@ -121,7 +121,8 @@ export async function hcUprtcl() {
   holochainUprtclClient = new HolochainConnection({
     host: process.env.REACT_APP_DNA_INTERFACE_URL,
     devEnv: {
-      templateDnasPaths: {QmeemT8H9g1qovPVWPL8KSvvL5o2kaswzZaFWRkqaR88XP: "/Users/tats/projects/Kizuna/dnados/dist/dnados.dna.json"}
+      // this property should be changed to your local paths and dna hash
+      templateDnasPaths: {QmeD6PiScYCjQ3XZHhULHt1g4Yw8FoCMz5aLMCea7VeMhk: "/Users/tats/projects/Kizuna/dnas/p2pmsg/dist/p2pmsg.dna.json"}
     }
   });
   console.log(holochainUprtclClient);
