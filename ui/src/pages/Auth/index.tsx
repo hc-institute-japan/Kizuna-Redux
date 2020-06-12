@@ -42,9 +42,10 @@ const Auth: React.FC = ({ pushErr }: any) => {
       dispatch(authenticate(address));
     }
   }, [dispatch, data]);
-  // useEffect(() => {
-  //   if (error) pushErr(error);
-  // }, [error, pushErr]);
+
+  useEffect(() => {
+    if (error) pushErr(error);
+  }, [error, pushErr]);
 
   return !loading ? (
     <IonRouterOutlet>

@@ -8,19 +8,24 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { arrowBack } from "ionicons/icons";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Input from "../../components/Input";
 import { RootState } from "../../redux/reducers";
 import UPDATE_PROFILE_MUTATION from "../../graphql/mutation/updateProfile";
+import withToast from "../../components/Toast/withToast";
 
-const EditProfile: React.FC = () => {
+const EditProfile: React.FC = ({ pushErr }: any) => {
   const { profile }: { profile: any } = useSelector(
     (state: RootState) => state.profile
   );
   const [profileInput, setProfileInput] = useState({});
 
-  const [updateProfile] = useMutation(UPDATE_PROFILE_MUTATION);
+  const [updateProfile, { error }] = useMutation(UPDATE_PROFILE_MUTATION);
+
+  useEffect(() => {
+    if (error) pushErr(error);
+  }, [error]);
 
   return (
     <IonPage>
@@ -59,4 +64,4 @@ const EditProfile: React.FC = () => {
   );
 };
 
-export default EditProfile;
+export default withToast(EditProfile);

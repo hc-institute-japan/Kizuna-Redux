@@ -12,11 +12,17 @@ const ToastProvider: React.FC = ({ children }) => {
   };
 
   const pushErr = (err: any, opt: any) => {
-    const message = err?.graphQLErrors[0].message;
-    setToast((curr: any) => [
-      ...curr,
-      <Toast key={curr.length + 1} {...opt} message={message} color="danger" />,
-    ]);
+    const error = err?.graphQLErrors[0];
+    if ((error.constructor.name = "Object" && "code" in error))
+      setToast((curr: any) => [
+        ...curr,
+        <Toast
+          key={curr.length + 1}
+          {...opt}
+          message={error.message}
+          color="danger"
+        />,
+      ]);
   };
 
   return (

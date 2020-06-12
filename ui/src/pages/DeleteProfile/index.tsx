@@ -10,13 +10,15 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { arrowBack } from "ionicons/icons";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import DELETE_PROFILE_MUTATION from "../../graphql/mutation/deleteProfileMutation";
 import { RootState } from "../../redux/reducers";
 import styles from "./style.module.css";
+import withToast from "../../components/Toast/withToast";
+import { setServers } from "dns";
 
-const DeleteProfile = () => {
+const DeleteProfile = ({ pushErr }: any) => {
   const profile: any = useSelector((state: RootState) => state.profile);
   // const [username, setUsername] = useState("");
   const [isUsernameCorrect, setIsUsernameCorrect] = useState(false);
@@ -29,11 +31,15 @@ const DeleteProfile = () => {
     // setUsername(string);
   };
 
-  const [deleteProfile] = useMutation(DELETE_PROFILE_MUTATION);
+  const [deleteProfile, { error }] = useMutation(DELETE_PROFILE_MUTATION);
 
   const onSubmitAction = async () => {
     await deleteProfile();
   };
+
+  useEffect(() => {
+    if (error) pushErr(error);
+  }, [error]);
 
   return (
     <IonPage>
@@ -72,4 +78,4 @@ const DeleteProfile = () => {
   );
 };
 
-export default DeleteProfile;
+export default withToast(DeleteProfile);

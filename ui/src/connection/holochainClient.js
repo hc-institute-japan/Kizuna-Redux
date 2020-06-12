@@ -72,13 +72,13 @@ export function callZome({ id, zome, func }) {
 
       const rawResult = await zomeCall(args);
       const jsonResult = JSON.parse(rawResult);
-      const error =
-        get("Err", jsonResult) || get("SerializationError", jsonResult);
+      // const error =
+      //   get("Err", jsonResult) || get("SerializationError", jsonResult);
       const rawOk = get("Ok", jsonResult);
 
       var result = rawOk;
 
-      if (error) throw error;
+      // if (error) throw error;
 
       if (result.constructor.name === "Object" && "code" in result) {
         throw new Error(result.message);
@@ -87,11 +87,12 @@ export function callZome({ id, zome, func }) {
       return result;
     } catch (error) {
       // throw new Error(JSON.stringify(error))
-      if (error.Internal) {
-        const { message } = JSON.parse(error.Internal);
-        throw new Error(message);
-      } else {
-        throw new Error(JSON.stringify(error));
+      const err = error.Internal;
+      if (err) {
+        if (err.constructor.name === "Object" && "code" in err) {
+          const { message } = JSON.parse(err);
+          throw new Error(message);
+        }
       }
     }
   };

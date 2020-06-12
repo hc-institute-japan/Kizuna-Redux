@@ -20,6 +20,8 @@ import styles from "./style.module.css";
 
 const Contacts = ({ history, pushErr }: any) => {
   const [search, setSearch] = useState("");
+  const [hasFetched, setHasFetched] = useState(false);
+
   const { indexedContacts, contacts } = useSelector(
     (state: RootState) => state.contacts
   );
@@ -27,10 +29,16 @@ const Contacts = ({ history, pushErr }: any) => {
   const dispatch = useDispatch();
   const { data, loading, error } = useQuery(CONTACTS, {
     fetchPolicy: "no-cache",
+    skip: hasFetched,
   });
 
   useEffect(() => {
+    if (error) pushErr(error);
+  }, [error]);
+
+  useEffect(() => {
     if (!loading) {
+      setHasFetched(true);
       dispatch(setContacts(data ? data.contacts : contacts));
     }
   }, [loading, contacts, data, dispatch]);

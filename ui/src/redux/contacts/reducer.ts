@@ -4,14 +4,7 @@ import { ActionType, Profile } from "../types";
 const initialState = {
   contacts: [],
   indexedContacts: {},
-  blocked: [
-    { username: "Neil1" },
-    { username: "Dave1" },
-    { username: "Tatsuya1" },
-    { username: "Neil2" },
-    { username: "Dave2" },
-    { username: "Tatsuya2" },
-  ],
+  blocked: [],
 };
 
 export default (state = initialState, action: ActionType) => {
