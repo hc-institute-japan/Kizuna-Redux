@@ -15,10 +15,21 @@ let holochainUprtclClient;
 
 // Do we need to close ws connection at some point?
 
+let connection;
+
 export const HOLOCHAIN_LOGGING = process.env.NODE_ENV === "development";
 
-export async function initAndGetHolochainClient() {
+export const getConnection = () => {
+  if (connection) return connection;
 
+  const { callZome } = initAndGetHolochainClient();
+
+  connection = (instance, zome, func) => async (params) => {
+    return await callZome(instance, zome, func)(params);
+  };
+};
+
+export async function initAndGetHolochainClient() {
   if (holochainClient) return holochainClient;
 
   try {
@@ -48,68 +59,42 @@ export function parseZomeCallPath(zomeCallPath) {
   return { instanceId, zome, zomeFunc };
 }
 
-export function createZomeCall(zomeCallPath, callOpts = {}) {
-  const DEFAULT_OPTS = {
-    logging: HOLOCHAIN_LOGGING,
-  };
-  const opts = {
-    ...DEFAULT_OPTS,
-    ...callOpts,
-  };
-
+export function callZome({ id, zome, func }) {
   return async function (args = {}) {
     try {
       // console.log(args);
-      const { instanceId, zome, zomeFunc } = parseZomeCallPath(zomeCallPath);
+
       let zomeCall;
       // if (MOCK_DNA_CONNECTION) {
       //   zomeCall = mockCallZome(instanceId, zome, zomeFunc);
       // } else {
       await initAndGetHolochainClient();
-      zomeCall = holochainClient.callZome(instanceId, zome, zomeFunc);
+      zomeCall = holochainClient.callZome(id, zome, func);
       // }
 
       const rawResult = await zomeCall(args);
       const jsonResult = JSON.parse(rawResult);
-      const error =
-        get("Err", jsonResult) || get("SerializationError", jsonResult);
+      // const error =
+      //   get("Err", jsonResult) || get("SerializationError", jsonResult);
       const rawOk = get("Ok", jsonResult);
 
       var result = rawOk;
 
-      if (error) throw error;
+      // if (error) throw error;
 
-      if (opts.logging) {
-        const detailsFormat = "font-weight: bold; color: rgb(220, 208, 120)";
-
-        console.groupCollapsed(
-          `👍 ${zomeCallPath}%c zome call complete`,
-          "font-weight: normal; color: rgb(160, 160, 160)"
-        );
-        console.groupCollapsed("%cArgs", detailsFormat);
-        console.log(args);
-        console.groupEnd();
-        console.groupCollapsed("%cResult", detailsFormat);
-        console.log(result);
-        console.groupEnd();
-        console.groupEnd();
+      if (result.constructor.name === "Object" && "code" in result) {
+        throw new Error(result.message);
       }
+
       return result;
     } catch (error) {
-      console.log(
-        `👎 %c${zomeCallPath}%c zome call ERROR using args: `,
-        "font-weight: bold; color: rgb(220, 208, 120); color: red",
-        "font-weight: normal; color: rgb(160, 160, 160)",
-        args,
-        " -- ",
-        error
-      );
-      
       // throw new Error(JSON.stringify(error))
-      if (error.Internal) {
-          throw new Error(error.Internal);
-      } else {
-        throw new Error(JSON.stringify(error))
+      const err = error.Internal;
+      if (err) {
+        if (err.constructor.name === "Object" && "code" in err) {
+          const { message } = JSON.parse(err);
+          throw new Error(message);
+        }
       }
     }
   };

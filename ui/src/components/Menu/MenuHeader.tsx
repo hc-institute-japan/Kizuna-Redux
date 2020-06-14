@@ -1,7 +1,6 @@
 import { IonGrid, IonText } from "@ionic/react";
 import React from "react";
 import { useSelector } from "react-redux";
-import { withRouter } from "react-router-dom";
 import { RootState } from "../../redux/reducers";
 import styles from "./style.module.css";
 

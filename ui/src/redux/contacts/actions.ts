@@ -1,8 +1,7 @@
-import { SET_CONTACTS, SET_BLOCKED } from "./actionTypes";
-
 import { AnyAction } from "redux";
 import { ThunkDispatch } from "redux-thunk";
-import { Contacts, Blocked, Profile } from "../types";
+import { Blocked } from "../types";
+import { SET_BLOCKED, SET_CONTACTS } from "./actionTypes";
 
 export const setContacts = (contacts: any) => (
   dispatch: ThunkDispatch<void, {}, AnyAction>
