@@ -1,7 +1,10 @@
 import { connect as hcWebClientConnect } from "@holochain/hc-web-client";
 import { get } from "lodash/fp";
-import {MicroOrchestrator} from '@uprtcl/micro-orchestrator';
-import { HolochainConnectionModule, HolochainConnection } from '@uprtcl/holochain-provider';
+import { MicroOrchestrator } from "@uprtcl/micro-orchestrator";
+import {
+  HolochainConnectionModule,
+  HolochainConnection,
+} from "@uprtcl/holochain-provider";
 
 let holochainClient;
 let holochainUprtclClient;
@@ -15,19 +18,7 @@ let holochainUprtclClient;
 
 // Do we need to close ws connection at some point?
 
-let connection;
-
 export const HOLOCHAIN_LOGGING = process.env.NODE_ENV === "development";
-
-export const getConnection = () => {
-  if (connection) return connection;
-
-  const { callZome } = initAndGetHolochainClient();
-
-  connection = (instance, zome, func) => async (params) => {
-    return await callZome(instance, zome, func)(params);
-  };
-};
 
 export async function initAndGetHolochainClient() {
   if (holochainClient) return holochainClient;
@@ -107,14 +98,17 @@ export async function hcUprtcl() {
     host: process.env.REACT_APP_DNA_INTERFACE_URL,
     devEnv: {
       // this property should be changed to your local paths and dna hash
-      templateDnasPaths: {QmR3sFbMo771b6zA9yhDRQx8aGV87yhzetm7Dnptj52WL4: "/Users/tats/projects/Kizuna/dnas/p2pcomm/dist/p2pcomm.dna.json"}
-    }
+      templateDnasPaths: {
+        QmR3sFbMo771b6zA9yhDRQx8aGV87yhzetm7Dnptj52WL4:
+          "/Users/tats/projects/Kizuna/dnas/p2pcomm/dist/p2pcomm.dna.json",
+      },
+    },
   });
-  console.log(holochainUprtclClient);
+
   const hcModule = new HolochainConnectionModule(holochainUprtclClient);
-  console.log(hcModule);
+
   const orchestrator = new MicroOrchestrator();
-  console.log(orchestrator);
+
   await orchestrator.loadModule(hcModule);
   return holochainUprtclClient;
 }

@@ -4,7 +4,7 @@ import { ApolloLink, Observable } from "apollo-link";
 import { onError } from "apollo-link-error";
 import { SchemaLink } from "apollo-link-schema";
 import { makeExecutableSchema } from "graphql-tools";
-import { callZome } from "./holochainClient";
+import { callZome, hcUprtcl } from "./holochainClient";
 import resolvers from "./resolvers";
 import typeDefs from "./typeDefs";
 
@@ -19,6 +19,7 @@ const schemaLink = new SchemaLink({
   }),
   context: {
     callZome: callZome,
+    hcUprtcl: hcUprtcl,
   },
 });
 
