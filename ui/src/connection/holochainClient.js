@@ -1,8 +1,10 @@
 import { connect as hcWebClientConnect } from "@holochain/hc-web-client";
 import { get } from "lodash/fp";
-// import mockCallZome from "../mock-dnas/mockCallZome";
+import {MicroOrchestrator} from '@uprtcl/micro-orchestrator';
+import { HolochainConnectionModule, HolochainConnection } from '@uprtcl/holochain-provider';
 
 let holochainClient;
+let holochainUprtclClient;
 
 // NB: This should be set to false when you want to run against a Holochain Conductor
 // with a websocket interface running on REACT_APP_DNA_INTERFACE_URL.
@@ -96,4 +98,23 @@ export function callZome({ id, zome, func }) {
       }
     }
   };
+}
+
+// see https://github.com/uprtcl/js-uprtcl/tree/master/providers/holochain
+export async function hcUprtcl() {
+  if (holochainUprtclClient) return holochainUprtclClient;
+  holochainUprtclClient = new HolochainConnection({
+    host: process.env.REACT_APP_DNA_INTERFACE_URL,
+    devEnv: {
+      // this property should be changed to your local paths and dna hash
+      templateDnasPaths: {QmR3sFbMo771b6zA9yhDRQx8aGV87yhzetm7Dnptj52WL4: "/Users/tats/projects/Kizuna/dnas/p2pcomm/dist/p2pcomm.dna.json"}
+    }
+  });
+  console.log(holochainUprtclClient);
+  const hcModule = new HolochainConnectionModule(holochainUprtclClient);
+  console.log(hcModule);
+  const orchestrator = new MicroOrchestrator();
+  console.log(orchestrator);
+  await orchestrator.loadModule(hcModule);
+  return holochainUprtclClient;
 }
