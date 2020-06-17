@@ -19,7 +19,7 @@ import withToast from "../../components/Toast/withToast";
 type Props = RouteComponentProps<
   {},
   {},
-  { email: string; pushErr(err: any, opt: any): void }
+  { pushErr(err: any, opt: any): void }
 >;
 
 const Register: any = (props: any) => {
@@ -58,6 +58,7 @@ const Register: any = (props: any) => {
       props.history.push("/home");
       // catch the error from createZomeCall
     } catch (e) {
+      // console.log(typeof e);
       props.pushErr(e);
     }
   };
