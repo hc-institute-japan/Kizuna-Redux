@@ -16,11 +16,7 @@ import { isUsernameFormatValid } from "../../utils/helpers/regex";
 import styles from "./style.module.css";
 import withToast from "../../components/Toast/withToast";
 
-type Props = RouteComponentProps<
-  {},
-  {},
-  { pushErr(err: any, opt: any): void }
->;
+// type Props = RouteComponentProps<{}, {}, { pushErr(err: any, opt: any): void }>;
 
 const Register: any = (props: any) => {
   const [username, setUsername] = useState("");
@@ -58,8 +54,7 @@ const Register: any = (props: any) => {
       props.history.push("/home");
       // catch the error from createZomeCall
     } catch (e) {
-      // console.log(typeof e);
-      props.pushErr(e);
+      props.pushErr(e, {}, "r");
     }
   };
 

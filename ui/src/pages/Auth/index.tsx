@@ -14,8 +14,6 @@ import Unauthenticated from "../../routes/Unauthenticated";
  *
  * Handles the authentication of the application. Checks if there is an agent_address stored locally in the device's local storage. Passes different set of routes depending on the authentication
  * Route - maps the necessary components to a certain url.
- *
- *
  */
 
 const Auth: React.FC = ({ pushErr }: any) => {

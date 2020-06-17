@@ -57,14 +57,22 @@ const requestLink = new ApolloLink(
 const links = [
   ...(process.env.NODE_ENV !== "test" && [
     onError(({ graphQLErrors, networkError }) => {
-      if (graphQLErrors)
-        graphQLErrors.map(({ message, locations, path }) =>
+      if (graphQLErrors) {
+        console.group("GraphQL Errors: ");
+        graphQLErrors.map(({ message, locations, path }, index) =>
           console.log(
-            `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+            `Error ${
+              index + 1
+            }: Message: ${message}, Location: ${locations}, Path: ${path}`
           )
         );
-
-      if (networkError) console.log(`[Network error]: ${networkError}`);
+        console.groupEnd();
+      }
+      if (networkError) {
+        console.group("Network Error: ");
+        console.log(networkError);
+        console.groupEnd();
+      }
     }),
   ]),
   // apolloLogger,
