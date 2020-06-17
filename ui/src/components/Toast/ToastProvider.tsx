@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Toast from ".";
 import ToastContext from "./ToastContext";
+import errorMessages from "../../utils/errors";
 
 const ToastProvider: React.FC = ({ children }) => {
   const [toast, setToast] = useState<any>([]);
@@ -11,40 +12,33 @@ const ToastProvider: React.FC = ({ children }) => {
     ]);
   };
 
-  const pushErr = (err: any, opt: any) => {
-    const graphQLError = err?.graphQLErrors[0];
-    const networkError = err?.networkError;
-    console.log(Object.keys(err));
-    console.log(networkError);
-    console.log(err.message);
-    const bool1: Boolean = graphQLError.constructor.name === "Object";
-    console.log(bool1);
-    console.log(graphQLError.constructor.name);
-    // console.log(networkError.constructor.name);
-    if (graphQLError.constructor.name === "Object") {
-      console.log("wtf is this");
-      // setToast((curr: any) => [
-      //   ...curr,
-      //   <Toast
-      //     key={curr.length + 1}
-      //     {...opt}
-      //     message={error.message}
-      //     color="danger"
-      //   />,
-      // ]);
-      setToast((curr: any) => {
-        console.log("working");
-        return [
-          ...curr,
-          <Toast
-            key={curr.length + 1}
-            {...opt}
-            message={graphQLError.message}
-            color="danger"
-          />,
-        ]
+  const pushErr = (err: any, opt: any = {}, postfix: any = "") => {
+    const { graphQLErrors, networkError }: any = { ...err };
+    const messages: any = [];
+    console.log(graphQLErrors);
+    if (graphQLErrors) {
+      graphQLErrors.map(({ message }: any) => {
+        const individual = JSON.parse(message);
+        const msg = errorMessages[individual.code + postfix] || "Test";
+        messages.push(msg);
       });
+    } else if (networkError) {
+      messages.push(errorMessages["500"]);
     }
+
+    console.log(messages);
+
+    setToast((curr: any) => [
+      ...curr,
+      ...messages.map((message: any) => (
+        <Toast
+          key={curr.length + 1}
+          {...opt}
+          message={message}
+          color="danger"
+        />
+      )),
+    ]);
   };
 
   return (

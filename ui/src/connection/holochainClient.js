@@ -53,48 +53,47 @@ export function parseZomeCallPath(zomeCallPath) {
 export function callZome({ id, zome, func }) {
   return async function (args = {}) {
     try {
-      // console.log(args);
-
       let zomeCall;
-      // if (MOCK_DNA_CONNECTION) {
-      //   zomeCall = mockCallZome(instanceId, zome, zomeFunc);
-      // } else {
+
       await initAndGetHolochainClient();
       zomeCall = holochainClient.callZome(id, zome, func);
-      // }
 
       const rawResult = await zomeCall(args);
       const jsonResult = JSON.parse(rawResult);
       const error =
         get("Err", jsonResult) || get("SerializationError", jsonResult);
       const rawOk = get("Ok", jsonResult);
-
-      var result = rawOk;
+      const result = rawOk;
 
       if (error) throw error;
 
-      // if (result.constructor.name === "Object" && "code" in result) {
-      //   throw new Error(result.message);
-      // }
-
       return result;
-    } catch (error) {
-      // throw new Error(JSON.stringify(error))
-      if (error.Internal) {
-        const err = JSON.parse(error.Internal);
+    } catch (e) {
+      const {
+        Internal,
+        FunctionNotImplemented,
+        HashNotFound,
+        ValidationFailed,
+      } = { ...e };
+      if (Internal) {
+        const err = JSON.parse(Internal);
         if (err.constructor.name === "Object" && "code" in err) {
-          throw new Error(err.message);
+          throw new Error(JSON.stringify(err));
         }
-      } else {
-        throw new Error(JSON.stringify(error))
+      } else if (FunctionNotImplemented || HashNotFound || ValidationFailed) {
+        throw new Error(
+          JSON.stringify({
+            code: 1000,
+            message: "Filler",
+          })
+        );
       }
-
-      // if (err) {
-      //   if (err.constructor.name === "Object" && "code" in err) {
-      //     const { message } = JSON.parse(err);
-      //     throw new Error(message);
-      //   }
-      // }
+      throw new Error(
+        JSON.stringify({
+          code: 502,
+          message: "Timeout",
+        })
+      );
     }
   };
 }
