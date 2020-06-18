@@ -14,10 +14,11 @@ import CREATE_PROFILE_MUTATION from "../../graphql/mutation/createProfileMutatio
 import { authenticate } from "../../redux/auth/actions";
 import { isUsernameFormatValid } from "../../utils/helpers/regex";
 import styles from "./style.module.css";
+import withToast from "../../components/Toast/withToast";
 
-type Props = RouteComponentProps<{}, {}, { email: string }>;
+// type Props = RouteComponentProps<{}, {}, { pushErr(err: any, opt: any): void }>;
 
-const Register: React.FC<Props> = (props) => {
+const Register: any = (props: any) => {
   const [username, setUsername] = useState("");
 
   const [usernameError, setUsernameError] = useState("");
@@ -37,17 +38,23 @@ const Register: React.FC<Props> = (props) => {
     }
   }, [username]);
 
-  useEffect(() => {});
-
   const onSubmitAction = async () => {
     // need to handle zomeapierror
-    const profile_result = await createProfile({
-      variables: { username },
-    });
-    // localStorage.setItem("user_address", returnEntry.data.createProfile);
-    localStorage.setItem("agent_address", profile_result.data.createProfile.id);
-    dispatch(authenticate(profile_result.data.createProfile.id));
-    props.history.push("/home");
+    try {
+      const profile_result = await createProfile({
+        variables: { username },
+      });
+      // localStorage.setItem("user_address", returnEntry.data.createProfile);
+      localStorage.setItem(
+        "agent_address",
+        profile_result.data.createProfile.id
+      );
+      dispatch(authenticate(profile_result.data.createProfile.id));
+      props.history.push("/home");
+      // catch the error from createZomeCall
+    } catch (e) {
+      props.pushErr(e, {}, "profiles");
+    }
   };
 
   return (
@@ -91,4 +98,4 @@ const Register: React.FC<Props> = (props) => {
   );
 };
 
-export default withRouter(Register);
+export default withToast(withRouter(Register));

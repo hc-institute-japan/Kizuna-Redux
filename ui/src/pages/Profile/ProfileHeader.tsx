@@ -8,14 +8,12 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { ellipsisVertical } from "ionicons/icons";
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import Popover from "../../components/Popover";
 import styles from "./style.module.css";
 
 const ProfileHeader = ({ url }: { url: string }) => {
-  const [showPopover, setIsPopoverVisible] = useState(false);
   const popover = useRef<any>(null);
-
   return (
     <div className={styles.profile} style={{ backgroundImage: `url(${url})` }}>
       <IonToolbar>

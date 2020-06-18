@@ -1,3 +1,6 @@
-[submodule "dna/zomes/profiles"]
-	path = dna/zomes/profiles
+[submodule "dnas/lobby/zomes/profiles"]
+	path = dnas/lobby/zomes/profiles
 	url = https://github.com/holochain-open-dev/profiles-zome.git
+[submodule "dnas/p2pcomm/zomes/messages"]
+	path = dnas/p2pcomm/zomes/messages
+	url = https://github.com/holochain-open-dev/messages-zome.git
