@@ -7,7 +7,7 @@ import {
   IonTabs,
 } from "@ionic/react";
 import { chatbox, personCircle } from "ionicons/icons";
-import React, { useState } from "react";
+import React from "react";
 
 const HomeTabBar: React.FC = ({ children }) => (
   <IonTabs>

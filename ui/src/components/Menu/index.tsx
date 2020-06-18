@@ -1,16 +1,8 @@
-import {
-  IonContent,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonMenu,
-  IonButton,
-  IonNote,
-} from "@ionic/react";
+import { IonContent, IonList, IonMenu, IonNote } from "@ionic/react";
 import React from "react";
+import { useHistory } from "react-router-dom";
 import MenuHeader from "./MenuHeader";
 import styles from "./style.module.css";
-import { useHistory } from "react-router-dom";
 
 /**
  * @name Menu

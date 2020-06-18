@@ -7,17 +7,26 @@ import {
   IonLabel,
   IonList,
 } from "@ionic/react";
-import { add } from "ionicons/icons";
-import React, { useState } from "react";
+import { add, push } from "ionicons/icons";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import SearchHeader from "../../components/Header/SearchHeader";
 import IonContainer from "../../components/IonContainer";
-import ADD_PROFILE from "../../graphql/mutation/addContactMutation";
+import ADD_CONTACTS from "../../graphql/mutation/addContactMutation";
 import ALL from "../../graphql/query/allAgentsQuery";
+import { setContacts } from "../../redux/contacts/actions";
+import { RootState } from "../../redux/reducers";
 import { getTimestamp } from "../../utils/helpers";
+import withToast from "../../components/Toast/withToast";
+import { attachProps } from "@ionic/react/dist/types/components/utils";
 
-const Add = () => {
-  const { data } = useQuery(ALL);
-  const [addProfile] = useMutation(ADD_PROFILE);
+const Add = ({ pushErr }: any) => {
+  const { data, error } = useQuery(ALL);
+  const [addContacts] = useMutation(ADD_CONTACTS);
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const { contacts } = useSelector((state: RootState) => state.contacts);
 
   const users = data
     ? data.allAgents.map((user: any) => ({
@@ -26,30 +35,19 @@ const Add = () => {
       }))
     : [];
 
-  const [search, setSearch] = useState("");
+  useEffect(() => {
+    if (error) pushErr(error, {}, "profiles");
+  }, [error]);
 
-  // [
-  //   { address: "test1", username: "Neil" },
-  //   { address: "test2", username: "Dave" },
-  //   { address: "test3", username: "Tatsuya" },
-  //   { address: "test4", username: "Tomato" },
-  //   { address: "test5", username: "Potato" },
-  //   { address: "test6", username: "Akira" },
-  //   { address: "test7", username: "Nicko" },
-  //   { address: "test8", username: "Zendaya" },
-  //   { address: "test9", username: "Wakabayashi" },
-  //   { address: "test10", username: "Sato" },
-  //   { address: "test11", username: "Pangarungan" },
-  //   { address: "test12", username: "Gardose" },
-  //   { address: "test13", username: "Sasaki" },
-  //   { username: "test14" },
-  //   { username: "test15" },
-  // ];
+  const [search, setSearch] = useState("");
 
   return (
     <IonContainer>
       <SearchHeader
         onSearchChange={(e) => setSearch((e.target as HTMLInputElement).value)}
+        onBack={() => {
+          history.push("home/contacts");
+        }}
         value={search}
         placeholder="Search User"
       />
@@ -60,27 +58,43 @@ const Add = () => {
               .filter((user: any) =>
                 user.username.toLowerCase().includes(search)
               )
-              .map((user: any) => (
-                <IonItem key={user.username}>
-                  <IonLabel>{user.username}</IonLabel>
-                  <IonButton
-                    onClick={() => {
-                      console.log(getTimestamp());
-                      addProfile({
-                        variables: {
-                          username: user.username,
-                          timestamp: Math.floor(getTimestamp()),
-                        },
-                      });
-                    }}
-                    fill="clear"
-                    color="dark"
-                    slot="end"
-                  >
-                    <IonIcon icon={add} slot="end" />
-                  </IonButton>
-                </IonItem>
-              ))}
+              .map((user: any) =>
+                contacts.some(
+                  (contact: any) => contact.username === user.username
+                ) ? null : (
+                  <IonItem key={user.username}>
+                    <IonLabel>{user.username}</IonLabel>
+
+                    <IonButton
+                      onClick={async () => {
+                        try {
+                          const profile: any = await addContacts({
+                            variables: {
+                              username: user.username,
+                              timestamp: getTimestamp(),
+                            },
+                          });
+                          dispatch(
+                            setContacts([
+                              ...contacts,
+                              {
+                                username: profile.data.addContact.username,
+                              },
+                            ])
+                          );
+                        } catch (e) {
+                          pushErr(e, {}, "contacts", "addContact")
+                        }
+                      }}
+                      fill="clear"
+                      color="dark"
+                      slot="end"
+                    >
+                      <IonIcon icon={add} slot="end" />
+                    </IonButton>
+                  </IonItem>
+                )
+              )}
           </IonList>
         ) : null}
       </IonContent>
@@ -88,4 +102,4 @@ const Add = () => {
   );
 };
 
-export default Add;
+export default withToast(Add);

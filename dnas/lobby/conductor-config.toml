@@ -12,7 +12,7 @@ test_agent = true
 
 [[dnas]]
 file = '/Users/tats/projects/Kizuna/dnas/lobby/dist/lobby.dna.json'
-hash = 'QmaAZ3rSgHhiu2Rn4bA1MZ9p6HjTSMy6UwJ2fuFQZPK477'
+hash = 'QmP24cVrdPqE5iE3632TjghQtv2Hcg8jidx7VwTDGmYHK8'
 id = 'hc-run-dna'
 
 [[instances]]

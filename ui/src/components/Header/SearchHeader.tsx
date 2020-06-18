@@ -1,13 +1,13 @@
-import React from "react";
 import {
-  IonToolbar,
   IonButton,
   IonButtons,
   IonIcon,
   IonSearchbar,
+  IonToolbar,
 } from "@ionic/react";
 import { arrowBack } from "ionicons/icons";
-import { withRouter, RouteComponentProps } from "react-router-dom";
+import React from "react";
+import { RouteComponentProps, withRouter } from "react-router-dom";
 
 interface Props {
   onBack?(): any;
@@ -17,9 +17,9 @@ interface Props {
 }
 
 const SearchHeader: React.FC<Props & RouteComponentProps> = ({
-  onBack = () => history.goBack(),
   onSearchChange,
   history,
+  onBack = () => history.goBack(),
   value,
   placeholder = "",
 }) => {

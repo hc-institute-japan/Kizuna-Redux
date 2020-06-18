@@ -1,13 +1,6 @@
+import { IonItem, IonLabel, IonList, IonNote } from "@ionic/react";
 import React from "react";
 import styles from "./style.module.css";
-import {
-  IonNote,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonText,
-  IonItemGroup,
-} from "@ionic/react";
 
 interface Profile {
   [key: string]: any;

@@ -3,6 +3,9 @@ import ApolloContainer from "./ApolloContainer";
 import ReduxContainer from "./ReduxContainer";
 import IonicContainer from "./IonicContainer";
 import RouterContainer from "./RouterContainer";
+import ErrorContainer from "./ErrorContainer";
+import ToastContainer from "../components/Toast/ToastContainer";
+import ToastProvider from "../components/Toast/ToastProvider";
 
 const Container = ({ children }: { children: React.ReactNode }) => {
   /**
@@ -20,7 +23,14 @@ const Container = ({ children }: { children: React.ReactNode }) => {
     <ApolloContainer>
       <ReduxContainer>
         <IonicContainer>
-          <RouterContainer>{children}</RouterContainer>
+          <ErrorContainer>
+            <RouterContainer>
+              <ToastProvider>
+                {children}
+                <ToastContainer />
+              </ToastProvider>
+            </RouterContainer>
+          </ErrorContainer>
         </IonicContainer>
       </ReduxContainer>
     </ApolloContainer>

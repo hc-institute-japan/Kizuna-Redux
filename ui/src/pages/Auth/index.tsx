@@ -1,7 +1,8 @@
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery, useLazyQuery } from "@apollo/react-hooks";
 import { IonLoading, IonRouterOutlet } from "@ionic/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import withToast from "../../components/Toast/withToast";
 import ME from "../../graphql/query/meQuery";
 import { authenticate } from "../../redux/auth/actions";
 import { RootState } from "../../redux/reducers";
@@ -13,11 +14,9 @@ import Unauthenticated from "../../routes/Unauthenticated";
  *
  * Handles the authentication of the application. Checks if there is an agent_address stored locally in the device's local storage. Passes different set of routes depending on the authentication
  * Route - maps the necessary components to a certain url.
- *
- *
  */
 
-const Auth: React.FC = () => {
+const Auth: React.FC = ({ pushErr }: any) => {
   // right now, once authenticated, the user will always be authenticated. is this ok?
   // may need to deauthenticate once the user has no username already.
   const isAuthenticated = useSelector(
@@ -27,7 +26,8 @@ const Auth: React.FC = () => {
 
   // this query is being called even before the holochain connection is finished establishing.
   // needs error handling
-  const { loading, data } = useQuery(ME);
+  const [username, setUsername] = useState(null);
+  const [getMe, { loading, data, error }] = useLazyQuery(ME);
 
   // localStorage.removeItem("agent_address");
   // localStorage.setItem(
@@ -37,18 +37,33 @@ const Auth: React.FC = () => {
   useEffect(() => {
     const address = localStorage.getItem("agent_address");
     // localStorage.removeItem("agent_address");
-    if (address && data?.me?.username !== null) {
-      dispatch(authenticate(address));
+    getMe();
+    if (data && data?.me?.username) setUsername(data?.me?.username);
+    if (username !== null) {
+      if (address) {
+        dispatch(authenticate(address));
+      } else {
+        localStorage.setItem(
+          "agent_address",
+          data?.me?.id
+        );
+        dispatch(authenticate(data?.me?.id));
+      }
     }
-  }, [dispatch, data]);
+  }, [dispatch, data, username, getMe]);
+
+  useEffect(() => {
+    if (error) pushErr(error, {}, "profiles");
+  }, [error]);
 
   return !loading ? (
     <IonRouterOutlet>
       {isAuthenticated ? <Authenticated /> : <Unauthenticated />}
+      {/* <Toast /> */}
     </IonRouterOutlet>
   ) : (
     <IonLoading isOpen={loading} message={"Please wait..."} />
   );
 };
 
-export default Auth;
+export default withToast(Auth);
