@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Toast from ".";
 import ToastContext from "./ToastContext";
 import errorMessages from "../../utils/errors";
+import { stringify } from "querystring";
 
 const ToastProvider: React.FC = ({ children }) => {
   const [toast, setToast] = useState<any>([]);
@@ -12,21 +13,40 @@ const ToastProvider: React.FC = ({ children }) => {
     ]);
   };
 
-  const pushErr = (err: any, opt: any = {}, postfix: any = "") => {
+  const pushErr = (err: any, opt: any = {}, zomeName: string, funcName: string | null = null) => {
     const { graphQLErrors, networkError }: any = { ...err };
     const messages: any = [];
-    console.log(graphQLErrors);
+
     if (graphQLErrors) {
       graphQLErrors.map(({ message }: any) => {
-        const individual = JSON.parse(message);
-        const msg = errorMessages[individual.code + postfix] || "Test";
-        messages.push(msg);
+        const { code } = JSON.parse(message);
+        if (code) {
+          switch(code) {
+            case 502: {
+              messages.push("Your request has timed out. Please try again later.");
+              break;
+            }
+            case 1000: {
+              messages.push("unexpected error has occured. Please try again later.");
+              break;
+            }
+            // handle all the other errors here
+            default: {
+              let msg;
+              console.log(zomeName);
+              console.log(funcName);
+              console.log(code);
+              funcName !== null ? msg = errorMessages[zomeName][funcName][code] : msg = errorMessages[zomeName][code];
+              // might not be good for debugging
+              msg ? messages.push(msg) : messages.push("unexpected error has occured. Please try again later.");
+              break;
+            }
+          }
+        } else messages.push("unexpected error has occured. Please try again later.")
       });
     } else if (networkError) {
       messages.push(errorMessages["500"]);
     }
-
-    console.log(messages);
 
     setToast((curr: any) => [
       ...curr,

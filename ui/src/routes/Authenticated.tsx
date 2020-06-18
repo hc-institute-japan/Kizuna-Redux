@@ -25,8 +25,8 @@ const Authenticated: React.FC = ({ pushErr }: any) => {
   }, [profile, dispatch]);
 
   useEffect(() => {
-    if (profile.error) pushErr(profile.error);
-  }, [profile.error, pushErr]);
+    if (profile.error) pushErr(profile.error, {}, "profiles");
+  }, [profile.error]);
   return !profile.loading ? (
     <>
       <Menu />

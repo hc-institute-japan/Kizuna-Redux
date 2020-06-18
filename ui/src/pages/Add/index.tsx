@@ -7,7 +7,7 @@ import {
   IonLabel,
   IonList,
 } from "@ionic/react";
-import { add } from "ionicons/icons";
+import { add, push } from "ionicons/icons";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -19,10 +19,11 @@ import { setContacts } from "../../redux/contacts/actions";
 import { RootState } from "../../redux/reducers";
 import { getTimestamp } from "../../utils/helpers";
 import withToast from "../../components/Toast/withToast";
+import { attachProps } from "@ionic/react/dist/types/components/utils";
 
 const Add = ({ pushErr }: any) => {
   const { data, error } = useQuery(ALL);
-  const [addContacts, addRes] = useMutation(ADD_CONTACTS);
+  const [addContacts] = useMutation(ADD_CONTACTS);
   const history = useHistory();
   const dispatch = useDispatch();
   const { contacts } = useSelector((state: RootState) => state.contacts);
@@ -35,9 +36,8 @@ const Add = ({ pushErr }: any) => {
     : [];
 
   useEffect(() => {
-    if (error) pushErr(error);
-    if (addRes.error) pushErr(error);
-  }, [error, pushErr, addRes.error]);
+    if (error) pushErr(error, {}, "profiles");
+  }, [error]);
 
   const [search, setSearch] = useState("");
 
@@ -67,21 +67,24 @@ const Add = ({ pushErr }: any) => {
 
                     <IonButton
                       onClick={async () => {
-                        const profile: any = await addContacts({
-                          variables: {
-                            username: user.username,
-                            timestamp: getTimestamp(),
-                          },
-                        });
-
-                        dispatch(
-                          setContacts([
-                            ...contacts,
-                            {
-                              username: profile.data.addContact.username,
+                        try {
+                          const profile: any = await addContacts({
+                            variables: {
+                              username: user.username,
+                              timestamp: getTimestamp(),
                             },
-                          ])
-                        );
+                          });
+                          dispatch(
+                            setContacts([
+                              ...contacts,
+                              {
+                                username: profile.data.addContact.username,
+                              },
+                            ])
+                          );
+                        } catch (e) {
+                          pushErr(e, {}, "contacts", "addContact")
+                        }
                       }}
                       fill="clear"
                       color="dark"

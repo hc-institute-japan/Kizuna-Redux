@@ -69,29 +69,24 @@ export function callZome({ id, zome, func }) {
 
       return result;
     } catch (e) {
-      const {
-        Internal,
-        FunctionNotImplemented,
-        HashNotFound,
-        ValidationFailed,
-      } = { ...e };
+      const { Internal, Timeout } = { ...e };
       if (Internal) {
         const err = JSON.parse(Internal);
         if (err.constructor.name === "Object" && "code" in err) {
           throw new Error(JSON.stringify(err));
         }
-      } else if (FunctionNotImplemented || HashNotFound || ValidationFailed) {
+      } else if (Timeout) {
         throw new Error(
           JSON.stringify({
-            code: 1000,
-            message: "Filler",
+            code: 502,
+            message: "Timeout",
           })
         );
       }
       throw new Error(
         JSON.stringify({
-          code: 502,
-          message: "Timeout",
+          code: 1000,
+          message: "Filler",
         })
       );
     }

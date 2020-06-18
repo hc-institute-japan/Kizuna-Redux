@@ -11,17 +11,14 @@ import { close } from "ionicons/icons";
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import BackHeader from "../../components/Header/BackHeader";
-import UNBLOCK_PROFILE from "../../graphql/mutation/unblockContactMutation";
+import UNBLOCK_CONTACT from "../../graphql/mutation/unblockContactMutation";
 import { RootState } from "../../redux/reducers";
 import { getTimestamp } from "../../utils/helpers";
 import styles from "./style.module.css";
 
 const Blocked: React.FC = ({ pushErr }: any) => {
   const { blocked } = useSelector((state: RootState) => state.contacts);
-  const [unblockProfile, { error }] = useMutation(UNBLOCK_PROFILE);
-  useEffect(() => {
-    if (error) pushErr(error);
-  }, [error, pushErr]);
+  const [unblockContact] = useMutation(UNBLOCK_CONTACT);
   return (
     <>
       <BackHeader />
@@ -31,14 +28,18 @@ const Blocked: React.FC = ({ pushErr }: any) => {
             <IonItem key={block.username}>
               <IonLabel>{block.username}</IonLabel>
               <IonButton
-                onClick={() =>
-                  unblockProfile({
-                    variables: {
-                      username: block.username,
-                      timestamp: getTimestamp(),
-                    },
-                  })
-                }
+                onClick={async () => {
+                  try {
+                    await unblockContact({
+                      variables: {
+                        username: block.username,
+                        timestamp: getTimestamp(),
+                      },
+                    })
+                  } catch (e) {
+                    pushErr(e, {}, "contacts", "unblockContact")
+                  }
+                }}
                 fill="clear"
               >
                 <IonIcon color="dark" icon={close}></IonIcon>

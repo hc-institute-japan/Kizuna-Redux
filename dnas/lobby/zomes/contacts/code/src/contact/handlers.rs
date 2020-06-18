@@ -85,7 +85,7 @@ pub fn remove(username: String, timestamp: u64) -> ZomeApiResult<Profile> {
                     return Err(ZomeApiError::from("{\"code\": \"321\", \"message\": \"The timestamp is the same with or less than the previous timestamp\"}".to_owned()))
                 }
             } else {
-                return Err(ZomeApiError::from("{\"code\": \"404\", \"message\": \"This address wasn't found in the contract\"}".to_owned()))
+                return Err(ZomeApiError::from("{\"code\": \"404\", \"message\": \"This address wasn't found in contacts\"}".to_owned()))
             }
         },
     }

@@ -44,7 +44,6 @@ const Register: any = (props: any) => {
       const profile_result = await createProfile({
         variables: { username },
       });
-      // if (error) throw error;
       // localStorage.setItem("user_address", returnEntry.data.createProfile);
       localStorage.setItem(
         "agent_address",
@@ -54,7 +53,7 @@ const Register: any = (props: any) => {
       props.history.push("/home");
       // catch the error from createZomeCall
     } catch (e) {
-      props.pushErr(e, {}, "r");
+      props.pushErr(e, {}, "profiles");
     }
   };
 

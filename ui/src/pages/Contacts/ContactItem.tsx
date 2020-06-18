@@ -16,13 +16,8 @@ import { setContacts } from "../../redux/contacts/actions";
 import withToast from "../../components/Toast/withToast";
 
 const ContactItem: any = ({ contact, contacts, pushErr }: any) => {
-  const [removeContact, removed] = useMutation(REMOVE_CONTACT);
-  const [blockContact, blocked] = useMutation(BLOCK_PROFILE);
-
-  useEffect(() => {
-    if (removed.error) pushErr(removed.error);
-    if (blocked.error) pushErr(blocked.error);
-  }, [removed.error, blocked.error]);
+  const [removeContact] = useMutation(REMOVE_CONTACT);
+  const [blockContact] = useMutation(BLOCK_PROFILE);
 
   const dispatch = useDispatch();
   return (
@@ -30,14 +25,18 @@ const ContactItem: any = ({ contact, contacts, pushErr }: any) => {
       <IonLabel>{contact.username}</IonLabel>
       <IonButtons slot="end">
         <IonButton
-          onClick={() =>
-            blockContact({
-              variables: {
-                username: contact.username,
-                timestamp: getTimestamp(),
-              },
-            })
-          }
+          onClick={async () => {
+           try {
+              await blockContact({
+                variables: {
+                  username: contact.username,
+                  timestamp: getTimestamp(),
+                },
+              })
+           } catch (e) {
+             pushErr(e, {}, "contacts", "blockContact")
+           } 
+          }}
           fill="clear"
           color="dark"
         >
@@ -45,19 +44,22 @@ const ContactItem: any = ({ contact, contacts, pushErr }: any) => {
         </IonButton>
         <IonButton
           onClick={async () => {
-            const removedContact: any = await removeContact({
-              variables: {
-                username: contact.username,
-                timestamp: getTimestamp(),
-              },
-            });
-
-            const updatedContacts = contacts.filter(
-              (c: any) =>
-                c.username !== removedContact.data.removeContact.username
-            );
-
-            dispatch(setContacts(updatedContacts));
+            try {
+              const removedContact: any = await removeContact({
+                variables: {
+                  username: contact.username,
+                  timestamp: getTimestamp(),
+                },
+              });
+              const updatedContacts = contacts.filter(
+                (c: any) =>
+                  c.username !== removedContact.data.removeContact.username
+              );
+  
+              dispatch(setContacts(updatedContacts));
+            } catch (e) {
+              pushErr(e, {}, "contacts", "removeContact")
+            }
           }}
           fill="clear"
           color="dark"

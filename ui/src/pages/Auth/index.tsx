@@ -1,6 +1,6 @@
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery, useLazyQuery } from "@apollo/react-hooks";
 import { IonLoading, IonRouterOutlet } from "@ionic/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import withToast from "../../components/Toast/withToast";
 import ME from "../../graphql/query/meQuery";
@@ -26,7 +26,8 @@ const Auth: React.FC = ({ pushErr }: any) => {
 
   // this query is being called even before the holochain connection is finished establishing.
   // needs error handling
-  const { loading, data, error } = useQuery(ME);
+  const [username, setUsername] = useState(null);
+  const [getMe, { loading, data, error }] = useLazyQuery(ME);
 
   // localStorage.removeItem("agent_address");
   // localStorage.setItem(
@@ -36,14 +37,24 @@ const Auth: React.FC = ({ pushErr }: any) => {
   useEffect(() => {
     const address = localStorage.getItem("agent_address");
     // localStorage.removeItem("agent_address");
-    if (address && data?.me?.username !== null) {
-      dispatch(authenticate(address));
+    getMe();
+    if (data && data?.me?.username) setUsername(data?.me?.username);
+    if (username !== null) {
+      if (address) {
+        dispatch(authenticate(address));
+      } else {
+        localStorage.setItem(
+          "agent_address",
+          data?.me?.id
+        );
+        dispatch(authenticate(data?.me?.id));
+      }
     }
-  }, [dispatch, data]);
+  }, [dispatch, data, username, getMe]);
 
   useEffect(() => {
-    if (error) pushErr(error);
-  }, [error, pushErr]);
+    if (error) pushErr(error, {}, "profiles");
+  }, [error]);
 
   return !loading ? (
     <IonRouterOutlet>

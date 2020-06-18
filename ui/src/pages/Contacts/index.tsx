@@ -33,7 +33,8 @@ const Contacts = ({ history, pushErr }: any) => {
   });
 
   useEffect(() => {
-    if (error) pushErr(error);
+    // this needs to be fixed later on
+    if (error) pushErr(error, {}, "cotacts");
   }, [error]);
 
   useEffect(() => {
