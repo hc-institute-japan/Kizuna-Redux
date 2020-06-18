@@ -127,7 +127,7 @@ module.exports = (scenario, conductorConfig) => {
     // });
 
     t.deepEqual(JSON.parse(invalid_remove_1.Err.Internal).code, "404");
-    t.deepEqual(JSON.parse(invalid_remove_1.Err.Internal).message, "This address wasn't found in the contract");
+    t.deepEqual(JSON.parse(invalid_remove_1.Err.Internal).message, "This address wasn't found in contacts");
 
     t.deepEqual(JSON.parse(invalid_remove_2.Err.Internal).code, "321");
     t.deepEqual(JSON.parse(invalid_remove_2.Err.Internal).message, "The timestamp is the same with or less than the previous timestamp");
