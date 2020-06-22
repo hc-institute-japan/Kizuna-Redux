@@ -7,7 +7,7 @@ import {
   IonLabel,
   IonList,
 } from "@ionic/react";
-import { add, push } from "ionicons/icons";
+import { add } from "ionicons/icons";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";

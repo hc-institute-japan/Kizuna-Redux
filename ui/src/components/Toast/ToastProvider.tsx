@@ -32,11 +32,7 @@ const ToastProvider: React.FC = ({ children }) => {
             }
             // handle all the other errors here
             default: {
-              let msg;
-              console.log(zomeName);
-              console.log(funcName);
-              console.log(code);
-              funcName !== null ? msg = errorMessages[zomeName][funcName][code] : msg = errorMessages[zomeName][code];
+              let msg = funcName !== null ? errorMessages[zomeName][funcName][code] : errorMessages[zomeName][code];
               // might not be good for debugging
               msg ? messages.push(msg) : messages.push("unexpected error has occured. Please try again later.");
               break;

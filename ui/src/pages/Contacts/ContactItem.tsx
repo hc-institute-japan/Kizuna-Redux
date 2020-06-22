@@ -7,7 +7,7 @@ import {
   IonLabel,
 } from "@ionic/react";
 import { sync, trashBin } from "ionicons/icons";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import BLOCK_PROFILE from "../../graphql/mutation/blockContactMutation";
 import REMOVE_CONTACT from "../../graphql/mutation/removeContactMutation";
 import { getTimestamp } from "../../utils/helpers";
