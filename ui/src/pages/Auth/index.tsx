@@ -1,4 +1,4 @@
-import { useQuery, useLazyQuery } from "@apollo/react-hooks";
+import { useLazyQuery } from "@apollo/react-hooks";
 import { IonLoading, IonRouterOutlet } from "@ionic/react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";

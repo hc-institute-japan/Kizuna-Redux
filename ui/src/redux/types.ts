@@ -20,3 +20,14 @@ export interface Contacts {
 export interface Blocked {
   blocked: [Profile];
 }
+
+interface MessageContent {
+  sender: string,
+  payload: string,
+  timestamp: number,
+}
+
+export interface Message {
+  author: string,
+  contents: Array<MessageContent>,
+}
