@@ -1,5 +1,5 @@
 import { SET_CONTACTS, SET_BLOCKED } from "./actionTypes";
-import { ActionType, Profile } from "../types";
+import { ActionType, Profile } from "../../utils/types";
 
 const initialState = {
   contacts: [],

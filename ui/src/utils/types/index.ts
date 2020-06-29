@@ -21,13 +21,13 @@ export interface Blocked {
   blocked: [Profile];
 }
 
-interface MessageContent {
+export interface MessageContent {
   sender: string,
   payload: string,
-  timestamp: number,
+  createdAt: number,
 }
 
 export interface Message {
-  author: string,
+  name: string,
   contents: Array<MessageContent>,
 }

@@ -1,3 +1,4 @@
 .tabBar {
   z-index: 10000;
+  box-shadow: 5px;
 }

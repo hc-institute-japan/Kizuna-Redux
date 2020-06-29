@@ -12,7 +12,7 @@ const Home: React.FC = () => (
     <Route path="/home/contacts" exact>
       <Contacts />
     </Route>
-    <Redirect from="/home*" to="/home/contacts" />
+    <Redirect from="/home*" to="/home/messages" />
   </HomeTabBar>
 );
 

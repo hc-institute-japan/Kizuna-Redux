@@ -11,6 +11,7 @@ import DeleteProfile from "../pages/DeleteProfile";
 import EditProfile from "../pages/EditProfile";
 import Home from "../pages/Home";
 import Profile from "../pages/Profile";
+import ChatRoom from "../pages/ChatRoom";
 import { setProfile } from "../redux/profile/actions";
 
 const Authenticated: React.FC = ({ pushErr }: any) => {
@@ -26,6 +27,7 @@ const Authenticated: React.FC = ({ pushErr }: any) => {
 
   useEffect(() => {
     if (profile.error) pushErr(profile.error, {}, "profiles");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile.error]);
   return !profile.loading ? (
     <>
@@ -48,6 +50,9 @@ const Authenticated: React.FC = ({ pushErr }: any) => {
         </Route>
         <Route path="/add" exact>
           <Add />
+        </Route>
+        <Route path="/chat-room/:id" exact>
+          <ChatRoom />
         </Route>
         <Redirect from="*" to="/home" />
       </Switch>
