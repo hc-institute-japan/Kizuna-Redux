@@ -1,11 +1,11 @@
 import { LOG_MESSAGE } from "./actionTypes";
 import { ActionType } from "../../utils/types";
-import { getTimestamp } from "../../utils/helpers/";
+import { getTimestamp } from "../../utils/helpers";
 
 const initialState = {
-    messages: [{
+    conversations: [{
         name: "Nicolas Alexander",
-        contents: [{
+        messages: [{
             sender: "Nicolas Alexander",
             payload: "hey",
             createdAt: getTimestamp(), 
@@ -24,7 +24,7 @@ const initialState = {
         }],
     }, {
         name: "Bob",
-        contents: [{
+        messages: [{
             sender: "Bob",
             payload: "hey",
             createdAt: getTimestamp(), 
@@ -43,7 +43,7 @@ const initialState = {
         }],
     },{
         name: "Charlie",
-        contents: [{
+        messages: [{
             sender: "Charlie",
             payload: "hey",
             createdAt: getTimestamp(), 
@@ -66,13 +66,15 @@ const initialState = {
 export default (state = initialState, action: ActionType) => {
     switch (action.type) {
         case LOG_MESSAGE:
-            const name: string = action.message.name;
-            const convExist = state.messages.some((currMsg) => currMsg.name === name);
+            console.log(action.conversation);
+            const name: string = action.conversation.name;
+            const convExist = state.conversations.some((conversation) => conversation.name === name);
             if (convExist) {
-                state.messages.forEach((message) => {
-                    if (message.name === name) message.contents.push(action.message.contents[0])
+                state.conversations.forEach((conversation) => {
+                    if (conversation.name === name) conversation.messages.push(action.conversation.messages[0])
                 })
-            } else state.messages.push(action.message)
+            } else state.conversations.push(action.conversation)
+            console.log(state);
             return { ...state };
         default:
             return state;

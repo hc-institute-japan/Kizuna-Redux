@@ -2,49 +2,47 @@ import React, { useEffect, useState } from "react";
 import { 
 	IonItem,
 	IonAvatar,
-  IonLabel,
   IonBadge,
 	IonGrid,
   IonCol, 
 	IonRow } from "@ionic/react";
 import { useHistory } from "react-router-dom";
-import { MessageContent } from "../../utils/types";
+import { Message } from "../../utils/types";
 import styles from "./style.module.css";
 
-type MessageItemProps = {
+type ConversationItemProps = {
 	name: string,
-	contents: Array<MessageContent>,
+	messages: Array<Message>,
 	me: string,
 }
 
-const MessageItem: React.FC<any> = ({name, contents, me}: MessageItemProps) => {
+const ConversationItem: React.FC<any> = ({name, messages}: ConversationItemProps) => {
 	const [recentMsg, setRecentMsg] = useState("");
 	const history = useHistory();
 
-	const getRecentMsg = (contents: Array<MessageContent>) => {
-		let currContent: MessageContent = {
+	const getRecentMsg = (msgs: Array<Message>) => {
+		let currMsg: Message = {
 			sender: "",
 			payload: "",
 			createdAt: 0,
 		}
-		contents.forEach(content => {
-			if (!currContent || (currContent && content.createdAt > currContent.createdAt)) currContent = content 
+		msgs.forEach(msg => {
+			if (!currMsg || (currMsg && msg.createdAt > currMsg.createdAt)) currMsg = msg 
 		});
-		setRecentMsg(currContent.payload);
+		setRecentMsg(currMsg.payload);
 	}
 
 	useEffect(() => {
-		getRecentMsg(contents);
-	}, [contents])
+		getRecentMsg(messages);
+	}, [messages])
 
 
 
 	return (
-		<IonItem lines={"none"} className={`${styles['message-item']}`} button onClick={() => history.push(`/chat-room/${name}`, {
-			me,
+		<IonItem lines={"none"} className={`${styles['conversation-item']}`} button onClick={() => history.push(`/chat-room/${name}`, {
 			name,
-			contents
-		})} >
+			messages
+		})}>
 			<IonAvatar slot="start">
 				<img src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y" alt="" />
 			</IonAvatar>
@@ -52,7 +50,7 @@ const MessageItem: React.FC<any> = ({name, contents, me}: MessageItemProps) => {
 				<IonRow className={`${styles['row']}`}>
 
 					<IonCol size={"8"} className={`${styles['col']}`} >
-            <h4 className={`${styles['message-item-name']}`}>{name}</h4>
+            <h4 className={`${styles['conversation-item-name']}`}>{name}</h4>
 					</IonCol>
 
           <IonCol size={"4"} className={`${styles['col']}`}>
@@ -77,4 +75,4 @@ const MessageItem: React.FC<any> = ({name, contents, me}: MessageItemProps) => {
 	)
 }
 
-export default MessageItem;
+export default ConversationItem;

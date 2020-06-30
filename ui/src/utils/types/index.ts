@@ -21,13 +21,13 @@ export interface Blocked {
   blocked: [Profile];
 }
 
-export interface MessageContent {
+export interface Message {
   sender: string,
   payload: string,
   createdAt: number,
 }
 
-export interface Message {
+export interface Conversation {
   name: string,
-  contents: Array<MessageContent>,
+  messages: Array<Message>,
 }

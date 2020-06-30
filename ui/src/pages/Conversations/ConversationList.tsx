@@ -1,0 +1,21 @@
+import React from "react";
+import { IonItemGroup } from "@ionic/react";
+import ConversationItem from "./ConversationItem";
+import { Conversation } from "../../utils/types";
+
+type ConversationListProps = {
+    conversations: Array<Conversation>,
+}
+
+const ConversationList: React.FC<ConversationListProps> = ({ conversations }: ConversationListProps) => {
+
+    return (
+        <IonItemGroup>
+          {conversations.map(conversation => 
+            <ConversationItem name={conversation.name} messages={conversation.messages}/>
+          )}
+        </IonItemGroup>
+    )
+}
+
+export default ConversationList;

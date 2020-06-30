@@ -1,8 +1,8 @@
 import { AnyAction } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 import { LOG_MESSAGE } from "./actionTypes";
-import { Message } from "../../utils/types";
+import { Conversation } from "../../utils/types";
 
-export const logMessage = (message: Message) => (
+export const logMessage = (conversation: Conversation) => (
     dispatch: ThunkDispatch<void, {}, AnyAction>
-) => dispatch({ type: LOG_MESSAGE, message });
+) => dispatch({ type: LOG_MESSAGE, conversation });
