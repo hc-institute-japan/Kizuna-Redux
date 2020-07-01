@@ -13,13 +13,19 @@ import Home from "../pages/Home";
 import Profile from "../pages/Profile";
 import ChatRoom from "../pages/ChatRoom";
 import { setProfile } from "../redux/profile/actions";
+import initializeP2PDNA from "../graphql/messages/query/initializeP2PDNA";
 
 const Authenticated: React.FC = ({ pushErr }: any) => {
   const profile = useQuery(ME);
   const dispatch = useDispatch();
+  const me = { ...profile?.data?.me };
+
+  const init = useQuery(initializeP2PDNA, {
+    variables: { requirements: { id: me.id, recipient: me.id } },
+    skip: !Object.prototype.hasOwnProperty.call(me, "id"),
+  });
 
   useEffect(() => {
-    const me = { ...profile?.data?.me };
     if (Object.prototype.hasOwnProperty.call(me, "id")) {
       dispatch(setProfile(me));
     }
@@ -27,7 +33,7 @@ const Authenticated: React.FC = ({ pushErr }: any) => {
 
   useEffect(() => {
     if (profile.error) pushErr(profile.error, {}, "profiles");
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile.error]);
   return !profile.loading ? (
     <>

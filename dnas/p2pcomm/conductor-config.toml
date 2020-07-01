@@ -11,8 +11,8 @@ public_address = 'HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhm
 test_agent = true
 
 [[dnas]]
-file = '/Users/neilsongardose/Documents/projects/beyonder/refork/Kizuna/dnas/lobby/dist/lobby.dna.json'
-hash = 'QmeUEyEugTQVdFXPZVGiik7Afi89UzCESozyYjMQTSVdrp'
+file = '/Users/neilsongardose/Documents/projects/beyonder/refork/Kizuna/dnas/p2pcomm/dist/p2pcomm.dna.json'
+hash = 'QmZAXYbAkFEj6NdcSTZM8pipvXnP71S2EZtiCTepRuRTQW'
 id = 'hc-run-dna'
 
 [[instances]]

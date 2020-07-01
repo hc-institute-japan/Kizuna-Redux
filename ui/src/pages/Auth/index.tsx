@@ -43,10 +43,7 @@ const Auth: React.FC = ({ pushErr }: any) => {
       if (address) {
         dispatch(authenticate(address));
       } else {
-        localStorage.setItem(
-          "agent_address",
-          data?.me?.id
-        );
+        localStorage.setItem("agent_address", data?.me?.id);
         dispatch(authenticate(data?.me?.id));
       }
     }

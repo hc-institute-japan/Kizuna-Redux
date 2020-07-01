@@ -61,7 +61,7 @@ const links = [
         console.group("GraphQL Errors: ");
         graphQLErrors.map(({ message, locations, path }, index) =>
           console.log(
-            `Error ${
+            `${
               index + 1
             }: Message: ${message}, Location: ${locations}, Path: ${path}`
           )
