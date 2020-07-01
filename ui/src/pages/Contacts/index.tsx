@@ -63,7 +63,7 @@ const Contacts = ({ history, pushErr }: any) => {
         slot="fixed"
       >
         <IonFabButton>
-          <IonIcon icon={add}  />
+          <IonIcon style={{color: "#FFF"}} icon={add}  />
         </IonFabButton>
       </IonFab>
     </IonPage>

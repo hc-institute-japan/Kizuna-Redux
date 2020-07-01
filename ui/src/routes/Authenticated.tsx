@@ -12,6 +12,7 @@ import EditProfile from "../pages/EditProfile";
 import Home from "../pages/Home";
 import Profile from "../pages/Profile";
 import ChatRoom from "../pages/ChatRoom";
+import NewMessage from "../pages/NewMessage";
 import { setProfile } from "../redux/profile/actions";
 import initializeP2PDNA from "../graphql/messages/query/initializeP2PDNA";
 
@@ -59,6 +60,9 @@ const Authenticated: React.FC = ({ pushErr }: any) => {
         </Route>
         <Route path="/chat-room/:id" exact>
           <ChatRoom />
+        </Route>
+        <Route path="/new-message" exact>
+          <NewMessage />
         </Route>
         <Redirect from="*" to="/home" />
       </Switch>

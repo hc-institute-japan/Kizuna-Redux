@@ -13,38 +13,41 @@ import {
   IonButton } from "@ionic/react";
 import { sendSharp } from "ionicons/icons";
 import { useLocation, useParams } from "react-router-dom";
-import { logMessage } from "../../redux/messages/actions";
+import { logMessage } from "../../redux/conversations/actions";
 import ChatHeader from "./ChatHeader";
-import { MessageContent, Message } from "../../utils/types";
+import { Conversation, Message } from "../../utils/types";
 import { getTimestamp } from "../../utils/helpers/index";
 import styles from "./style.module.css";
 import { RootState } from "../../redux/reducers";
 
 
 const ChatRoom: React.FC = () => {
-  const location: any = useLocation();
-  const { id } = useParams();
-  const [contents, setContents] = useState<Array<MessageContent>>([]);
-  const [currentUser, setCurrentuser] = useState<string>("");
+  const [messages, setMessages] = useState<Array<Message>>([]);
+  const [currentUser, setCurrentUser] = useState<string>("");
   const [me, setMe] = useState<string>("");
   const [newMsg, setNewMsg] = useState<string>();
+  
+  const { id } = useParams();
+  const location: any = useLocation();
+  
   const dispatch = useDispatch();
-  const { messages } = useSelector(
-    (state: RootState) => state.messages
+
+  const { conversations } = useSelector(
+    (state: RootState) => state.conversations
   );
 
-  const getContent = () => {
-    return document.querySelector('ion-content');
-  }
+  const { profile } = useSelector(
+    (state: RootState) => state.profile
+  );
 
   const scrollToBottom = () => {
-    getContent()!.scrollToBottom();
+    document.querySelector('ion-content')!.scrollToBottom();
   }
 
   const sendNewMessage = () => {
-    const newMessage: Message = {
+    const newMessage: Conversation = {
       name: id!,
-      contents: [{
+      messages: [{
         sender: me,
         payload: newMsg!,
         createdAt: getTimestamp(),
@@ -57,18 +60,22 @@ const ChatRoom: React.FC = () => {
 
   useEffect(() => {
     //TODO: if location.state.contents is null then fetch message from the hc then push to redux state
-    setContents(location.state.contents);
-    setCurrentuser(id!);
-    setMe(location.state.me)
-  }, [location, id]);
+    if (location.state.messages) {
+      setMessages(location.state.messages)
+    }
+    setCurrentUser(id!);
+    setMe(profile.username)
+  }, [location, id, profile]);
 
-  useEffect(() => {
-    const c: Message | undefined = messages.find((message) => {
-      return message.name === id!
-    });
-    if (c) setContents(c.contents)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ messages ])
+  // useEffect(() => {
+  //   const conversation: Conversation | undefined = conversations.find((conversation) => {
+  //     console.log(id);
+  //     console.log(conversation.name);
+  //     return conversation.name === id!
+  //   });
+  //   if (conversation) setMessages(conversation.messages)
+  //   console.log("Hey!");
+  // }, [conversations])
   
   // temporary timestamp function
   const getProperTimestamp = (timestamp: number) => {
@@ -82,25 +89,25 @@ const ChatRoom: React.FC = () => {
       <ChatHeader name={id!}/>
       <IonContent scrollEvents={true} >
         <IonGrid>
-          {contents.map(content => {
-            return content.sender !== currentUser ? 
+          {messages.map(message => {
+            return message.sender !== currentUser ? 
             (
               <IonRow>
                 <IonCol offset={"3"} size={"9"} className={`${styles['my-message']} ${styles['message']}`}>
-                  <b>{content.sender}</b><br/>
-                  <span>{content.payload}</span>
+                  <b>{message.sender}</b><br/>
+                  <span>{message.payload}</span>
                   <div className={`${styles['time']}`} ><br/>
-                    {getProperTimestamp(content.createdAt)}
+                    {getProperTimestamp(message.createdAt)}
                   </div>
                 </IonCol>
               </IonRow>
             ) : (
               <IonRow>
                 <IonCol size={"9"} class={`${styles['other-message']} ${styles['message']}`}>
-                  <b>{content.sender}</b><br/>
-                  <span>{content.payload}</span>
+                  <b>{message.sender}</b><br/>
+                  <span>{message.payload}</span>
                   <div className={`${styles['time']}`} ><br/>
-                    {getProperTimestamp(content.createdAt)}
+                    {getProperTimestamp(message.createdAt)}
                   </div>
                 </IonCol>
               </IonRow>
@@ -122,15 +129,12 @@ const ChatRoom: React.FC = () => {
                   className={`${styles['msg-input']}`}
                 />
               </IonCol>
-              <IonCol size={"2"} style={{padding: "0px"}}>
+              <IonCol size={"2"}>
                 <IonButton 
                   expand={"full"}
                   fill={"clear"}
                   disabled={newMsg ? false : true } 
                   className={`${styles['msg-btn']}`} 
-                  style={{
-                    padding: "0px !important",
-                  }}
                   onClick={() => {
                     sendNewMessage();
                  }}>
