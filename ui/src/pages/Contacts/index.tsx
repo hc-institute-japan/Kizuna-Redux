@@ -5,6 +5,7 @@ import {
   IonFabButton,
   IonIcon,
   IonPage,
+  IonSpinner,
 } from "@ionic/react";
 import { add } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
@@ -34,7 +35,7 @@ const Contacts = ({ history, pushErr }: any) => {
 
   useEffect(() => {
     // this needs to be fixed later on
-    if (error) pushErr(error, {}, "cotacts");
+    if (error) pushErr(error, {}, "contacts");
   }, [error]);
 
   useEffect(() => {
@@ -49,11 +50,17 @@ const Contacts = ({ history, pushErr }: any) => {
       <ContactsHeader search={search} setSearch={setSearch} />
 
       <IonContent>
-        <ContactList
-          search={search}
-          contacts={contacts}
-          indexedContacts={indexedContacts}
-        />
+        {loading ? (
+          <div className={styles.center}>
+            <IonSpinner />
+          </div>
+        ) : (
+          <ContactList
+            search={search}
+            contacts={contacts}
+            indexedContacts={indexedContacts}
+          />
+        )}
       </IonContent>
       <IonFab
         onClick={() => history.push("/add")}
@@ -63,7 +70,7 @@ const Contacts = ({ history, pushErr }: any) => {
         slot="fixed"
       >
         <IonFabButton>
-          <IonIcon style={{color: "#FFF"}} icon={add}  />
+          <IonIcon style={{ color: "#FFF" }} icon={add} />
         </IonFabButton>
       </IonFab>
     </IonPage>

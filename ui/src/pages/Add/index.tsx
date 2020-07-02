@@ -6,23 +6,26 @@ import {
   IonItem,
   IonLabel,
   IonList,
+  IonSpinner,
 } from "@ionic/react";
 import { add } from "ionicons/icons";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import SearchHeader from "../../components/Header/SearchHeader";
 import IonContainer from "../../components/IonContainer";
+import withToast from "../../components/Toast/withToast";
 import ADD_CONTACTS from "../../graphql/mutation/addContactMutation";
 import ALL from "../../graphql/query/allAgentsQuery";
 import { setContacts } from "../../redux/contacts/actions";
 import { RootState } from "../../redux/reducers";
 import { getTimestamp } from "../../utils/helpers";
-import withToast from "../../components/Toast/withToast";
-import { attachProps } from "@ionic/react/dist/types/components/utils";
+import SearchPrompt from "./SearchPrompt";
+import styles from "./style.module.css";
+import EmptyResult from "./EmptyResult";
 
 const Add = ({ pushErr }: any) => {
-  const { data, error } = useQuery(ALL);
+  const { data, error, loading } = useQuery(ALL);
   const [addContacts] = useMutation(ADD_CONTACTS);
   const history = useHistory();
   const dispatch = useDispatch();
@@ -40,6 +43,9 @@ const Add = ({ pushErr }: any) => {
   }, [error]);
 
   const [search, setSearch] = useState("");
+  const filteredUsers = users.filter((user: any) =>
+    user.username.toLowerCase().includes(search)
+  );
 
   return (
     <IonContainer>
@@ -52,16 +58,20 @@ const Add = ({ pushErr }: any) => {
         placeholder="Search User"
       />
       <IonContent>
-        {search.length > 0 ? (
-          <IonList>
-            {users
-              .filter((user: any) =>
-                user.username.toLowerCase().includes(search)
-              )
-              .map((user: any) =>
-                contacts.some(
-                  (contact: any) => contact.username === user.username
-                ) ? null : (
+        {loading ? (
+          <div className={styles.center}>
+            <IonSpinner></IonSpinner>
+          </div>
+        ) : search.length > 0 ? (
+          filteredUsers.length === 0 ? (
+            <EmptyResult />
+          ) : (
+            filteredUsers.map((user: any) =>
+              contacts.some(
+                (contact: any) => contact.username === user.username
+              ) ? null : (
+                <IonList>
+                  {" "}
                   <IonItem key={user.username}>
                     <IonLabel>{user.username}</IonLabel>
 
@@ -83,7 +93,7 @@ const Add = ({ pushErr }: any) => {
                             ])
                           );
                         } catch (e) {
-                          pushErr(e, {}, "contacts", "addContact")
+                          pushErr(e, {}, "contacts", "addContact");
                         }
                       }}
                       fill="clear"
@@ -93,10 +103,13 @@ const Add = ({ pushErr }: any) => {
                       <IonIcon icon={add} slot="end" />
                     </IonButton>
                   </IonItem>
-                )
-              )}
-          </IonList>
-        ) : null}
+                </IonList>
+              )
+            )
+          )
+        ) : (
+          <SearchPrompt />
+        )}
       </IonContent>
     </IonContainer>
   );

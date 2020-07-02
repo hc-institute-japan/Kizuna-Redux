@@ -7,6 +7,7 @@ import {
 } from "@ionic/react";
 import React from "react";
 import ContactItem from "./ContactItem";
+import EmptyContacts from "./EmptyContacts";
 
 const ContactList: React.FC<any> = ({ indexedContacts, search, contacts }) => {
   const searchContacts =
@@ -31,6 +32,8 @@ const ContactList: React.FC<any> = ({ indexedContacts, search, contacts }) => {
               />
             ))}
         </IonItemGroup>
+      ) : Object.keys(indexedContacts).length === 0 ? (
+        <EmptyContacts />
       ) : (
         <>
           {Object.keys(indexedContacts).map((index) => {
