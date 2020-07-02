@@ -1,42 +1,42 @@
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery, useMutation, useLazyQuery } from "@apollo/react-hooks";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Menu from "../components/Menu";
 import withToast from "../components/Toast/withToast";
+import INITIALIZE from "../graphql/messages/mutations/initializeP2PDNA";
+import GET_MESSAGE from "../graphql/messages/query/getMessage";
 import ME from "../graphql/query/meQuery";
 import Add from "../pages/Add";
+import ChatRoom from "../pages/ChatRoom";
 import Blocked from "../pages/Contacts/Blocked";
 import DeleteProfile from "../pages/DeleteProfile";
 import EditProfile from "../pages/EditProfile";
 import Home from "../pages/Home";
-import Profile from "../pages/Profile";
-import ChatRoom from "../pages/ChatRoom";
 import NewMessage from "../pages/NewMessage";
+import Profile from "../pages/Profile";
 import { setProfile } from "../redux/profile/actions";
-import initializeP2PDNA from "../graphql/messages/query/initializeP2PDNA";
+import SEND_MESSAGE from "../graphql/messages/mutations/sendMessage";
+import { IonButton, IonApp } from "@ionic/react";
 
 const Authenticated: React.FC = ({ pushErr }: any) => {
-  const profile = useQuery(ME);
+  const [
+    getMe,
+    { loading: meLoading, error: meError, data: me },
+  ] = useLazyQuery(ME);
   const dispatch = useDispatch();
-  const me = { ...profile?.data?.me };
-
-  const init = useQuery(initializeP2PDNA, {
-    variables: { requirements: { id: me.id, recipient: me.id } },
-    skip: !Object.prototype.hasOwnProperty.call(me, "id"),
-  });
-
   useEffect(() => {
-    if (Object.prototype.hasOwnProperty.call(me, "id")) {
-      dispatch(setProfile(me));
+    getMe();
+    if (me) {
+      dispatch(setProfile(me.me));
     }
-  }, [profile, dispatch]);
+  }, [dispatch, me, getMe]);
 
   useEffect(() => {
-    if (profile.error) pushErr(profile.error, {}, "profiles");
+    if (meError) pushErr(meError, {}, "profiles");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile.error]);
-  return !profile.loading ? (
+  }, [meError]);
+  return !meLoading ? (
     <>
       <Menu />
       <Switch>

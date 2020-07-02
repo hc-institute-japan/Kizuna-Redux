@@ -8,7 +8,7 @@ import {
   IonList,
 } from "@ionic/react";
 import { close } from "ionicons/icons";
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import BackHeader from "../../components/Header/BackHeader";
 import UNBLOCK_CONTACT from "../../graphql/mutation/unblockContactMutation";
@@ -35,9 +35,9 @@ const Blocked: React.FC = ({ pushErr }: any) => {
                         username: block.username,
                         timestamp: getTimestamp(),
                       },
-                    })
+                    });
                   } catch (e) {
-                    pushErr(e, {}, "contacts", "unblockContact")
+                    pushErr(e, {}, "contacts", "unblockContact");
                   }
                 }}
                 fill="clear"

@@ -20,9 +20,9 @@ import ALL from "../../graphql/query/allAgentsQuery";
 import { setContacts } from "../../redux/contacts/actions";
 import { RootState } from "../../redux/reducers";
 import { getTimestamp } from "../../utils/helpers";
+import EmptyResult from "./EmptyResult";
 import SearchPrompt from "./SearchPrompt";
 import styles from "./style.module.css";
-import EmptyResult from "./EmptyResult";
 
 const Add = ({ pushErr }: any) => {
   const { data, error, loading } = useQuery(ALL);
@@ -40,6 +40,7 @@ const Add = ({ pushErr }: any) => {
 
   useEffect(() => {
     if (error) pushErr(error, {}, "profiles");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
   const [search, setSearch] = useState("");

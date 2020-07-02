@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 
-const schema = `
+const schema = gql`
   type Message {
     anchor: ID
     payload: String
@@ -10,9 +10,11 @@ const schema = `
     recipient: String
   }
   extend type Query {
+    getMessages(id: ID): [Message]
+  }
+  extend type Mutation {
     initializeP2PDNA(requirements: Requirements): Boolean
-    getMessages (id: ID): [Message]
-    sendMessage (author: ID, recipient: ID, message: String): String
+    sendMessage(author: ID, recipient: ID, message: String): Message
   }
 `;
 

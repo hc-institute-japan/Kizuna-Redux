@@ -29,11 +29,6 @@ const Auth: React.FC = ({ pushErr }: any) => {
   const [username, setUsername] = useState(null);
   const [getMe, { loading, data, error }] = useLazyQuery(ME);
 
-  // localStorage.removeItem("agent_address");
-  // localStorage.setItem(
-  //   "agent_address",
-  //   "HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma"
-  // );
   useEffect(() => {
     const address = localStorage.getItem("agent_address");
     // localStorage.removeItem("agent_address");
@@ -51,7 +46,7 @@ const Auth: React.FC = ({ pushErr }: any) => {
 
   useEffect(() => {
     if (error) pushErr(error, {}, "profiles");
-  }, [error]);
+  }, [error, pushErr]);
 
   return !loading ? (
     <IonRouterOutlet>

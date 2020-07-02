@@ -36,6 +36,7 @@ const Contacts = ({ history, pushErr }: any) => {
   useEffect(() => {
     // this needs to be fixed later on
     if (error) pushErr(error, {}, "contacts");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
   useEffect(() => {

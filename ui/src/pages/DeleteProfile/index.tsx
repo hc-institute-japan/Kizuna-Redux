@@ -10,13 +10,12 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { arrowBack } from "ionicons/icons";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import withToast from "../../components/Toast/withToast";
 import DELETE_PROFILE_MUTATION from "../../graphql/mutation/deleteProfileMutation";
 import { RootState } from "../../redux/reducers";
 import styles from "./style.module.css";
-import withToast from "../../components/Toast/withToast";
-import { setServers } from "dns";
 
 const DeleteProfile = ({ pushErr }: any) => {
   const profile: any = useSelector((state: RootState) => state.profile);
@@ -39,6 +38,7 @@ const DeleteProfile = ({ pushErr }: any) => {
 
   useEffect(() => {
     if (error) pushErr(error);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
   return (

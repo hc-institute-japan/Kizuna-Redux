@@ -11,6 +11,7 @@ const MenuHeader = ({ history, close }: any) => {
     close();
     history.push("/profile");
   };
+
   return (
     <div onClick={handleOnClick} className={`${styles.profile} ion-padding`}>
       <IonGrid>

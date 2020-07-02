@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import Toast from ".";
-import ToastContext from "./ToastContext";
 import errorMessages from "../../utils/errors";
-import { stringify } from "querystring";
+import ToastContext from "./ToastContext";
 
 const ToastProvider: React.FC = ({ children }) => {
   const [toast, setToast] = useState<any>([]);
@@ -13,49 +12,71 @@ const ToastProvider: React.FC = ({ children }) => {
     ]);
   };
 
-  const pushErr = (err: any, opt: any = {}, zomeName: string, funcName: string | null = null) => {
-    const { graphQLErrors, networkError }: any = { ...err };
-    const messages: any = [];
+  const pushErr = useCallback(
+    (
+      err: any,
+      opt: any = {},
+      zomeName: string,
+      funcName: string | null = null
+    ) => {
+      const { graphQLErrors, networkError }: any = { ...err };
+      const messages: any = [];
 
-    if (graphQLErrors) {
-      graphQLErrors.map(({ message }: any) => {
-        const { code } = JSON.parse(message);
-        if (code) {
-          switch(code) {
-            case 502: {
-              messages.push("Your request has timed out. Please try again later.");
-              break;
+      if (graphQLErrors) {
+        graphQLErrors.forEach(({ message }: any) => {
+          const { code } = JSON.parse(message);
+          if (code) {
+            switch (code) {
+              case 502: {
+                messages.push(
+                  "Your request has timed out. Please try again later."
+                );
+                break;
+              }
+              case 1000: {
+                messages.push(
+                  "Unexpected error has occured. Please try again later."
+                );
+                break;
+              }
+              // handle all the other errors here
+              default: {
+                let msg =
+                  funcName !== null
+                    ? errorMessages[zomeName][funcName][code]
+                    : errorMessages[zomeName][code];
+                // might not be good for debugging
+                msg
+                  ? messages.push(msg)
+                  : messages.push(
+                      "Unexpected error has occured. Please try again later."
+                    );
+                break;
+              }
             }
-            case 1000: {
-              messages.push("unexpected error has occured. Please try again later.");
-              break;
-            }
-            // handle all the other errors here
-            default: {
-              let msg = funcName !== null ? errorMessages[zomeName][funcName][code] : errorMessages[zomeName][code];
-              // might not be good for debugging
-              msg ? messages.push(msg) : messages.push("unexpected error has occured. Please try again later.");
-              break;
-            }
-          }
-        } else messages.push("unexpected error has occured. Please try again later.")
-      });
-    } else if (networkError) {
-      messages.push(errorMessages["500"]);
-    }
+          } else
+            messages.push(
+              "unexpected error has occured. Please try again later."
+            );
+        });
+      } else if (networkError) {
+        messages.push(errorMessages["500"]);
+      }
 
-    setToast((curr: any) => [
-      ...curr,
-      ...messages.map((message: any) => (
-        <Toast
-          key={curr.length + 1}
-          {...opt}
-          message={message}
-          color="danger"
-        />
-      )),
-    ]);
-  };
+      setToast((curr: any) => [
+        ...curr,
+        ...messages.map((message: any) => (
+          <Toast
+            key={curr.length + 1}
+            {...opt}
+            message={message}
+            color="danger"
+          />
+        )),
+      ]);
+    },
+    [setToast]
+  );
 
   return (
     <ToastContext.Provider value={{ push, pushErr, toast }}>

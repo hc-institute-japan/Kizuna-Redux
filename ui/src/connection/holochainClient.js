@@ -83,6 +83,7 @@ export function callZome({ id, zome, func }) {
           })
         );
       }
+
       throw new Error(
         JSON.stringify({
           code: 1000,
@@ -96,30 +97,22 @@ export function callZome({ id, zome, func }) {
 // see https://github.com/uprtcl/js-uprtcl/tree/master/providers/holochain
 export async function hcUprtcl() {
   await initAndGetHolochainClient();
-  console.log("xd");
   if (holochainUprtclClient) return holochainUprtclClient;
-  console.log("xd1");
-
   holochainUprtclClient = new HolochainConnection({
     host: process.env.REACT_APP_DNA_INTERFACE_URL,
     devEnv: {
       // this property should be changed to your local paths and dna hash
       templateDnasPaths: {
-        HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma:
-          "/Users/neilsongardose/projects/Kizuna/dnas/p2pcomm/dist/p2pcomm.dna.json",
+        Qmd7rDCxyVFN5U5eUMXHjdtgMz3sewdGV2fAPsLuDqCuss:
+          "/Users/neilsongardose/Documents/projects/beyonder/refork/Kizuna/dnas/p2pcomm/dist/p2pcomm.dna.json",
       },
     },
   });
-  console.log("xd2");
 
   const hcModule = new HolochainConnectionModule(holochainUprtclClient);
-  console.log("xd3");
 
   const orchestrator = new MicroOrchestrator();
-  console.log(orchestrator);
 
   await orchestrator.loadModule(hcModule);
-  console.log(holochainUprtclClient);
-
   return holochainUprtclClient;
 }

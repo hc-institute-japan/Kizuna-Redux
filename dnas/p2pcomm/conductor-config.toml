@@ -12,7 +12,7 @@ test_agent = true
 
 [[dnas]]
 file = '/Users/neilsongardose/Documents/projects/beyonder/refork/Kizuna/dnas/p2pcomm/dist/p2pcomm.dna.json'
-hash = 'QmZAXYbAkFEj6NdcSTZM8pipvXnP71S2EZtiCTepRuRTQW'
+hash = 'Qmd7rDCxyVFN5U5eUMXHjdtgMz3sewdGV2fAPsLuDqCuss'
 id = 'hc-run-dna'
 
 [[instances]]

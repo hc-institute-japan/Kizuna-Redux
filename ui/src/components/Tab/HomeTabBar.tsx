@@ -8,7 +8,6 @@ import {
 } from "@ionic/react";
 import { chatbox, personCircle } from "ionicons/icons";
 import React from "react";
-import styles from "./style.module.css"
 
 const HomeTabBar: React.FC = ({ children }) => (
   <IonTabs>

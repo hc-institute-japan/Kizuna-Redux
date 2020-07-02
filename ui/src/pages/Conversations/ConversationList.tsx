@@ -4,18 +4,23 @@ import ConversationItem from "./ConversationItem";
 import { Conversation } from "../../utils/types";
 
 type ConversationListProps = {
-    conversations: Array<Conversation>,
-}
+  conversations: Array<Conversation>;
+};
 
-const ConversationList: React.FC<ConversationListProps> = ({ conversations }: ConversationListProps) => {
-
-    return (
-        <IonItemGroup>
-          {conversations.map(conversation => 
-            <ConversationItem name={conversation.name} messages={conversation.messages}/>
-          )}
-        </IonItemGroup>
-    )
-}
+const ConversationList: React.FC<ConversationListProps> = ({
+  conversations,
+}: ConversationListProps) => {
+  return (
+    <IonItemGroup>
+      {conversations.map((conversation) => (
+        <ConversationItem
+          key={conversation.name}
+          name={conversation.name}
+          messages={conversation.messages}
+        />
+      ))}
+    </IonItemGroup>
+  );
+};
 
 export default ConversationList;

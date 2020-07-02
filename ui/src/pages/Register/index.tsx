@@ -9,12 +9,12 @@ import {
 } from "@ionic/react";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { RouteComponentProps, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
+import withToast from "../../components/Toast/withToast";
 import CREATE_PROFILE_MUTATION from "../../graphql/mutation/createProfileMutation";
 import { authenticate } from "../../redux/auth/actions";
 import { isUsernameFormatValid } from "../../utils/helpers/regex";
 import styles from "./style.module.css";
-import withToast from "../../components/Toast/withToast";
 
 // type Props = RouteComponentProps<{}, {}, { pushErr(err: any, opt: any): void }>;
 
