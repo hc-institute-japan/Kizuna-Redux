@@ -12,8 +12,10 @@ import HomeHeader from "../../components/Header/HomeHeader";
 import { RootState } from "../../redux/reducers";
 import ConversationList from "./ConversationList";
 import styles from "./style.module.css";
+import { useHistory } from "react-router";
 
 const Conversations: React.FC = () => {
+  const history = useHistory();
   const { conversations } = useSelector(
     (state: RootState) => state.conversations
   );
