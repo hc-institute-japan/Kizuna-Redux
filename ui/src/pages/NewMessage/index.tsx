@@ -5,11 +5,11 @@ import { IonPage, IonLoading, IonContent } from "@ionic/react";
 import { setContacts } from "../../redux/contacts/actions";
 import CONTACTS from "../../graphql/query/listContactsQuery";
 import { RootState } from "../../redux/reducers";
-import withToast from "../../components/Toast/withToast";
+import withToast, { ToastProps } from "../../components/Toast/withToast";
 import RecipientList from "./RecipientList";
 import NewMessageHeader from "./NewMessageHeader";
 
-const NewMessage: React.FC<any> = ({ pushErr }: any) => {
+const NewMessage: React.FC<ToastProps> = ({ pushErr }) => {
   const [search, setSearch] = useState("");
   const [hasFetched, setHasFetched] = useState(false);
   const dispatch = useDispatch();

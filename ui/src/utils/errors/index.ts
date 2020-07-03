@@ -1,9 +1,12 @@
+import { Key } from "react";
+
 // See https://trello.com/c/f6pN3WLk/316-error-codes for error codes explanation.
 const genericError = "unexpected error has occured. Please try again later.";
 
 // This corresponds to the mutation and query we have.
-// If the same error codes are not being used twice in the same zome, 
-// then we are not separating them by their function names. 
+// If the same error codes are not being used twice in the same zome,
+// then we are not separating them by their function names.
+
 const errorMessages: any = {
   profiles: {
     202: "Sorry! This username is already exisiting.",
@@ -49,7 +52,6 @@ const errorMessages: any = {
       800: genericError,
       802: genericError,
     },
-
   },
   500: "Network error has occurred. Please try again later.",
 };

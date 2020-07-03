@@ -13,13 +13,17 @@ import {
 import { sendSharp } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams, RouteComponentProps } from "react-router-dom";
 import { logMessage } from "../../redux/conversations/actions";
 import { RootState } from "../../redux/reducers";
 import { getTimestamp } from "../../utils/helpers/index";
 import { Conversation, Message } from "../../utils/types";
 import ChatHeader from "./ChatHeader";
 import styles from "./style.module.css";
+
+interface LocationProps {
+  messages: Array<Message> | [];
+}
 
 const ChatRoom: React.FC = () => {
   const [messages, setMessages] = useState<Array<Message>>([]);
@@ -28,7 +32,7 @@ const ChatRoom: React.FC = () => {
   const [newMsg, setNewMsg] = useState<string>();
 
   const { id } = useParams();
-  const location: any = useLocation();
+  const location = useLocation<LocationProps>();
 
   const dispatch = useDispatch();
 
@@ -60,8 +64,9 @@ const ChatRoom: React.FC = () => {
 
   useEffect(() => {
     //TODO: if location.state.contents is null then fetch message from the hc then push to redux state
-    if (location.state.messages) {
-      setMessages(location.state.messages);
+
+    if (location?.state?.messages) {
+      setMessages(location?.state?.messages);
     }
     setCurrentUser(id!);
     setMe(profile.username);

@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import SearchHeader from "../../components/Header/SearchHeader";
 import IonContainer from "../../components/IonContainer";
-import withToast from "../../components/Toast/withToast";
+import withToast, { ToastProps } from "../../components/Toast/withToast";
 import ADD_CONTACTS from "../../graphql/mutation/addContactMutation";
 import ALL from "../../graphql/query/allAgentsQuery";
 import { setContacts } from "../../redux/contacts/actions";
@@ -23,8 +23,9 @@ import { getTimestamp } from "../../utils/helpers";
 import EmptyResult from "./EmptyResult";
 import SearchPrompt from "./SearchPrompt";
 import styles from "./style.module.css";
+import { Profile } from "../../utils/types";
 
-const Add = ({ pushErr }: any) => {
+const Add: React.FC<ToastProps> = ({ pushErr }) => {
   const { data, error, loading } = useQuery(ALL);
   const [addContacts] = useMutation(ADD_CONTACTS);
   const history = useHistory();
@@ -32,7 +33,7 @@ const Add = ({ pushErr }: any) => {
   const { contacts } = useSelector((state: RootState) => state.contacts);
 
   const users = data
-    ? data.allAgents.map((user: any) => ({
+    ? data.allAgents.map((user: Profile) => ({
         id: user.id,
         username: user.username,
       }))
@@ -44,7 +45,7 @@ const Add = ({ pushErr }: any) => {
   }, [error]);
 
   const [search, setSearch] = useState("");
-  const filteredUsers = users.filter((user: any) =>
+  const filteredUsers = users.filter((user: Profile) =>
     user.username.toLowerCase().includes(search)
   );
 
@@ -67,9 +68,9 @@ const Add = ({ pushErr }: any) => {
           filteredUsers.length === 0 ? (
             <EmptyResult />
           ) : (
-            filteredUsers.map((user: any) =>
+            filteredUsers.map((user: Profile) =>
               contacts.some(
-                (contact: any) => contact.username === user.username
+                (contact: Profile) => contact.username === user.username
               ) ? null : (
                 <IonList>
                   {" "}
@@ -79,7 +80,7 @@ const Add = ({ pushErr }: any) => {
                     <IonButton
                       onClick={async () => {
                         try {
-                          const profile: any = await addContacts({
+                          const profile: Profile = await addContacts({
                             variables: {
                               username: user.username,
                               timestamp: getTimestamp(),

@@ -32,7 +32,9 @@ export default class ErrorContainer extends Component<{}, Error> {
     };
   }
 
-  componentDidCatch(error: any, info: any) {
+  // componentDidCatch(error, info) {
+
+  componentDidCatch() {
     this.setState({
       error: true,
     });

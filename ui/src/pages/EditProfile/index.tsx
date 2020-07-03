@@ -11,14 +11,13 @@ import { arrowBack } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Input from "../../components/Input";
-import withToast from "../../components/Toast/withToast";
+import withToast, { ToastProps } from "../../components/Toast/withToast";
 import UPDATE_PROFILE_MUTATION from "../../graphql/mutation/updateProfile";
 import { RootState } from "../../redux/reducers";
+import { Profile } from "../../utils/types";
 
-const EditProfile: React.FC = ({ pushErr }: any) => {
-  const { profile }: { profile: any } = useSelector(
-    (state: RootState) => state.profile
-  );
+const EditProfile: React.FC<ToastProps> = ({ pushErr }) => {
+  const { profile } = useSelector((state: RootState) => state.profile);
   const [profileInput, setProfileInput] = useState({});
 
   const [updateProfile, { error }] = useMutation(UPDATE_PROFILE_MUTATION);

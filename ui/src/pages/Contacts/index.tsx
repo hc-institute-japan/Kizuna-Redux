@@ -10,8 +10,8 @@ import {
 import { add } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { withRouter } from "react-router-dom";
-import withToast from "../../components/Toast/withToast";
+import { withRouter, RouteComponentProps } from "react-router-dom";
+import withToast, { ToastProps } from "../../components/Toast/withToast";
 import CONTACTS from "../../graphql/query/listContactsQuery";
 import { setContacts } from "../../redux/contacts/actions";
 import { RootState } from "../../redux/reducers";
@@ -19,7 +19,9 @@ import ContactList from "./ContactList";
 import ContactsHeader from "./ContactsHeader";
 import styles from "./style.module.css";
 
-const Contacts = ({ history, pushErr }: any) => {
+interface Props extends RouteComponentProps, ToastProps {}
+
+const Contacts: React.FC<Props> = ({ history, pushErr }) => {
   const [search, setSearch] = useState("");
   const [hasFetched, setHasFetched] = useState(false);
 
