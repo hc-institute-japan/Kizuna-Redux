@@ -10,7 +10,7 @@ const schema = gql`
     recipient: String
   }
   extend type Query {
-    getMessages(id: ID): [Message]
+    getMessages(author: ID, recipient: ID): [Message]
   }
   extend type Mutation {
     initializeP2PDNA(requirements: Requirements): Boolean
