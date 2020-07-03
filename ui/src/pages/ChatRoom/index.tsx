@@ -32,9 +32,9 @@ const ChatRoom: React.FC = () => {
 
   const dispatch = useDispatch();
 
-  // const { conversations } = useSelector(
-  //   (state: RootState) => state.conversations
-  // );
+  const { conversations } = useSelector(
+    (state: RootState) => state.conversations
+  );
 
   const { profile } = useSelector((state: RootState) => state.profile);
 
@@ -53,31 +53,33 @@ const ChatRoom: React.FC = () => {
         },
       ],
     };
+    console.log(newMessage);
     dispatch(logMessage(newMessage));
     setNewMsg("");
-    scrollToBottom();
-  };
+    // scrollToBottom();
+  }
 
   useEffect(() => {
     //TODO: if location.state.contents is null then fetch message from the hc then push to redux state
     if (location.state.messages) {
-      setMessages(location.state.messages);
+      console.log(location);
+      setMessages(location.state.messages)
     }
     setCurrentUser(id!);
     setMe(profile.username);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location, id, profile]);
 
-  // useEffect(() => {
-  //   const conversation: Conversation | undefined = conversations.find((conversation) => {
-  //     console.log(id);
-  //     console.log(conversation.name);
-  //     return conversation.name === id!
-  //   });
-  //   if (conversation) setMessages(conversation.messages)
-  //   console.log("Hey!");
-  // }, [conversations])
-
+  useEffect(() => {
+    const conversation: Conversation | undefined = conversations.find((conversation) => {
+      console.log(id);
+      console.log(conversation.name);
+      return conversation.name === id!
+    });
+    if (conversation) setMessages(conversation.messages)
+    console.log("Hey!");
+  }, [conversations])
+  
   // temporary timestamp function
   const getProperTimestamp = (timestamp: number) => {
     const originalTimeStamp = timestamp * 1000;
@@ -129,31 +131,28 @@ const ChatRoom: React.FC = () => {
 
       <IonFooter>
         <IonToolbar color={"light"}>
-          <IonRow className={`${styles["footer"]}`}>
-            <IonCol size={"10"}>
-              <IonTextarea
-                autofocus
-                placeholder={"Type a message..."}
-                rows={1}
-                value={newMsg}
-                onIonChange={(e) => setNewMsg(e.detail.value!)}
-                className={`${styles["msg-input"]}`}
-              />
-            </IonCol>
-            <IonCol size={"2"}>
-              <IonButton
-                expand={"full"}
-                fill={"clear"}
-                disabled={newMsg ? false : true}
-                className={`${styles["msg-btn"]}`}
-                onClick={() => {
-                  sendNewMessage();
-                }}
-              >
-                <IonIcon icon={sendSharp} />
-              </IonButton>
-            </IonCol>
-          </IonRow>
+          <IonRow className={`${styles['footer']}`} >
+              <IonCol size={"10"} >
+                <IonTextarea
+                  autofocus
+                  placeholder={"Type a message..."} 
+                  rows={1}
+                  value={newMsg} 
+                  onIonChange={e => setNewMsg(e.detail.value!)}
+                  className={`${styles['msg-input']}`}
+                />
+              </IonCol>
+              <IonCol size={"2"}>
+                <IonButton 
+                  expand={"full"}
+                  fill={"clear"}
+                  disabled={newMsg ? false : true } 
+                  className={`${styles['msg-btn']}`} 
+                  onClick={() => sendNewMessage()}>
+                  <IonIcon icon={sendSharp} />
+                </IonButton>
+              </IonCol>
+          </IonRow> 
         </IonToolbar>
       </IonFooter>
     </IonPage>

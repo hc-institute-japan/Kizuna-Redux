@@ -13,7 +13,6 @@ import styles from "./style.module.css";
 type ConversationItemProps = {
 	name: string,
 	messages: Array<Message>,
-	me: string,
 }
 
 const ConversationItem: React.FC<any> = ({name, messages}: ConversationItemProps) => {
