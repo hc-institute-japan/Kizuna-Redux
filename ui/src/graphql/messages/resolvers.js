@@ -13,12 +13,6 @@ const resolvers = {
       });
       return messages;
     },
-    messageSignal: async (_, {}, { hcUprtcl }) => {
-      const connection =  hcUprtcl();
-      const signal = await connection.onSignal("recipient_offline", () => console.log("Nicko"));
-
-      return signal;
-    }
   },
   Mutation: {
     sendMessage: async (_, input, { callZome }) => {
