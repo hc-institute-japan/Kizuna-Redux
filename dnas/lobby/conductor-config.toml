@@ -11,8 +11,8 @@ public_address = 'HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhm
 test_agent = true
 
 [[dnas]]
-file = '/Users/neilsongardose/Documents/projects/beyonder/refork/Kizuna/dnas/lobby/dist/lobby.dna.json'
-hash = 'Qmd2QARqTeTzgqpk41jLwuj1wf1YwJq8yoqJ9CoLAqtJFT'
+file = '/home/holo/Desktop/KizunaMain/Kizuna/dnas/lobby/dist/lobby.dna.json'
+hash = 'QmTH2Z3VPaD7SZJC3XVMmW6NRNLCvBHzBeu8jMtQybbvob'
 id = 'hc-run-dna'
 
 [[instances]]
@@ -40,6 +40,10 @@ type = 'debug'
 
 [logger.rules]
 rules = []
+
+[network]
+sim2h_url = 'ws://localhost:9000'
+type = 'sim2h'
 
 [passphrase_service]
 type = 'cmd'
