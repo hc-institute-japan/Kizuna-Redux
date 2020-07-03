@@ -9,13 +9,19 @@ import withToast from "../../../components/Toast/withToast";
 import RecipientList from "./RecipientList";
 import NewConversationHeader from "./NewConversationHeader";
 
-const NewConversationModal: React.FC<any> = ({ pushErr }: any) => {
+type NewConversationModalProps = {
+	pushErr: any,
+	setShowModal(value: boolean): Function,
+}
+
+const NewConversationModal: React.FC<any> = ({ pushErr, setShowModal }: NewConversationModalProps) => {
 	const [search, setSearch] = useState("");
 	const [hasFetched, setHasFetched] = useState(false);
 	const dispatch = useDispatch();
 
+	
 	const { indexedContacts, contacts } = useSelector(
-			(state: RootState) => state.contacts
+		(state: RootState) => state.contacts
 		);
 
 	const { profile } = useSelector(
@@ -41,7 +47,7 @@ const NewConversationModal: React.FC<any> = ({ pushErr }: any) => {
 
   return !loading ? (
 			<IonContent>
-				<NewConversationHeader search={search} setSearch={setSearch} />
+				<NewConversationHeader search={search} setSearch={setSearch} setShowModal={setShowModal} />
 				<RecipientList 
 					search={search}
 					contacts={contacts}

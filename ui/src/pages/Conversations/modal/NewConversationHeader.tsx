@@ -13,11 +13,12 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import styles from "./style.module.css";
 
-interface Props {
+type NewConversationHeader = {
   setSearch(value: string): void;
+  setShowModal(value: boolean): void;
   search: string;
 }
-const ContactsHeader: React.FC<Props> = ({ search, setSearch }) => {
+const NewConversationHeader: React.FC<NewConversationHeader> = ({ search, setSearch, setShowModal }: NewConversationHeader) => {
   const history = useHistory();
 
   return (
@@ -28,7 +29,9 @@ const ContactsHeader: React.FC<Props> = ({ search, setSearch }) => {
             <IonCol size={"2"}>
               <IonButtons>
                 <IonButton
-                  onClick={() => history.goBack()}
+                  onClick={() => {
+                    setShowModal(false);
+                  }}
                   className={`${styles["cancel-btn"]}`}
                   size={"small"}
                 >
@@ -55,4 +58,4 @@ const ContactsHeader: React.FC<Props> = ({ search, setSearch }) => {
   );
 };
 
-export default ContactsHeader;
+export default NewConversationHeader;

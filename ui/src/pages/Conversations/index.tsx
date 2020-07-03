@@ -1,7 +1,6 @@
 import { IonPage, IonFab, IonContent, IonFabButton, IonIcon, IonModal } from "@ionic/react";
 import { useSelector } from "react-redux";
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
 import HomeHeader from "../../components/Header/HomeHeader";
 import { RootState } from "../../redux/reducers";
 import ConversationList from "./ConversationList";
@@ -10,11 +9,8 @@ import styles from "./style.module.css";
 import NewConversationModal from "./modal/NewConversationModal";
 
 const Conversations: React.FC = () => {
-  const history = useHistory();
   const [showModal, setShowModal] = useState<boolean>(false)
-  const { conversations } = useSelector(
-    (state: RootState) => state.conversations
-  );
+  const { conversations } = useSelector((state: RootState) => state.conversations);
 
   // console.log(profile);
 
@@ -26,7 +22,7 @@ const Conversations: React.FC = () => {
       </IonContent>
       <IonContent>
         <IonModal isOpen={showModal}>
-          <NewConversationModal />
+          <NewConversationModal setShowModal={setShowModal}/>
         </IonModal>
       </IonContent>
       <IonFab
