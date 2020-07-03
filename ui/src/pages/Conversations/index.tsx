@@ -1,19 +1,17 @@
-import {
-  IonContent,
-  IonFab,
-  IonFabButton,
-  IonIcon,
-  IonPage,
-} from "@ionic/react";
-import { pencil } from "ionicons/icons";
-import React from "react";
+import { IonPage, IonFab, IonContent, IonFabButton, IonIcon, IonModal } from "@ionic/react";
 import { useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import HomeHeader from "../../components/Header/HomeHeader";
 import { RootState } from "../../redux/reducers";
 import ConversationList from "./ConversationList";
+import { pencil } from "ionicons/icons";
 import styles from "./style.module.css";
+import NewConversationModal from "./modal/NewConversationModal";
 
 const Conversations: React.FC = () => {
+  const history = useHistory();
+  const [showModal, setShowModal] = useState<boolean>(false)
   const { conversations } = useSelector(
     (state: RootState) => state.conversations
   );
@@ -26,8 +24,13 @@ const Conversations: React.FC = () => {
       <IonContent>
         <ConversationList conversations={conversations} />
       </IonContent>
+      <IonContent>
+        <IonModal isOpen={showModal}>
+          <NewConversationModal />
+        </IonModal>
+      </IonContent>
       <IonFab
-        onClick={() => history.push("/new-message")}
+        onClick={() => setShowModal(true)}
         vertical="bottom"
         horizontal="end"
         slot="fixed"

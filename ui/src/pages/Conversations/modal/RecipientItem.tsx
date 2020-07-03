@@ -5,7 +5,7 @@ import {
   IonLabel,
 } from "@ionic/react";
 import React from "react";
-import withToast from "../../components/Toast/withToast";
+import withToast from "../../../components/Toast/withToast";
 
 const RecipientItem: any = ({ contact, pushErr }: any) => {
 	const history = useHistory();
@@ -13,7 +13,8 @@ const RecipientItem: any = ({ contact, pushErr }: any) => {
 
   return (
     <IonItem button onClick={() => history.push(`/chat-room/${contact.username}`, {
-			
+      name: contact.username,
+      messages: [{sender: "tatsuloks", payload: "hey", createdAt: 1593681118}],
 		})}>
 			<IonAvatar slot="start">
 				<img src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y" alt="" />

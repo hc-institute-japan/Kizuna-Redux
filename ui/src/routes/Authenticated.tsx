@@ -13,7 +13,6 @@ import Blocked from "../pages/Contacts/Blocked";
 import DeleteProfile from "../pages/DeleteProfile";
 import EditProfile from "../pages/EditProfile";
 import Home from "../pages/Home";
-import NewMessage from "../pages/NewMessage";
 import Profile from "../pages/Profile";
 import { setProfile } from "../redux/profile/actions";
 import SEND_MESSAGE from "../graphql/messages/mutations/sendMessage";
@@ -60,9 +59,6 @@ const Authenticated: React.FC = ({ pushErr }: any) => {
         </Route>
         <Route path="/chat-room/:id" exact>
           <ChatRoom />
-        </Route>
-        <Route path="/new-message" exact>
-          <NewMessage />
         </Route>
         <Redirect from="*" to="/home" />
       </Switch>
