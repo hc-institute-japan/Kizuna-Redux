@@ -2,10 +2,12 @@ import React, { useCallback, useState } from "react";
 import Toast from ".";
 import errorMessages from "../../utils/errors";
 import ToastContext from "./ToastContext";
+import { ApolloError } from "apollo-boost";
+import { ToastOptions } from "@ionic/react";
 
 const ToastProvider: React.FC = ({ children }) => {
-  const [toast, setToast] = useState<any>([]);
-  const push = (opt: any) => {
+  const [toast, setToast] = useState<Array<typeof Toast> | []>([]);
+  const push = (opt: ToastOptions) => {
     setToast((curr: any) => [
       ...curr,
       <Toast key={curr.length + 1} {...opt} />,
@@ -14,16 +16,16 @@ const ToastProvider: React.FC = ({ children }) => {
 
   const pushErr = useCallback(
     (
-      err: any,
-      opt: any = {},
+      err: ApolloError,
+      opt: ToastOptions,
       zomeName: string,
       funcName: string | null = null
     ) => {
-      const { graphQLErrors, networkError }: any = { ...err };
-      const messages: any = [];
+      const { graphQLErrors, networkError } = { ...err };
+      const messages: string[] = [];
 
       if (graphQLErrors) {
-        graphQLErrors.forEach(({ message }: any) => {
+        graphQLErrors.forEach(({ message }: { message: string }) => {
           const { code } = JSON.parse(message);
           if (code) {
             switch (code) {
@@ -65,7 +67,7 @@ const ToastProvider: React.FC = ({ children }) => {
 
       setToast((curr: any) => [
         ...curr,
-        ...messages.map((message: any) => (
+        ...messages.map((message: string) => (
           <Toast
             key={curr.length + 1}
             {...opt}

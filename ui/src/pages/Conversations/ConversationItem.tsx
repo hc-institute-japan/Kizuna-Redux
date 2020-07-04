@@ -14,10 +14,10 @@ import styles from "./style.module.css";
 type ConversationItemProps = {
   name: string;
   messages: Array<Message>;
-  me: string;
+  me?: string;
 };
 
-const ConversationItem: React.FC<any> = ({
+const ConversationItem: React.FC<ConversationItemProps> = ({
   name,
   messages,
 }: ConversationItemProps) => {

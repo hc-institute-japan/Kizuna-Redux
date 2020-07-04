@@ -1,15 +1,14 @@
-import React from "react";
 import {
-  IonFooter,
-  IonToolbar,
-  IonTextarea,
-  IonButtons,
   IonButton,
+  IonButtons,
+  IonFooter,
   IonIcon,
+  IonTextarea,
+  IonToolbar,
 } from "@ionic/react";
 import { sendSharp } from "ionicons/icons";
+import React from "react";
 import styles from "./style.module.css";
-import sendMessage from "../../graphql/messages/mutations/sendMessage";
 
 interface Props {
   newMsg: string | undefined;

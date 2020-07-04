@@ -1,5 +1,5 @@
 import { IonContent, IonGrid, IonPage } from "@ionic/react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { logMessage } from "../../redux/conversations/actions";
@@ -46,8 +46,8 @@ const ChatRoom: React.FC = () => {
     dispatch(logMessage(conversation));
     setMessages((curr) => [...curr, newMessage]);
     setNewMsg("");
-    // scrollToBottom();
-  }
+    scrollToBottom();
+  };
 
   return (
     <IonPage>

@@ -1,35 +1,13 @@
-import { IonToast } from "@ionic/react";
-import React, { forwardRef, useImperativeHandle, useState } from "react";
+import { IonToast, ToastOptions } from "@ionic/react";
+import React, { forwardRef, useImperativeHandle, useState, Ref } from "react";
 
-declare enum Position {
-  "top",
-  "bottom",
-  "middle",
+interface ToastRef {
+  show(): void;
+  hide(): void;
+  toggle(): void;
 }
 
-interface Button {
-  side?: string;
-  icon?: string;
-  text: string;
-  handler?(): void;
-  role: string;
-}
-
-interface Props {
-  message: string;
-  duration?: number;
-  buttons?: any[];
-  color?: string;
-  header?: string;
-  position?: "top" | "bottom" | "middle" | undefined;
-  mode?: string;
-  onDidDismiss?(): void;
-  onDidPresent?(): void;
-  onWillDismiss?(): void;
-  onWillPresent?(): void;
-}
-
-const Toast = (props: any, ref: any) => {
+const Toast = (props: ToastOptions, ref: Ref<ToastRef>) => {
   const [isOpen, setIsOpen] = useState(true);
   const { duration = 1000 } = { ...props };
 

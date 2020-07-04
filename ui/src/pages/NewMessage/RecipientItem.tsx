@@ -1,20 +1,20 @@
 import { useHistory } from "react-router-dom";
 import { IonAvatar, IonItem, IonLabel } from "@ionic/react";
 import React from "react";
-import withToast from "../../components/Toast/withToast";
+import withToast, { ToastProps } from "../../components/Toast/withToast";
+import { Profile } from "../../utils/types";
 
-const RecipientItem: any = ({ contact, pushErr }: any) => {
+interface Props extends ToastProps {
+  contact: Profile;
+}
+
+const RecipientItem: React.FC<Props> = ({ contact, pushErr }) => {
   const history = useHistory();
 
   return (
     <IonItem
       button
-      onClick={() =>
-        history.push(`/chat-room/${contact.username}`, {
-          name: contact.username,
-          messages: [],
-        })
-      }
+      onClick={() => history.push(`/chat-room/${contact.username}`, {})}
     >
       <IonAvatar slot="start">
         <img

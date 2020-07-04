@@ -1,11 +1,9 @@
-import { useQuery, useMutation, useLazyQuery } from "@apollo/react-hooks";
+import { useLazyQuery } from "@apollo/react-hooks";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Menu from "../components/Menu";
-import withToast from "../components/Toast/withToast";
-import INITIALIZE from "../graphql/messages/mutations/initializeP2PDNA";
-import GET_MESSAGE from "../graphql/messages/query/getMessage";
+import withToast, { ToastProps } from "../components/Toast/withToast";
 import ME from "../graphql/query/meQuery";
 import Add from "../pages/Add";
 import ChatRoom from "../pages/ChatRoom";
@@ -15,10 +13,8 @@ import EditProfile from "../pages/EditProfile";
 import Home from "../pages/Home";
 import Profile from "../pages/Profile";
 import { setProfile } from "../redux/profile/actions";
-import SEND_MESSAGE from "../graphql/messages/mutations/sendMessage";
-import { IonButton, IonApp } from "@ionic/react";
 
-const Authenticated: React.FC = ({ pushErr }: any) => {
+const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
   const [
     getMe,
     { loading: meLoading, error: meError, data: me },
