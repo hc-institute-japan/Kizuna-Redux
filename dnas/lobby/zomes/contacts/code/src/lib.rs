@@ -58,4 +58,9 @@ mod contacts {
     fn list_blocked() -> ZomeApiResult<Vec<Address>> {
         contact::handlers::list_blocked()
     }
+
+    #[zome_fn("hc_public")]
+    fn in_contacts(id: Address) -> ZomeApiResult<bool> {
+        contact::handlers::in_contacts(id)
+    }
 }

@@ -109,6 +109,19 @@ pub fn list_contacts() -> ZomeApiResult<Vec<Address>> {
 
 }
 
+pub fn in_contacts(id: Address) -> ZomeApiResult<bool> {
+    let contacts_list = list_contacts()?;
+    if contacts_list.len() == 0 {
+        Ok(false)
+    } else {
+        if contacts_list.iter().any(|address| address.to_string()==id.to_string()) {
+            Ok(true)
+        } else {
+            Ok(false)
+        }
+    }
+}
+
 pub fn block(username: String, timestamp: u64) -> ZomeApiResult<Profile> {
     let contact_address = username_address(username.clone())?;
 

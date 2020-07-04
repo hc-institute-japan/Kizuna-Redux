@@ -78,7 +78,7 @@ mod requests {
     }
 
     #[receive]
-    fn receive(_from: Address, payload: String) -> String {
+    fn receive(from: Address, payload: String) -> String {
         if payload == "request_accepted" {
             let _emitted = hdk::emit_signal(
                 "request_accepted".to_string(),
@@ -86,11 +86,41 @@ mod requests {
             );
             format!("{{code: {}}}", "request_accepted".to_string())
         } else {
-            let _emitted = hdk::emit_signal(
-                payload,
-                JsonString::from_json(&format!("{{code: {}}}", "request_receieved".to_owned()))
+            // check contacts membership
+            #[derive(Serialize, Deserialize, Debug, DefaultJson)]
+            struct ZomeInput {
+                id: Address
+            };
+            let call_input = ZomeInput {
+                id: from
+            };
+
+            let call_response = hdk::call(
+                hdk::THIS_INSTANCE,
+                "contacts",
+                Address::from(hdk::PUBLIC_TOKEN.to_owned()),
+                "in_contacts",
+                call_input.into()
             );
-            format!("{{code: {}}}", "request_received".to_string())
+
+            match call_response {
+                Ok(response) => {
+                    let in_contacts = response;
+                    let _emitted = hdk::emit_signal(
+                        payload,
+                        JsonString::from_json(&format!("{{code: {}, in_contacts: {}}}", "request_receieved".to_owned(), in_contacts))
+                    );
+                    format!("{{code: {}, in_contacts: {}}}", "request_receieved".to_owned(), in_contacts)
+                },
+                _ => {
+                    let _emitted = hdk::emit_signal(
+                        payload,
+                        JsonString::from_json(&format!("{{code: {}}}", "contact_checking_failed".to_owned()))
+                    );
+                    format!("{{code: {}}}", "contact_checking_failed".to_owned())
+                }
+            }
+
         }
     }
 }
