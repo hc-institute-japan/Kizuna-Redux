@@ -38,24 +38,59 @@ mod requests {
     #[zome_fn("hc_public")]
     fn request_to_chat(sender: Address, recipient: Address) -> ZomeApiResult<String> {
         let dna_properties = Members::new(sender.clone(), recipient.clone());
-        hdk::send(
-            recipient,
-            json!(dna_properties).to_string(),
-            10000.into()
-        )
+        match hdk::send(recipient, json!(dna_properties).to_string(), 10000.into()) {
+            Ok(_response) => {
+                let _emitted = hdk::emit_signal(
+                    "request_pending",
+                    JsonString::from_json(&format!("{{code: {}}}", "request_pending".to_owned()))
+                )?;
+                Ok(JsonString::from_json(&format!("{{code: {}}}", "request_pending".to_owned())).to_string())
+            },
+            _=> {
+                let _emitted = hdk::emit_signal(
+                    "recipient_offline",
+                    JsonString::from_json(&format!("{{code: {}}}", "recipient_offline".to_owned()))
+                )?;
+                Ok(JsonString::from_json(&format!("{{code: {}}}", "recipient_offline".to_owned())).to_string())
+            }
+        }
     }
 
     #[zome_fn("hc_public")]
     fn accept_request(sender: Address) -> ZomeApiResult<String> {
-        hdk::send(
-            sender,
-            "request_accepted".into(),
-            10000.into()
-        )
+
+        match hdk::send(sender, "request_accepted".to_owned(), 10000.into()) {
+            Ok(_response) => {
+                let _emitted = hdk::emit_signal(
+                    "request_accepted",
+                    JsonString::from_json(&format!("{{code: {}}}", "confirmation_sent".to_owned()))
+                )?;
+                Ok(JsonString::from_json(&format!("{{code: {}}}", "confirmation_sent".to_owned())).to_string())
+            },
+            _=> {
+                let _emitted = hdk::emit_signal(
+                    "recipient_offline",
+                    JsonString::from_json(&format!("{{code: {}}}", "recipient_offline".to_owned()))
+                )?;
+                Ok(JsonString::from_json(&format!("{{code: {}}}", "recipient_offline".to_owned())).to_string())
+            }
+        }
     }
 
     #[receive]
-    fn receive(from: Address, payload: String) -> String {
-        format!("Received: {} from {}", payload, from)
+    fn receive(_from: Address, payload: String) -> String {
+        if payload == "request_accepted" {
+            let _emitted = hdk::emit_signal(
+                "request_accepted".to_string(),
+                JsonString::from_json(&format!("{{code: {}}}", "request_accepted".to_owned()))
+            );
+            format!("{{code: {}}}", "request_accepted".to_string())
+        } else {
+            let _emitted = hdk::emit_signal(
+                payload,
+                JsonString::from_json(&format!("{{code: {}}}", "request_receieved".to_owned()))
+            );
+            format!("{{code: {}}}", "request_received".to_string())
+        }
     }
 }
