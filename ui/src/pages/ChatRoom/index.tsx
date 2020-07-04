@@ -1,8 +1,8 @@
 import { IonContent, IonGrid, IonPage } from "@ionic/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
-import { logMessage } from "../../redux/conversations/actions";
+import { logMessage, getMessages } from "../../redux/conversations/actions";
 import { RootState } from "../../redux/reducers";
 import { getTimestamp } from "../../utils/helpers/index";
 import { Conversation, Message } from "../../utils/types";
@@ -21,9 +21,11 @@ const ChatRoom: React.FC = () => {
   const location = useLocation<LocationState>();
   const dispatch = useDispatch();
   const id = location.state.name;
-  const [messages, setMessages] = useState<Array<Message>>(
-    location.state.messages
-  );
+  const [messages, setMessages] = useState<Array<Message>>([]);
+
+  useEffect(() => {
+    setMessages(dispatch(getMessages(id)) as any);
+  }, [id]);
 
   const {
     profile: { username: me },
@@ -54,13 +56,13 @@ const ChatRoom: React.FC = () => {
       <ChatHeader name={id!} />
       <IonContent scrollEvents={true}>
         <IonGrid>
-          {messages.map((message) => {
-            return message.sender === me ? (
+          {messages.map((message) =>
+            message.sender === me ? (
               <Me key={JSON.stringify(message)} message={message} />
             ) : (
               <Others key={JSON.stringify(message)} message={message} />
-            );
-          })}
+            )
+          )}
         </IonGrid>
       </IonContent>
 

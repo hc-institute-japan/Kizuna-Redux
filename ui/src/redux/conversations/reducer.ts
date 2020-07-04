@@ -113,8 +113,8 @@ export default (state = initialState, action: ActionType) => {
       if (i >= 0)
         state.conversations[i].messages.push(action.conversation.messages[0]);
       else state.conversations.push(action.conversation);
-      console.log(state.conversations);
-      return Object.create(state);
+
+      return { ...state };
     default:
       return state;
   }
