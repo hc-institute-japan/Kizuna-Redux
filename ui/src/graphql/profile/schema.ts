@@ -7,13 +7,13 @@ const schema = `
         username: String!
     }
 
-    type Query {
+    extend type Query {
         allAgents: [Profile!]!
         me: Profile
         username(address: String): String!
     }
 
-    type Mutation {
+    extend type Mutation {
         createProfile(username: String): Profile!
         deleteProfile(username: String): Boolean
         updateProfile(profile: ProfileInput): Boolean

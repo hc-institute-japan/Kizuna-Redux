@@ -21,15 +21,15 @@ const ContactsHeader: React.FC<Props> = ({ search, setSearch }) => {
   const history = useHistory();
 
   return (
-    <IonHeader className={`${styles["header"]}`}>
+    <IonHeader className={styles["header"]}>
       <IonToolbar>
         <IonGrid class="ion-no-padding">
-          <IonRow className={`${styles["row"]}`}>
+          <IonRow className={styles["row"]}>
             <IonCol size={"2"}>
               <IonButtons>
                 <IonButton
                   onClick={() => history.goBack()}
-                  className={`${styles["cancel-btn"]}`}
+                  className={styles["cancel-btn"]}
                   size={"small"}
                 >
                   Cancel
@@ -45,10 +45,11 @@ const ContactsHeader: React.FC<Props> = ({ search, setSearch }) => {
           </IonRow>
         </IonGrid>
         <IonSearchbar
-          className={`${styles["search-bar"]}`}
+          className={styles["search-bar"]}
+          color="light"
           onIonChange={(e) => setSearch((e.target as HTMLInputElement).value)}
           value={search}
-          placeholder={"Search by username"}
+          placeholder="Search by username"
         />
       </IonToolbar>
     </IonHeader>

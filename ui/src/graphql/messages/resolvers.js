@@ -9,16 +9,18 @@ const resolvers = {
         func: "get_messages_from_contact",
       })({
         author: input.author,
-        recipient: input.recipient
+        recipient: input.recipient,
       });
       return messages;
     },
     messageSignal: async (_, {}, { hcUprtcl }) => {
-      const connection =  hcUprtcl();
-      const signal = await connection.onSignal("recipient_offline", () => console.log("Nicko"));
+      const connection = hcUprtcl();
+      const signal = await connection.onSignal("recipient_offline", () =>
+        console.log("Nicko")
+      );
 
-      return signal;
-    }
+      return true;
+    },
   },
   Mutation: {
     sendMessage: async (_, input, { callZome }) => {
@@ -55,7 +57,7 @@ const resolvers = {
       // initialize properties
 
       const members = {
-        members: [requirements.id, requirements.recipient]
+        members: [requirements.id, requirements.recipient],
       };
       console.log("lmao");
 

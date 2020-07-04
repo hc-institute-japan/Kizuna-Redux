@@ -9,18 +9,16 @@ type ConversationListProps = {
 
 const ConversationList: React.FC<ConversationListProps> = ({
   conversations,
-}: ConversationListProps) => {
-  return (
-    <IonItemGroup>
-      {conversations.map((conversation) => (
-        <ConversationItem
-          key={conversation.name}
-          name={conversation.name}
-          messages={conversation.messages}
-        />
-      ))}
-    </IonItemGroup>
-  );
-};
+}: ConversationListProps) => (
+  <IonItemGroup>
+    {conversations.map((conversation) => (
+      <ConversationItem
+        key={conversation.name}
+        name={conversation.name}
+        messages={conversation.messages}
+      />
+    ))}
+  </IonItemGroup>
+);
 
 export default ConversationList;
