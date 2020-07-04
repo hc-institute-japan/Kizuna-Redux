@@ -46,8 +46,8 @@ const ChatRoom: React.FC = () => {
     dispatch(logMessage(conversation));
     setMessages((curr) => [...curr, newMessage]);
     setNewMsg("");
-    scrollToBottom();
-  };
+    // scrollToBottom();
+  }
 
   return (
     <IonPage>
