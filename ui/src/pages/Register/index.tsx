@@ -9,16 +9,16 @@ import {
 } from "@ionic/react";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { withRouter } from "react-router-dom";
-import withToast from "../../components/Toast/withToast";
+import { withRouter, RouteComponentProps } from "react-router-dom";
+import withToast, { ToastProps } from "../../components/Toast/withToast";
 import CREATE_PROFILE_MUTATION from "../../graphql/mutation/createProfileMutation";
 import { authenticate } from "../../redux/auth/actions";
 import { isUsernameFormatValid } from "../../utils/helpers/regex";
 import styles from "./style.module.css";
 
-// type Props = RouteComponentProps<{}, {}, { pushErr(err: any, opt: any): void }>;
+interface Props extends ToastProps, RouteComponentProps {}
 
-const Register: any = (props: any) => {
+const Register: React.FC<Props> = (props) => {
   const [username, setUsername] = useState("");
 
   const [usernameError, setUsernameError] = useState("");

@@ -1,30 +1,46 @@
 import {
-  IonAvatar,
+  IonBackButton,
   IonButton,
   IonButtons,
-  IonCol,
-  IonGrid,
   IonHeader,
   IonIcon,
-  IonRow,
+  IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { arrowBack, call } from "ionicons/icons";
+import { call } from "ionicons/icons";
 import React from "react";
-import { useHistory } from "react-router-dom";
 import styles from "./style.module.css";
 
 type ChatHeaderProps = {
   name: string;
 };
 
-const ChatHeader: React.FC<ChatHeaderProps> = ({ name }: ChatHeaderProps) => {
-  const history = useHistory();
+const ChatHeader: React.FC<ChatHeaderProps> = ({ name }: ChatHeaderProps) => (
+  <IonHeader>
+    <IonToolbar>
+      <IonButtons slot="start">
+        <IonBackButton />
+      </IonButtons>
+      <div className={styles["header-label"]}>
+        <img
+          height="40px"
+          className={`ion-float-left ${styles.img}`}
+          src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y"
+          alt=""
+        />
 
-  return (
-    <IonHeader>
-      <IonToolbar>
-        <IonGrid class="ion-no-padding">
+        <IonTitle className="ion-no-padding ion-padding-start">{name}</IonTitle>
+      </div>
+      <IonButtons slot="end">
+        <IonButton>
+          <IonIcon slot="end" icon={call} />
+        </IonButton>
+      </IonButtons>
+    </IonToolbar>
+  </IonHeader>
+);
+
+/* <IonGrid class="ion-no-padding">
           <IonRow className={`${styles["header-row"]}`}>
             <IonCol className={`${styles["header-col"]}`}>
               <IonButtons>
@@ -56,10 +72,6 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ name }: ChatHeaderProps) => {
               </IonButtons>
             </IonCol>
           </IonRow>
-        </IonGrid>
-      </IonToolbar>
-    </IonHeader>
-  );
-};
+        </IonGrid> */
 
 export default ChatHeader;

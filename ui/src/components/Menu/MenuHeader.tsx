@@ -4,7 +4,14 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/reducers";
 import styles from "./style.module.css";
 
-const MenuHeader = ({ history, close }: any) => {
+interface Props {
+  history: {
+    push(param: string): void;
+  };
+  close(): void;
+}
+
+const MenuHeader: React.FC<Props> = ({ history, close }) => {
   const profile = useSelector((state: RootState) => state.profile.profile);
 
   const handleOnClick = () => {

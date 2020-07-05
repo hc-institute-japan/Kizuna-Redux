@@ -10,7 +10,9 @@ const initialState = {
 export default (state = initialState, action: ActionType) => {
   switch (action.type) {
     case SET_CONTACTS:
-      let indexedContacts: any = {};
+      let indexedContacts: {
+        [key: string]: Array<Profile>;
+      } = {};
       const contacts = action.contacts.sort((a: Profile, b: Profile) => {
         const usernameA = a.username.toLowerCase();
         const usernameB = b.username.toLowerCase();

@@ -9,7 +9,7 @@ const resolvers = {
         func: "get_messages_from_contact",
       })({
         author: input.author,
-        recipient: input.recipient
+        recipient: input.recipient,
       });
       return messages;
     },
@@ -49,7 +49,7 @@ const resolvers = {
       // initialize properties
 
       const members = {
-        members: [requirements.id, requirements.recipient]
+        members: [requirements.id, requirements.recipient],
       };
       console.log("lmao");
 

@@ -10,8 +10,8 @@ import React from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 
 interface Props {
-  onBack?(): any;
-  onSearchChange(e: any): any;
+  onBack?(): void;
+  onSearchChange(e: CustomEvent): void;
   value: string;
   placeholder?: string;
 }

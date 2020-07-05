@@ -1,7 +1,5 @@
-import { callZome } from "../../connection/holochainClient";
-
 const resolvers = {
-  Query: {
+  Mutation: {
     requestToChat: async (_, input, { callZome }) => {
       await callZome({
         id: "test-instance",
@@ -10,7 +8,7 @@ const resolvers = {
       })({
         sender: input.sender,
         recipient: input.recipient,
-      })
+      });
     },
     acceptRequest: async (_, input, { callZome }) => {
       await callZome({
@@ -19,7 +17,7 @@ const resolvers = {
         func: "acceptRequest",
       })({
         sender: input.sender,
-      })
+      });
     },
   },
 };

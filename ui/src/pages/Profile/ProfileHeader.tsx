@@ -25,7 +25,9 @@ const ProfileHeader = ({ url }: { url: string }) => {
         </IonButtons>
         <IonButtons slot="end">
           <IonButton
-            onClick={(e) => {
+            onClick={(
+              e: React.MouseEvent<HTMLIonButtonElement, MouseEvent>
+            ) => {
               popover?.current?.show(e);
             }}
           >

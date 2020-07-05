@@ -12,7 +12,8 @@ const resolvers = {
         username: agent.username,
       }));
     },
-    me: async (_obj, _args, { callZome }) => {
+    me: async (_obj, _args, { callZome, onSignal }) => {
+      // onSignal("test", (signal) => console.log(signal));
       const agent_id = await callZome({
         id: "test-instance",
         zome: "profiles",

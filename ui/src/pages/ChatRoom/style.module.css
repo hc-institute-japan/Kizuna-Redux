@@ -1,26 +1,37 @@
+.messages {
+  display: flex;
+  flex-direction: column;
+}
+
 .message {
-  padding-right: 10px;
-  padding-left: 10px;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  display: inline-block;
+  padding: 0.5rem;
   border-radius: 15px;
-  margin-bottom: 4px;
-  white-space: pre-wrap;
+  margin-top: 0.3rem;
+  /* white-space: pre-wrap;   */
+}
+.message p {
+  margin: 0 !important;
 }
 
 .other-message {
-  background: #D5D5D5;
+  background: var(--ion-color-medium);
+}
 
+.my-message-container {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .my-message {
-  background: #F98712;
+  margin-left: auto;
+  text-align: end;
+  background: var(--ion-color-primary);
   color: #fff;
 }
 
 .time {
   /* text-align: right; */
-  float: right;
   font-size: small;
 }
 
@@ -31,33 +42,32 @@
   background: #fff;
   resize: none;
   padding-left: 10px;
+  color: var(--ion-color-dark);
   padding-right: 10px;
   width: 100%;
   margin-top: 0px;
 }
 
-.msg-btn {
-  margin: 0px;
-  border-color: rgb(0, 0, 0);
-  padding-top: 0px;
-  padding-bottom: 0px;
-  padding-right: 0px;
-  padding-right:0px;
-  margin-inline-start: 0px;
-  margin-inline-end: 0px;
-  margin-left: 0px;
-  margin-right: 0px;
+.footer {
+  background-color: var(--ion-color-light);
 }
 
-.footer {
+.header-container {
+  display: flex;
+  flex: 1;
+  background-color: red;
+  justify-content: space-between;
+}
+
+.header-label {
+  display: flex;
   align-items: center;
-  box-shadow: darkgray;
 }
 
 .header-row {
   align-items: center;
   align-content: center;
-  padding: 5px !important; 
+  padding: 5px !important;
 }
 
 .header-col {
@@ -81,4 +91,5 @@
 
 .img {
   margin: 0px !important;
+  border-radius: 20px;
 }

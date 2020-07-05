@@ -1,12 +1,13 @@
 import { IonItem, IonLabel, IonList, IonNote } from "@ionic/react";
 import React from "react";
 import styles from "./style.module.css";
+import { Profile } from "../../utils/types";
 
-interface Profile {
-  [key: string]: any;
+interface Props {
+  profile: Profile;
 }
 
-const ProfileDetails = ({ profile }: any) => {
+const ProfileDetails: React.FC<Props> = ({ profile }) => {
   const profileKeys = Object.keys(profile);
 
   return (

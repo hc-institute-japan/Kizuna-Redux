@@ -14,7 +14,7 @@ import styles from "./style.module.css";
  */
 
 const Menu: React.FC = () => {
-  const menuRef = React.useRef<any>(null);
+  const menuRef = React.useRef<HTMLIonMenuElement | null>(null);
   const history = useHistory();
 
   return (

@@ -12,13 +12,18 @@ import {
 import { arrowBack } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import withToast from "../../components/Toast/withToast";
+import withToast, { ToastProps } from "../../components/Toast/withToast";
 import DELETE_PROFILE_MUTATION from "../../graphql/mutation/deleteProfileMutation";
 import { RootState } from "../../redux/reducers";
+import { Profile } from "../../utils/types";
 import styles from "./style.module.css";
 
-const DeleteProfile = ({ pushErr }: any) => {
-  const profile: any = useSelector((state: RootState) => state.profile);
+interface ChangeEventDetail {
+  value: string | undefined | null;
+}
+
+const DeleteProfile: React.FC<ToastProps> = ({ pushErr }) => {
+  const profile: Profile = useSelector((state: RootState) => state.profile);
   // const [username, setUsername] = useState("");
   const [isUsernameCorrect, setIsUsernameCorrect] = useState(false);
 
