@@ -11,10 +11,10 @@ let holochainUprtclClient;
 
 // NB: This should be set to false when you want to run against a Holochain Conductor
 // with a websocket interface running on REACT_APP_DNA_INTERFACE_URL.
-// export const MOCK_DNA_CONNECTION =
-//   process.env.NODE_ENV === "test" ||
-//   process.env.REACT_APP_MOCK_DNA_CONNECTION === "true" ||
-//   false;
+export const MOCK_DNA_CONNECTION =
+  process.env.NODE_ENV === "test" ||
+  process.env.REACT_APP_MOCK_DNA_CONNECTION === "true" ||
+  false;
 
 // Do we need to close ws connection at some point?
 
@@ -99,6 +99,43 @@ export function callZome({ id, zome, func }) {
   };
 }
 
+export function callAdmin( adminFn ) {
+  return async function (args = {}) {
+    try {
+      let adminCall;
+
+      await initAndGetHolochainClient();
+      adminCall = holochainClient.call(adminFn);
+
+      const rawResult = await adminCall(args);
+
+      return rawResult;
+    } catch (e) {
+      const { Internal, Timeout } = { ...e };
+      if (Internal) {
+        const err = JSON.parse(Internal);
+        if (err.constructor.name === "Object" && "code" in err) {
+          throw new Error(JSON.stringify(err));
+        }
+      } else if (Timeout) {
+        throw new Error(
+          JSON.stringify({
+            code: 502,
+            message: "Timeout",
+          })
+        );
+      }
+
+      throw new Error(
+        JSON.stringify({
+          code: 1000,
+          message: "Filler",
+        })
+      );
+    }
+  };
+}
+
 // see https://github.com/uprtcl/js-uprtcl/tree/master/providers/holochain
 export async function hcUprtcl() {
   await initAndGetHolochainClient();
@@ -108,7 +145,7 @@ export async function hcUprtcl() {
     devEnv: {
       // this property should be changed to your local paths and dna hash
       templateDnasPaths: {
-        Qmf1P9z3vbkkDeiULA3fAohoMMqgVASBNRjEUYiqxMwdGQ:
+        mWMcdbwrkFwMWsd836se32cwD2SRgHx8KY8qP4PoFpVwc :
           "/home/holo/Desktop/KizunaMain/Kizuna/dnas/p2pcomm/dist/p2pcomm.dna.json",
       },
     },

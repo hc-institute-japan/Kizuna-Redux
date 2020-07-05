@@ -1,9 +1,10 @@
 import gql from "graphql-tag";
 
 const schema = gql`
-  extend type Mutation {
+  extend type Query {
     requestToChat(sender: ID, recipient: ID): String
     acceptRequest(sender: ID): String
+    testEmit(message: String): String
   }
 `;
 

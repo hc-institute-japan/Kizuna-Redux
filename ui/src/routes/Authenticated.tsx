@@ -4,6 +4,8 @@ import { useDispatch } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Menu from "../components/Menu";
 import withToast, { ToastProps } from "../components/Toast/withToast";
+import INITIALIZE from "../graphql/messages/mutations/initializeP2PDNA";
+import GET_MESSAGE from "../graphql/messages/query/getMessages";
 import ME from "../graphql/query/meQuery";
 import Add from "../pages/Add";
 import ChatRoom from "../pages/ChatRoom";

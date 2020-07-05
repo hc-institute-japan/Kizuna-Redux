@@ -1,4 +1,6 @@
-const schema = `
+import gql from "graphql-tag";
+
+const schema = gql`
     type Contacts {
         agent_id: ID!
         timestamp: Float

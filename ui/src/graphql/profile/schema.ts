@@ -1,4 +1,6 @@
-const schema = `
+import gql from "graphql-tag";
+
+const schema = gql`
     type Profile {
         id: ID!
         username: String
@@ -16,7 +18,6 @@ const schema = `
     extend type Mutation {
         createProfile(username: String): Profile!
         deleteProfile(username: String): Boolean
-        updateProfile(profile: ProfileInput): Boolean
     }
 `;
 

@@ -5,6 +5,10 @@ const schema = gql`
     anchor: ID
     payload: String
   }
+  type DNA {
+    id: String,
+    hash: ID
+  }
   input Requirements {
     id: ID
     recipient: String
@@ -12,6 +16,7 @@ const schema = gql`
   extend type Query {
     getMessages(author: ID, recipient: ID): [Message]
     messageSignal: Boolean
+    getMessageDNAs: [DNA]
   }
   extend type Mutation {
     initializeP2PDNA(requirements: Requirements): Boolean

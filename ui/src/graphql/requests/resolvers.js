@@ -14,10 +14,19 @@ const resolvers = {
       await callZome({
         id: "test-instance",
         zome: "requests",
-        func: "acceptRequest",
+        func: "accept_request",
       })({
         sender: input.sender,
       });
+    },
+    testEmit: async (_, input, { callZome }) => {
+      await callZome({
+        id: "test-instance",
+        zome: "requests",
+        func: "test_emit"
+      })({ message: input.message });
+
+      return "Nicko";
     },
   },
 };
