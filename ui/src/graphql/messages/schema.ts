@@ -15,7 +15,6 @@ const schema = gql`
   }
   extend type Query {
     getMessages(author: ID, recipient: ID): [Message]
-    messageSignal: Boolean
     getMessageDNAs: [DNA]
   }
   extend type Mutation {

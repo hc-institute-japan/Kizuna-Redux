@@ -1,4 +1,4 @@
-import { callZome, callAdmin, initAndGetHolochainClient } from "../../connection/holochainClient";
+import { callZome, callAdmin } from "../../connection/holochainClient";
 
 const resolvers = {
   Query: {
@@ -41,7 +41,6 @@ const resolvers = {
       const connection = await hcUprtcl();
 
       // get member agents' addresses
-      // const my_agent_id = await callZome({id: 'test-instance', zome: 'profiles', func: 'get_my_address'})();
       const agent_id = await callZome({
         id: "test-instance",
         zome: "profiles",
@@ -53,22 +52,40 @@ const resolvers = {
       console.log(agent_id, requirements.id);
 
       // initialize properties
-
       const members = {
         members: [requirements.id, requirements.recipient],
       };
-      console.log("lmao");
 
       // clone DNA from template and initialize using properties
-      await connection.cloneDna(
-        agentConfig.id, // agent to 'host' the DNA
-        `message-dna-${requirements.id}-${requirements.recipient}`, // DNA id
-        `message-instance-${requirements.id}-${requirements.recipient}`, // instance id
-        "mWMcdbwrkFwMWsd836se32cwD2SRgHx8KY8qP4PoFpVwc", // DNA address
-        members, // properties
-        (interfaces) =>
-          interfaces.find((iface) => iface.id === "websocket-interface") // interface
-      );
+      try {
+        await connection.cloneDna(
+          agentConfig.id, // agent to 'host' the DNA
+          `message-dna-${requirements.id}-${requirements.recipient}`, // DNA id
+          `message-instance-${requirements.id}-${requirements.recipient}`, // instance id
+          "mWMcdbwrkFwMWsd836se32cwD2SRgHx8KY8qP4PoFpVwc", // DNA address
+          members, // properties
+          (interfaces) =>
+            interfaces.find((iface) => iface.id === "websocket-interface") // interface
+        );
+        return true;
+      } catch (error) {
+          // check if the message instance is already configured
+          const running_instances = await callAdmin("admin/instance/running")();
+          const message_instances = running_instances.filter(instance => 
+            instance.id.includes(`message-instance-${requirements.id}-${requirements.recipient}`)
+          );
+
+          if (message_instances.length != 0) {
+            return true;  
+          } else {
+            console.log(error);
+            // revert changes to conductor config
+            await callAdmin("admin/instance/remove")({id: `message-instance-${requirements.id}-${requirements.recipient}`});
+            await callAdmin("admin/dna/uninstall")({id: `message-dna-${requirements.id}-${requirements.recipient}`})
+  
+            return false;
+          }
+      }
     },
   },
 };
