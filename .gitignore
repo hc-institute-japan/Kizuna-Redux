@@ -1,6 +1,6 @@
+target/
+.cargo/
 dist/
 node_modules/
-target/
 .hc
-.cargo/
 .DS_Store
