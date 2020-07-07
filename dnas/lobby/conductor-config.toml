@@ -12,13 +12,8 @@ test_agent = true
 
 [[dnas]]
 file = '/home/holo/Desktop/KizunaMain/Kizuna/dnas/lobby/dist/lobby.dna.json'
-hash = 'QmQvKtDMtjooFmkqAqnMwvSDjpN1yzvjp4aLWXEdQUihXV'
+hash = 'QmdkycYGiLfAp6RhAmUpjAVXzvr4CjvtmSvUaMiV7PLx69'
 id = 'hc-run-dna'
-
-[[dnas]]
-file = 'dna/QmZyTALf4XPnFqj6LJKaWuaqAdHNAVKeCYqYFtK4v1TVcW.dna.json'
-hash = 'QmZyTALf4XPnFqj6LJKaWuaqAdHNAVKeCYqYFtK4v1TVcW'
-id = 'message-dna-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
 
 [[instances]]
 agent = 'hc-run-agent'
@@ -28,24 +23,12 @@ id = 'test-instance'
 [instances.storage]
 type = 'memory'
 
-[[instances]]
-agent = 'hc-run-agent'
-dna = 'message-dna-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
-id = 'message-instance-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
-
-[instances.storage]
-path = 'storage/message-instance-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
-type = 'lmdb'
-
 [[interfaces]]
 admin = true
 id = 'websocket-interface'
 
 [[interfaces.instances]]
 id = 'test-instance'
-
-[[interfaces.instances]]
-id = 'message-instance-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
 
 [interfaces.driver]
 port = 8888

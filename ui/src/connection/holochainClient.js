@@ -111,20 +111,23 @@ export function callAdmin( adminFn ) {
 
       return rawResult;
     } catch (e) {
-      const { Internal, Timeout } = { ...e };
-      if (Internal) {
-        const err = JSON.parse(Internal);
-        if (err.constructor.name === "Object" && "code" in err) {
-          throw new Error(JSON.stringify(err));
-        }
-      } else if (Timeout) {
-        throw new Error(
-          JSON.stringify({
-            code: 502,
-            message: "Timeout",
-          })
-        );
-      }
+      // const { error } = { ...e };
+
+      console.log(e);
+
+      // if (Internal) {
+      //   const err = JSON.parse(Internal);
+      //   if (err.constructor.name === "Object" && "code" in err) {
+      //     throw new Error(JSON.stringify(err));
+      //   }
+      // } else if (Timeout) {
+      //   throw new Error(
+      //     JSON.stringify({
+      //       code: 502,
+      //       message: "Timeout",
+      //     })
+      //   );
+      // }
 
       throw new Error(
         JSON.stringify({
