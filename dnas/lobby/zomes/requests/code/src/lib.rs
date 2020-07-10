@@ -40,18 +40,11 @@ mod requests {
         let dna_properties = Members::new(sender.clone(), recipient.clone());
         match hdk::send(recipient, json!(dna_properties).to_string(), 10000.into()) {
             Ok(_response) => {
-                let _emitted = hdk::emit_signal(
-                    "request_pending",
-                    JsonString::from_json(&format!("{{code: {}}}", "request_pending".to_owned()))
-                )?;
-                Ok(JsonString::from_json(&format!("{{code: {}}}", "request_pending".to_owned())).to_string())
+                Ok(JsonString::from_json(&format!("{{\"code\": \"{}\"}}", "request_pending".to_owned())).to_string())
             },
             _=> {
-                let _emitted = hdk::emit_signal(
-                    "recipient_offline",
-                    JsonString::from_json(&format!("{{code: {}}}", "recipient_offline".to_owned()))
-                )?;
-                Ok(JsonString::from_json(&format!("{{code: {}}}", "recipient_offline".to_owned())).to_string())
+                // send a request_notif that will be linked to the recipient agent_address
+                Ok(JsonString::from_json(&format!("{{\"code\": \"{}\"}}", "recipient_offline".to_owned())).to_string())
             }
         }
     }
@@ -60,19 +53,19 @@ mod requests {
     fn accept_request(sender: Address) -> ZomeApiResult<String> {
 
         match hdk::send(sender, "request_accepted".to_owned(), 10000.into()) {
-            Ok(_response) => {
+            Ok(response) => {
                 let _emitted = hdk::emit_signal(
                     "request_accepted",
-                    JsonString::from_json(&format!("{{code: {}}}", "confirmation_sent".to_owned()))
+                    JsonString::from_json(&format!("{{\"code\": \"{}\", \"res\": {}}}", "confirmation_sent".to_owned(), response.to_owned()))
                 )?;
-                Ok(JsonString::from_json(&format!("{{code: {}}}", "confirmation_sent".to_owned())).to_string())
+                Ok(JsonString::from_json(&format!("{{\"code\": \"{}\"}}", "confirmation_sent".to_owned())).to_string())
             },
             _=> {
                 let _emitted = hdk::emit_signal(
                     "recipient_offline",
-                    JsonString::from_json(&format!("{{code: {}}}", "recipient_offline".to_owned()))
+                    JsonString::from_json(&format!("{{\"code\": \"{}\"}}", "recipient_offline".to_owned()))
                 )?;
-                Ok(JsonString::from_json(&format!("{{code: {}}}", "recipient_offline".to_owned())).to_string())
+                Ok(JsonString::from_json(&format!("{{\"code\": \"{}\"}}", "recipient_offline".to_owned())).to_string())
             }
         }
     }
@@ -82,9 +75,9 @@ mod requests {
         if payload == "request_accepted" {
             let _emitted = hdk::emit_signal(
                 "request_accepted".to_string(),
-                JsonString::from_json(&format!("{{code: {}}}", "request_accepted".to_owned()))
+                JsonString::from_json(&format!("{{\"code\": \"{}\"}}", "request_accepted".to_owned()))
             );
-            format!("{{code: {}}}", "request_accepted".to_string())
+            format!("{{\"code\": \"{}\"}}", "request_accepted".to_string())
         } else {
             // check contacts membership
             #[derive(Serialize, Deserialize, Debug, DefaultJson)]
@@ -104,23 +97,41 @@ mod requests {
             );
 
             match call_response {
-                Ok(response) => {
-                    let in_contacts = response;
-                    let _emitted = hdk::emit_signal(
-                        payload,
-                        JsonString::from_json(&format!("{{code: {}, in_contacts: {}}}", "request_receieved".to_owned(), in_contacts))
-                    );
-                    format!("{{code: {}, in_contacts: {}}}", "request_receieved".to_owned(), in_contacts)
+                Ok(res) => {
+                    match serde_json::from_str(&res.to_string()) {
+                        Ok(response) => {
+                            let call_result: Result<bool, ZomeApiError> = response;
+                            match call_result {
+                                Ok(r) => {
+                                    // need to handle zomeApiError
+                                    let _emitted = hdk::emit_signal(
+                                        payload,
+                                        JsonString::from_json(&format!("{{\"code\": \"{}\", \"in_contacts\": \"{}\"}}", "request_receieved".to_owned(), r))
+                                    );
+                                    format!("{{\"code\": \"{}\", \"in_contacts\": \"{}\"}}", "request_receieved".to_owned(), r)
+                                },
+                                Err(e) => {
+                                    let _emitted = hdk::emit_signal(
+                                        payload,
+                                        JsonString::from_json(&format!("{{\"code\": \"{}\", \"err\": \"{}\"}}", "contact_checking_failed".to_owned(), e))
+                                    );
+                                    format!("{{\"code\": \"{}\", \"res\": \"{}\"}}", "contact_checking_failed".to_owned(), e)
+                                }
+                            }
+                        },
+                        Err(e) => {
+                            let _emitted = hdk::emit_signal(
+                                payload,
+                                JsonString::from_json(&format!("{{\"code\": \"{}\", \"err\": \"{}\"}}", "parsing_failed".to_owned(), e))
+                            );
+                            format!("{{\"code\": \"{}\", \"res\": \"{}\"}}", "parsing_failed".to_owned(), e)
+                        }
+                    }
                 },
-                _ => {
-                    let _emitted = hdk::emit_signal(
-                        payload,
-                        JsonString::from_json(&format!("{{code: {}}}", "contact_checking_failed".to_owned()))
-                    );
-                    format!("{{code: {}}}", "contact_checking_failed".to_owned())
-                }
+                Err(e) => {
+                    format!("{{\"code\": \"{}\", \"err\": \"{}\"}}", "contact_checking_failed".to_owned(), e)
+                },
             }
-
         }
     }
 }

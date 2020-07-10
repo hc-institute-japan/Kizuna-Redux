@@ -2,6 +2,7 @@ import { IonContent, IonGrid, IonPage } from "@ionic/react";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { useMutation } from "@apollo/react-hooks";
 import { logMessage, getMessages } from "../../redux/conversations/actions";
 import { RootState } from "../../redux/reducers";
 import { getTimestamp } from "../../utils/helpers/index";
@@ -10,45 +11,61 @@ import ChatFooter from "./ChatFooter";
 import ChatHeader from "./ChatHeader";
 import Me from "./Me";
 import Others from "./Others";
+import SEND_MESSAGE from "../../graphql/messages/mutations/sendMessageMutation";
 
 interface LocationState {
   name: string;
-  messages: Array<Message>;
+  recipientAddr: string,
 }
 
 const ChatRoom: React.FC = () => {
-  const [newMsg, setNewMsg] = useState<string>();
+  const [payload, setPayload] = useState<string>();
   const location = useLocation<LocationState>();
   const dispatch = useDispatch();
-  const id = location.state.name;
   const [messages, setMessages] = useState<Array<Message>>([]);
+  const [sendMessage] = useMutation(SEND_MESSAGE);
+  const id = location.state.name;
+  const { recipientAddr } = location.state;
 
   useEffect(() => {
     setMessages(dispatch(getMessages(id)) as any);
   }, [id]);
 
   const {
-    profile: { username: me },
+    profile: { username: me, id: myAddr },
   } = useSelector((state: RootState) => state.profile);
 
   const scrollToBottom = () => {
     document.querySelector("ion-content")!.scrollToBottom();
   };
 
-  const sendNewMessage = () => {
-    const newMessage = {
-      sender: me,
-      payload: newMsg!,
-      createdAt: getTimestamp(),
-    };
-    const conversation: Conversation = {
-      name: id!,
-      messages: [newMessage],
-    };
-    dispatch(logMessage(conversation));
-    setMessages((curr) => [...curr, newMessage]);
-    setNewMsg("");
-    scrollToBottom();
+  const sendNewMessage = async () => {
+    try {
+      //needs to be changed.
+      const newMessage = {
+        sender: me,
+        payload: payload!,
+        createdAt: getTimestamp(),
+      };
+      const sendResult = await sendMessage({
+        variables: {
+          author: myAddr,
+          recipient: recipientAddr,
+          message: payload,
+        }
+      });
+      const conversation: Conversation = {
+        name: id!,
+        address: recipientAddr,
+        messages: [newMessage], // this should be the result from sendMessage
+      };
+      dispatch(logMessage(conversation));
+      setMessages((curr) => [...curr, newMessage]);
+      setPayload("");
+      scrollToBottom();
+    } catch (e) {
+      //pushErr
+    }
   };
 
   return (
@@ -67,8 +84,8 @@ const ChatRoom: React.FC = () => {
       </IonContent>
 
       <ChatFooter
-        newMsg={newMsg}
-        setNewMsg={setNewMsg}
+        payload={payload}
+        setPayload={setPayload}
         sendNewMessage={sendNewMessage}
       />
     </IonPage>

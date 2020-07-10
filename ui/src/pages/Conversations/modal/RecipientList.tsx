@@ -1,22 +1,22 @@
 import { IonItemDivider, IonItemGroup, IonLabel } from "@ionic/react";
 import React from "react";
 import RecipientItem from "./RecipientItem";
-import { Profile } from "../../../utils/types";
+import { Profile, Conversation } from "../../../utils/types";
 
 interface Props {
   search: string;
   indexedContacts: {
     [key: string]: Array<Profile> | [];
   };
-  contacts: Array<Profile> | [];
-  profile: Profile;
+  conversations: Array<Conversation>,
+  myAddress: string,
 }
 
 const RecipientList: React.FC<Props> = ({
   indexedContacts,
   search,
-  contacts,
-  profile,
+  conversations,
+  myAddress,
 }) => {
   const searchContacts =
     search.length > 0 ? indexedContacts[search.charAt(0).toUpperCase()] : null;
@@ -33,7 +33,7 @@ const RecipientList: React.FC<Props> = ({
               contact.username.toLowerCase().includes(search.toLowerCase())
             )
             .map((contact) => (
-              <RecipientItem key={contact.username} contact={contact} />
+              <RecipientItem key={contact.username} contact={contact} conversations={conversations} myAddress={myAddress}  />
             ))}
         </IonItemGroup>
       ) : (
@@ -46,7 +46,7 @@ const RecipientList: React.FC<Props> = ({
                   <IonLabel>{index}</IonLabel>
                 </IonItemDivider>
                 {contacts.map((contact) => (
-                  <RecipientItem key={contact.username} contact={contact} />
+                  <RecipientItem key={contact.username} contact={contact} conversations={conversations} myAddress={myAddress} />
                 ))}
               </IonItemGroup>
             );

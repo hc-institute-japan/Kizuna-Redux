@@ -5,29 +5,30 @@ import { IonPage, IonLoading, IonContent } from "@ionic/react";
 import { setContacts } from "../../../redux/contacts/actions";
 import CONTACTS from "../../../graphql/query/listContactsQuery";
 import { RootState } from "../../../redux/reducers";
-import withToast from "../../../components/Toast/withToast";
+import withToast, { ToastProps } from "../../../components/Toast/withToast";
 import RecipientList from "./RecipientList";
 import NewConversationHeader from "./NewConversationHeader";
+import { Conversation } from "../../../utils/types";
 
-type NewConversationModalProps = {
-	pushErr: any,
+interface Props extends ToastProps {
 	setShowModal(value: boolean): Function,
+	conversations: Array<Conversation>,
 }
 
-const NewConversationModal: React.FC<any> = ({ pushErr, setShowModal }: NewConversationModalProps) => {
+const NewConversationModal: React.FC<Props> = ({ pushErr, setShowModal, conversations }: Props) => {
 	const [search, setSearch] = useState("");
 	const [hasFetched, setHasFetched] = useState(false);
 	const dispatch = useDispatch();
 
+	const {
+		profile: { id: myAddress },
+	  } = useSelector((state: RootState) => state.profile);
 	
 	const { indexedContacts, contacts } = useSelector(
 		(state: RootState) => state.contacts
 		);
 
-	const { profile } = useSelector(
-		(state: RootState) => state.profile
-		);
-
+	// should only fetch when contacts is not cached.
 	const { data, loading, error } = useQuery(CONTACTS, {
 			fetchPolicy: "no-cache",
 			skip: hasFetched,
@@ -50,9 +51,9 @@ const NewConversationModal: React.FC<any> = ({ pushErr, setShowModal }: NewConve
 				<NewConversationHeader search={search} setSearch={setSearch} setShowModal={setShowModal} />
 				<RecipientList 
 					search={search}
-					contacts={contacts}
-					profile={profile}
+					conversations={conversations}
 					indexedContacts={indexedContacts}
+					myAddress={myAddress}
 				/>
 			</IonContent>
   ) : (

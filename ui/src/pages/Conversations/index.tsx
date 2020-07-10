@@ -1,6 +1,7 @@
 import { IonPage, IonFab, IonContent, IonFabButton, IonIcon, IonModal } from "@ionic/react";
 import { useSelector } from "react-redux";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { onSignal } from "../../connection/holochainClient";
 import HomeHeader from "../../components/Header/HomeHeader";
 import { RootState } from "../../redux/reducers";
 import ConversationList from "./ConversationList";
@@ -12,6 +13,12 @@ const Conversations: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false)
   const { conversations } = useSelector((state: RootState) => state.conversations);
 
+  // useEffect(() => {
+  //   onSignal((signal: any) => {
+  //     console.log(signal)
+  //   })
+  // }, []);
+  
   // console.log(profile);
 
   return (
@@ -22,7 +29,7 @@ const Conversations: React.FC = () => {
       </IonContent>
       <IonContent>
         <IonModal isOpen={showModal}>
-          <NewConversationModal setShowModal={setShowModal}/>
+          <NewConversationModal setShowModal={setShowModal} conversations={conversations}/>
         </IonModal>
       </IonContent>
       <IonFab

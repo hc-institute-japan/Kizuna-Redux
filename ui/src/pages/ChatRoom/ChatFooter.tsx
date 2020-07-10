@@ -11,12 +11,12 @@ import React from "react";
 import styles from "./style.module.css";
 
 interface Props {
-  newMsg: string | undefined;
-  setNewMsg(value: string): void;
+  payload: string | undefined;
+  setPayload(value: string): void;
   sendNewMessage(): void;
 }
 
-const ChatFooter: React.FC<Props> = ({ newMsg, setNewMsg, sendNewMessage }) => {
+const ChatFooter: React.FC<Props> = ({ payload, setPayload, sendNewMessage }) => {
   return (
     <IonFooter>
       <IonToolbar className={styles.footer}>
@@ -25,16 +25,16 @@ const ChatFooter: React.FC<Props> = ({ newMsg, setNewMsg, sendNewMessage }) => {
           placeholder="Type a message..."
           color="dark"
           rows={1}
-          value={newMsg}
-          onIonChange={(e) => setNewMsg(e.detail.value!)}
+          value={payload}
+          onIonChange={(e) => setPayload(e.detail.value!)}
           className={styles["msg-input"]}
         />
         <IonButtons slot="end">
           <IonButton
             expand="full"
             fill="clear"
-            disabled={newMsg ? false : true}
-            color={newMsg ? "primary" : "medium"}
+            disabled={payload ? false : true}
+            color={payload ? "primary" : "medium"}
             className={`${styles["msg-btn"]}`}
             onClick={sendNewMessage}
           >

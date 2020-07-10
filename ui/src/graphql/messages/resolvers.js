@@ -1,8 +1,6 @@
-import { callZome, callAdmin } from "../../connection/holochainClient";
-
 const resolvers = {
   Query: {
-    getMessages: async (_, input ) => {
+    getMessages: async (_, input, { callZome }) => {
       const messages = await callZome({
         id: `message-instance-${input.author}-${input.recipient}`,
         zome: "messages",
@@ -12,7 +10,7 @@ const resolvers = {
       });
       return messages;
     },
-    getMessageDNAs: async () => {
+    getMessageDNAs: async (_, __, { callAdmin }) => {
       const allDNAs = await callAdmin("admin/dna/list")();
       const messageDNAs = allDNAs.filter(dna => 
         dna.id.includes("message-dna")
@@ -37,7 +35,8 @@ const resolvers = {
         payload: response,
       };
     },
-    initializeP2PDNA: async (_obj, { requirements }, { hcUprtcl }) => {
+    initializeP2PDNA: async (_obj, { requirements }, { callZome, callAdmin, hcUprtcl }) => {
+      console.log("Is this running");
       const connection = await hcUprtcl();
 
       // get member agents' addresses
@@ -62,7 +61,7 @@ const resolvers = {
           agentConfig.id, // agent to 'host' the DNA
           `message-dna-${requirements.id}-${requirements.recipient}`, // DNA id
           `message-instance-${requirements.id}-${requirements.recipient}`, // instance id
-          "mWMcdbwrkFwMWsd836se32cwD2SRgHx8KY8qP4PoFpVwc", // DNA address
+          "QmdTptxXvTcQPQqPWtSDFnRgKk4YBBhninZkXNPCc7oYR8", // DNA address
           members, // properties
           (interfaces) =>
             interfaces.find((iface) => iface.id === "websocket-interface") // interface
@@ -75,13 +74,14 @@ const resolvers = {
             instance.id.includes(`message-instance-${requirements.id}-${requirements.recipient}`)
           );
 
-          if (message_instances.length != 0) {
+          if (message_instances.length !== 0) {
+            console.log("HERE?");
             return true;  
           } else {
             console.log(error);
             // revert changes to conductor config
             await callAdmin("admin/instance/remove")({id: `message-instance-${requirements.id}-${requirements.recipient}`});
-            await callAdmin("admin/dna/uninstall")({id: `message-dna-${requirements.id}-${requirements.recipient}`})
+            await callAdmin("admin/dna/uninstall")({id: `message-dna-${requirements.id}-${requirements.recipient}`});
   
             return false;
           }

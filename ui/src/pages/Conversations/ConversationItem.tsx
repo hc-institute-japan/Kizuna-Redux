@@ -13,13 +13,14 @@ import styles from "./style.module.css";
 
 type ConversationItemProps = {
   name: string;
+  recipientAddr: string
   messages: Array<Message>;
-  me?: string;
 };
 
 const ConversationItem: React.FC<ConversationItemProps> = ({
   name,
   messages,
+  recipientAddr,
 }: ConversationItemProps) => {
   const [recentMsg, setRecentMsg] = useState("");
   const history = useHistory();
@@ -49,7 +50,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       onClick={() =>
         history.push(`/chat-room/${name}`, {
           name,
-          messages: [...messages],
+          recipientAddr,
         })
       }
     >
