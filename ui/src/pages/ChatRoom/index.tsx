@@ -42,26 +42,28 @@ const ChatRoom: React.FC = () => {
   const sendNewMessage = async () => {
     try {
       //needs to be changed.
-      const newMessage = {
-        sender: me,
-        payload: payload!,
-        createdAt: getTimestamp(),
-      };
+      let finalPayload;
+      finalPayload = payload;
+      setPayload("");
       const sendResult = await sendMessage({
         variables: {
           author: myAddr,
           recipient: recipientAddr,
-          message: payload,
+          message: finalPayload,
         }
       });
+      const newMessage = {
+        sender: me,
+        payload: sendResult.data?.sendMessage?.payload,
+        createdAt: sendResult.data?.sendMessage?.timestamp,
+      };
+      setMessages((curr) => [...curr, newMessage]);
       const conversation: Conversation = {
         name: id!,
         address: recipientAddr,
         messages: [newMessage], // this should be the result from sendMessage
       };
       dispatch(logMessage(conversation));
-      setMessages((curr) => [...curr, newMessage]);
-      setPayload("");
       scrollToBottom();
     } catch (e) {
       //pushErr

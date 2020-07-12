@@ -38,14 +38,16 @@ const resolvers = {
         };
       }
     },
-    username: async (_obj, input, { callZome }) =>
-      await callZome({
+    username: async (_obj, input, { callZome }) => {
+      const usernameResult = await callZome({
         id: "test-instance",
-        zome: "profile",
+        zome: "profiles",
         func: "get_username",
       })({
-        agent_address: input,
-      }),
+        agent_address: input.address,
+      });
+      return usernameResult;
+    }
   },
   Mutation: {
     createProfile: async (_obj, username, { callZome }) => {
@@ -62,7 +64,7 @@ const resolvers = {
     deleteProfile: async (_obj, username, { callZome }) =>
       await callZome({
         id: "profiles",
-        zome: "profile",
+        zome: "profiles",
         func: "delete_profile",
       })({
         input: username.username,

@@ -96,6 +96,8 @@ mod requests {
                 call_input.into()
             );
 
+            
+
             match call_response {
                 Ok(res) => {
                     match serde_json::from_str(&res.to_string()) {
@@ -103,33 +105,37 @@ mod requests {
                             let call_result: Result<bool, ZomeApiError> = response;
                             match call_result {
                                 Ok(r) => {
-                                    // need to handle zomeApiError
                                     let _emitted = hdk::emit_signal(
-                                        payload,
-                                        JsonString::from_json(&format!("{{\"code\": \"{}\", \"in_contacts\": \"{}\"}}", "request_receieved".to_owned(), r))
+                                        "request_received",
+                                        JsonString::from_json(&format!("{{\"code\": \"{}\", \"in_contacts\": \"{}\", \"addresses\": {}}}", "request_receieved".to_owned(), r, payload))
                                     );
                                     format!("{{\"code\": \"{}\", \"in_contacts\": \"{}\"}}", "request_receieved".to_owned(), r)
                                 },
+                                // need to handle zomeApiError from contacts
                                 Err(e) => {
                                     let _emitted = hdk::emit_signal(
-                                        payload,
-                                        JsonString::from_json(&format!("{{\"code\": \"{}\", \"err\": \"{}\"}}", "contact_checking_failed".to_owned(), e))
+                                        "contact_checking_zome_interal_failed",
+                                        JsonString::from_json(&format!("{{\"code\": \"{}\", \"err\": \"{}\", \"addresses\": \"{}\"}}", "contact_checking_zome_interal_failed".to_owned(), e, payload))
                                     );
-                                    format!("{{\"code\": \"{}\", \"res\": \"{}\"}}", "contact_checking_failed".to_owned(), e)
+                                    format!("{{\"code\": \"{}\", \"res\": \"{}\", \"in_contacts\": \"false\"}}", "contact_checking_zome_interal_failed".to_owned(), e)
                                 }
                             }
                         },
                         Err(e) => {
                             let _emitted = hdk::emit_signal(
-                                payload,
-                                JsonString::from_json(&format!("{{\"code\": \"{}\", \"err\": \"{}\"}}", "parsing_failed".to_owned(), e))
+                                "contacts_checking_parsing_failed",
+                                JsonString::from_json(&format!("{{\"code\": \"{}\", \"err\": \"{}\", \"addresses\": \"{}\"}}", "contacts_checking_parsing_failed".to_owned(), e, payload))
                             );
-                            format!("{{\"code\": \"{}\", \"res\": \"{}\"}}", "parsing_failed".to_owned(), e)
+                            format!("{{\"code\": \"{}\", \"res\": \"{}\"}}", "contacts_checking_parsing_failed".to_owned(), e)
                         }
                     }
                 },
                 Err(e) => {
-                    format!("{{\"code\": \"{}\", \"err\": \"{}\"}}", "contact_checking_failed".to_owned(), e)
+                    let _emitted = hdk::emit_signal(
+                        "contacts_checking_call_failed",
+                        JsonString::from_json(&format!("{{\"code\": \"{}\", \"err\": \"{}\", \"addresses\": \"{}\"}}", "contacts_checking_call_failed".to_owned(), e, payload))
+                    );
+                    format!("{{\"code\": \"{}\", \"err\": \"{}\"}}", "contacts_checking_call_failed".to_owned(), e)
                 },
             }
         }

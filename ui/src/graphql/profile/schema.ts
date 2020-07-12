@@ -5,6 +5,7 @@ const schema = gql`
         id: ID!
         username: String
     }
+
     input ProfileInput {
         username: String!
     }
@@ -12,7 +13,7 @@ const schema = gql`
     extend type Query {
         allAgents: [Profile!]!
         me: Profile
-        username(address: String): String!
+        username(address: String): String
     }
 
     extend type Mutation {

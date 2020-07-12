@@ -1,3 +1,5 @@
+import { getTimestamp } from "../../utils/helpers/";
+
 const resolvers = {
   Query: {
     getMessages: async (_, input, { callZome }) => {
@@ -8,6 +10,7 @@ const resolvers = {
       })({
         id: input.author,
       });
+      console.log(messages);
       return messages;
     },
     getMessageDNAs: async (_, __, { callAdmin }) => {
@@ -25,18 +28,18 @@ const resolvers = {
         zome: "messages",
         func: "send",
       })({
-        author: input.author,
         recipient: input.recipient,
         message: input.message,
+        timestamp: getTimestamp(),
       });
-
       return {
-        anchor: "xd",
-        payload: response,
+        author: response.author,
+        recipient: response.recipient,
+        timestamp: response.timestamp,
+        payload: response.message,
       };
     },
     initializeP2PDNA: async (_obj, { requirements }, { callZome, callAdmin, hcUprtcl }) => {
-      console.log("Is this running");
       const connection = await hcUprtcl();
 
       // get member agents' addresses
@@ -46,9 +49,7 @@ const resolvers = {
         func: "get_my_address",
       })();
 
-      console.log(agent_id, requirements.id, connection.getAgentConfig);
       const agentConfig = await connection.getAgentConfig(agent_id);
-      console.log(agent_id, requirements.id);
 
       // initialize properties
       const members = {
@@ -61,7 +62,7 @@ const resolvers = {
           agentConfig.id, // agent to 'host' the DNA
           `message-dna-${requirements.id}-${requirements.recipient}`, // DNA id
           `message-instance-${requirements.id}-${requirements.recipient}`, // instance id
-          "QmdTptxXvTcQPQqPWtSDFnRgKk4YBBhninZkXNPCc7oYR8", // DNA address
+          "QmUm1HtsHbxhde5kwGfDwhdk7knBW1Wfa6jzQ1pDQNd643", // DNA address
           members, // properties
           (interfaces) =>
             interfaces.find((iface) => iface.id === "websocket-interface") // interface
@@ -75,7 +76,6 @@ const resolvers = {
           );
 
           if (message_instances.length !== 0) {
-            console.log("HERE?");
             return true;  
           } else {
             console.log(error);

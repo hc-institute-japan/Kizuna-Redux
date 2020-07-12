@@ -1,7 +1,6 @@
 import { IonPage, IonFab, IonContent, IonFabButton, IonIcon, IonModal } from "@ionic/react";
 import { useSelector } from "react-redux";
-import React, { useState, useEffect } from "react";
-import { onSignal } from "../../connection/holochainClient";
+import React, { useState } from "react";
 import HomeHeader from "../../components/Header/HomeHeader";
 import { RootState } from "../../redux/reducers";
 import ConversationList from "./ConversationList";

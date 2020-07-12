@@ -12,6 +12,10 @@ const init = gql`
   type Mutation {
     filler2: Boolean
   }
+
+  type Subscription {
+    filler3: Boolean
+  }
 `;
 
 export default [

@@ -2,7 +2,10 @@ import gql from "graphql-tag";
 
 const schema = gql`
   type Message {
-    anchor: ID
+    author: ID!
+    author_username: String!
+    recipient: ID!
+    timestamp: Float
     payload: String
   }
   type DNA {
@@ -14,7 +17,7 @@ const schema = gql`
     recipient: String
   }
   extend type Query {
-    getMessages(author: ID, recipient: ID): [Message]
+    getMessages(author: ID, recipient: ID): [Message!]
     getMessageDNAs: [DNA]
   }
   extend type Mutation {

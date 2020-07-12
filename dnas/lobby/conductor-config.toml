@@ -12,12 +12,12 @@ test_agent = true
 
 [[dnas]]
 file = '/Users/tats/projects/Kizuna/dnas/lobby/dist/lobby.dna.json'
-hash = 'QmWUkAoqSS43iiZeYZuk7ws6o1U9f6EFgK2MXk5dhCYz4V'
+hash = 'QmReKtvE9ZyE4jLZrjQbz3MdJEjm2kPEqhQbdCmq6mVqiV'
 id = 'hc-run-dna'
 
 [[dnas]]
-file = 'dna/Qmd2wtQb31sHSKYTKm5ELVL2hK2ytAjebjChsoVjBHt5DQ.dna.json'
-hash = 'Qmd2wtQb31sHSKYTKm5ELVL2hK2ytAjebjChsoVjBHt5DQ'
+file = 'dna/QmWfgGhuhb3iGtCoPn2zmPQJqLXKPpEqmeKh4Cz4xCN4dD.dna.json'
+hash = 'QmWfgGhuhb3iGtCoPn2zmPQJqLXKPpEqmeKh4Cz4xCN4dD'
 id = 'message-dna-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
 
 [[instances]]

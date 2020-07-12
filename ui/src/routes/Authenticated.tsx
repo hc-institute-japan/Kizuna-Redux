@@ -14,12 +14,17 @@ import Home from "../pages/Home";
 import Profile from "../pages/Profile";
 import { onSignal } from "../connection/holochainClient";
 import { setProfile } from "../redux/profile/actions";
+import { logMessage } from "../redux/conversations/actions";
+import { getUsername } from "../redux/contacts/actions";
+import { Conversation } from "../utils/types/";
 import INITIALIZE_P2P_DNA from "../graphql/messages/mutations/initializeP2PDNAMutation";
 import MESSAGES from "../graphql/messages/query/getMessagesQuery";
+import USERNAME from "../graphql/query/usernameQuery";
 
 const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
   const [getMe, { loading: meLoading, error: meError, data: me }] = useLazyQuery(ME);
   const [getMsgs, {data: msgs}] = useLazyQuery(MESSAGES);
+  const [getUsrname, {data}] = useLazyQuery(USERNAME);
   const [initializeP2PDNA] = useMutation(INITIALIZE_P2P_DNA);
   const dispatch = useDispatch();
 
@@ -34,52 +39,78 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
   const pickMyAddress = (addresses: Array<string>) => addresses.find(addr => addr === me.id);
 
   const resolveSignal = async (signal: any) => {
-    const parsedArgs = JSON.parse(signal?.signal?.arguments);
-    const parsedName = JSON.parse(signal?.signal?.name);
-    switch(parsedArgs.code) {
+    let parsedArgs;
+    if (signal?.signal?.arguments) parsedArgs = JSON.parse(signal?.signal?.arguments);
+    switch(signal?.signal?.name) {
       case "request_receieved":
         // needs to have 2 separate lists for in_contacts chat
         if (parsedArgs.in_contacts) {
           const createP2PDNAResult = await initializeP2PDNA({
             variables : {
               requirements: {
-                id: parsedName.members[0],
-                recipient: parsedName.members[1],
+                id: parsedArgs.addresses.members[0],
+                recipient: parsedArgs.addresses.members[1],
               }
             }
           });
           if (createP2PDNAResult.data?.initializeP2PDNA) {
-
+            // needs to cache recent messages
+            getMsgs();
+            console.log(msgs);
           }
         } else {
           const createP2PDNAResult = await initializeP2PDNA({
             variables : {
               requirements: {
-                id: parsedName.members[0],
-                recipient: parsedName.members[1],
+                id: parsedArgs.addresses.members[0],
+                recipient: parsedArgs.addresses.members[1],
               }
             }
           });
         };
         break;
-      case "parsing_failed":
+      case "contact_checking_zome_interal_failed":
         break;
-
-        
+      case "contacts_checking_parsing_failed":
+        break;
+      case "contacts_checking_call_failed":
+        break;
+      case "message_sent":
+        break;
+      case "message_received":
+        console.log("working?");
+        console.log(parsedArgs);
+        // call get username from address.
+        const recipient: string = dispatch(getUsername(parsedArgs.payload.author) as any)
+        if (!recipient) {
+          getUsrname({
+            variables : {
+              address: parsedArgs.payload.recipient,
+            }
+          });
+        }
+        // TODO: cache the recent message in the future
+        const newMessage = {
+          sender: recipient,
+          payload: parsedArgs.payload.message,
+          createdAt: parsedArgs.payload.timestamp,
+        };
+        const conversation: Conversation = {
+          name: recipient,
+          address: parsedArgs.payload.recipient,
+          messages: [newMessage], // this should be the result from sendMessage
+        };
+        dispatch(logMessage(conversation));
+        break;
+      case "send_message_recipient_offline":
+        break;
     }
   }
 
   useEffect(() => {
-    onSignal((signal: any) => {
-      if (signal?.signal) {
-        const parsedArgs = JSON.parse(signal?.signal?.arguments);
-        const parsedName = JSON.parse(signal?.signal?.name);
-        console.log(parsedArgs);
-        console.log(parsedName);
-      }
-      console.log(signal);
-    })
-  }, []);
+    onSignal((signal: any) => resolveSignal(signal))
+  }, [onSignal]);
+  
 
   useEffect(() => {
     if (meError) pushErr(meError, {}, "profiles");
