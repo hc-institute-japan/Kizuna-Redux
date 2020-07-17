@@ -49,7 +49,6 @@ const links = [
     }),
   ]),
   apolloLogger,
-  requestLink,
   schemaLink,
 ];
 

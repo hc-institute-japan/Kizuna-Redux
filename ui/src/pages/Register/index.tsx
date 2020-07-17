@@ -49,7 +49,7 @@ const Register: React.FC<Props> = (props) => {
         "agent_address",
         profile_result.data.createProfile.id
       );
-      dispatch(authenticate(profile_result.data.createProfile.id));
+      dispatch(authenticate(profile_result.data.createProfile));
       props.history.push("/home");
       // catch the error from createZomeCall
     } catch (e) {
