@@ -32,6 +32,7 @@ const Auth: React.FC<ToastProps> = ({ pushErr }) => {
       const address = localStorage.getItem("agent_address");
       if (data?.me?.username) {
         if (address) {
+          localStorage.setItem("agent_address", data?.me?.id);
           dispatch(authenticate(data.me));
         } else {
           localStorage.setItem("agent_address", data?.me?.id);

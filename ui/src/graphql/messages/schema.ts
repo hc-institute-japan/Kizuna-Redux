@@ -19,6 +19,11 @@ const schema = gql`
     conversantId: ID!
   }
 
+  input Properties {
+    creator: ID!
+    conversant: ID!
+  }
+
   type MembersDetail {
     id: ID!
     username: String!
@@ -40,7 +45,7 @@ const schema = gql`
     getP2PCommInstances: [P2PInstance!]
   }
   extend type Mutation {
-    initializeP2PDNA(members: Requirements): Boolean
+    initializeP2PDNA(properties: Properties): Boolean
     sendMessage(author: ID, recipient: ID, message: String): Message
   }
 `;

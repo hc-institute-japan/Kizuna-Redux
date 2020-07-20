@@ -27,7 +27,7 @@ const resolvers = {
         })();
 
         const myAddress = await getMyId(callZome);
-        const conversantAddress = members.members.find(member => member !== getMyId())
+        const conversantAddress = members.members.find(member => member !== myAddress)
 
         const myUsername = await callZome({
           id: "test-instance",
@@ -174,23 +174,25 @@ const resolvers = {
         payload: response.message,
       };
     },
-    initializeP2PDNA: async (_obj, { members }, { callZome, callAdmin, hcUprtcl }) => {
+    initializeP2PDNA: async (_obj, { properties }, { callZome, callAdmin, hcUprtcl }) => {
       const connection = await hcUprtcl();
       const myAddress = await getMyId(callZome);
       const agentConfig = await connection.getAgentConfig(myAddress);
 
       // initialize properties
       const membersProperties = {
-        members: [members.myId, members.conversantId],
+        members: [properties.creator, properties.conversant],
       };
+
+      // fix this shit. wont work if the agents are different
 
       // clone DNA from template and initialize using properties
       try {
         await connection.cloneDna(
           agentConfig.id, // agent to 'host' the DNA
-          `message-dna-${members.myId}-${members.conversantId}`, // DNA id
-          `message-instance-${members.myId}-${members.conversantId}`, // instance id
-          "QmRwzSjnJNBh7BHFbKTAKNsedtfZWqomxs8tDtSrUSwnfy", // DNA address
+          `message-dna-${properties.creator}-${properties.conversant}`, // DNA id
+          `message-instance-${properties.creator}-${properties.conversant}`, // instance id
+          "QmW1SJB7imT5PApeCCTweYAcCcGn33kQW5MgFc7pXxCg3c", // DNA address
           membersProperties, // properties
           (interfaces) =>
             interfaces.find((iface) => iface.id === "websocket-interface") // interface
@@ -200,7 +202,7 @@ const resolvers = {
           // check if the message instance is already configured
           const running_instances = await callAdmin("admin/instance/running")();
           const message_instances = running_instances.filter(instance => 
-            instance.id.includes(`message-instance-${members.myId}-${members.conversantId}`)
+            instance.id.includes(`message-instance-${properties.creator}-${properties.conversant}`)
           );
 
           if (message_instances.length !== 0) {
@@ -208,8 +210,8 @@ const resolvers = {
           } else {
             console.log(error);
             // revert changes to conductor config
-            await callAdmin("admin/instance/remove")({id: `message-instance-${members.myId}-${members.conversantId}`});
-            await callAdmin("admin/dna/uninstall")({id: `message-dna-${members.myId}-${members.conversantId}`});
+            await callAdmin("admin/instance/remove")({id: `message-instance-${properties.creator}-${properties.conversant}`});
+            await callAdmin("admin/dna/uninstall")({id: `message-dna-${properties.creator}-${properties.conversant}`});
             
             // return error here instead of false
             return false;

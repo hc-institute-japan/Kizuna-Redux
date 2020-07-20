@@ -34,11 +34,6 @@ export interface Conversation {
   messages: Array<Message>,
 }
 
-export interface namedAddresses {
-  myId: string,
-  conversantId: string
-}
-
 export interface Members {
   me: Profile,
   conversant: Profile,

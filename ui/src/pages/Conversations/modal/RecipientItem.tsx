@@ -31,14 +31,12 @@ const RecipientItem: React.FC<Props> = ({ contact, pushErr, conversations, myAdd
               recipientAddr: contact.id,
             })
           } else {
-            console.log(myAddress);
-            console.log(contact.id);
             try {
               const createP2PDNAResult = await initializeP2PDNA({
                 variables : {
-                  members: {
-                    myId: myAddress,
-                    conversantId: contact.id,
+                  properties: {
+                    creator: myAddress,
+                    conversant: contact.id,
                   }
                 }
               });
