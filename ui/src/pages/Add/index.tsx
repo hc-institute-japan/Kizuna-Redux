@@ -53,9 +53,7 @@ const Add: React.FC<ToastProps> = ({ pushErr }) => {
     <IonContainer>
       <SearchHeader
         onSearchChange={(e) => setSearch((e.target as HTMLInputElement).value)}
-        onBack={() => {
-          history.push("home/contacts");
-        }}
+        onBack={() => history.goBack()}
         value={search}
         placeholder="Search User"
       />

@@ -55,7 +55,7 @@ const Auth: React.FC<ToastProps> = ({ pushErr }) => {
       {/* <Toast /> */}
     </IonRouterOutlet>
   ) : (
-    <IonLoading isOpen={loading} message={"Please wait..."} />
+    <IonLoading isOpen={loading} message="Please wait..." />
   );
 };
 

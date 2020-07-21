@@ -1,4 +1,11 @@
-import { IonPage, IonFab, IonContent, IonFabButton, IonIcon, IonModal } from "@ionic/react";
+import {
+  IonPage,
+  IonFab,
+  IonContent,
+  IonFabButton,
+  IonIcon,
+  IonModal,
+} from "@ionic/react";
 import { useSelector } from "react-redux";
 import React, { useState, useEffect } from "react";
 import HomeHeader from "../../components/Header/HomeHeader";
@@ -9,8 +16,10 @@ import styles from "./style.module.css";
 import NewConversationModal from "./modal/NewConversationModal";
 
 const Conversations: React.FC = () => {
-  const [showModal, setShowModal] = useState<boolean>(false)
-  const { conversations } = useSelector((state: RootState) => state.conversations);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const { conversations } = useSelector(
+    (state: RootState) => state.conversations
+  );
 
   useEffect(() => console.log(conversations), [conversations]);
 
@@ -19,22 +28,22 @@ const Conversations: React.FC = () => {
       <HomeHeader />
       <IonContent>
         <ConversationList conversations={conversations} />
-      </IonContent>
-      <IonContent>
+
         <IonModal isOpen={showModal}>
           <NewConversationModal setShowModal={setShowModal} conversations={conversations}/>
         </IonModal>
+
+        <IonFab
+          onClick={() => setShowModal(true)}
+          vertical="bottom"
+          horizontal="end"
+          slot="fixed"
+        >
+          <IonFabButton>
+            <IonIcon className={`${styles["fab-icon"]}`} icon={pencil} />
+          </IonFabButton>
+        </IonFab>
       </IonContent>
-      <IonFab
-        onClick={() => setShowModal(true)}
-        vertical="bottom"
-        horizontal="end"
-        slot="fixed"
-      >
-        <IonFabButton>
-          <IonIcon className={`${styles["fab-icon"]}`} icon={pencil} />
-        </IonFabButton>
-      </IonFab>
     </IonPage>
   );
 };

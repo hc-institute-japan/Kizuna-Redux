@@ -1,12 +1,5 @@
+import { IonAvatar, IonItem, IonText, IonLabel, IonNote } from "@ionic/react";
 import React, { useEffect, useState } from "react";
-import {
-  IonItem,
-  IonAvatar,
-  IonBadge,
-  IonGrid,
-  IonCol,
-  IonRow,
-} from "@ionic/react";
 import { useHistory } from "react-router-dom";
 import { Message } from "../../utils/types";
 import styles from "./style.module.css";
@@ -42,9 +35,81 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
     getRecentMsg(messages);
   }, [messages]);
 
+  const handleOnClick = () =>
+    history.push(`/chat-room/${name}`, {
+      name,
+      messages: [...messages],
+    });
+
   return (
     <IonItem
+      className={`item ios in-list ion-focusable item-label hydrated ${styles["conversation-item"]}`}
       lines="none"
+      color="none"
+      button
+      onClick={handleOnClick}
+    >
+      <IonAvatar slot="start" class="ios hydrated">
+        <img
+          src="https://pbs.twimg.com/profile_images/831775643432001537/vrmO1ndW.jpg"
+          /* src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y"*/
+          alt=""
+        />
+      </IonAvatar>
+      <IonLabel className="sc-ion-label-ios-h sc-ion-label-ios-s ios hydrated">
+        <h2>
+          <strong>
+            <IonText color="dark">{name}</IonText>
+          </strong>
+        </h2>
+        <p className="ion-text-nowrap">
+          <IonText color="medium">{recentMsg}</IonText>
+        </p>
+      </IonLabel>
+      <IonNote slot="end" className="ios hydrated">
+        <p className="ion-no-margin">Just Now</p>
+        <div className={styles.badge}>50</div>
+      </IonNote>
+    </IonItem>
+  );
+};
+// <IonItem
+//   lines="none"
+//   button
+//   color="none"
+//   onClick={handleOnClick}
+//   className={`item ios in-list ion-focusable item-label hydrated ${styles["conversation-item"]}`}
+// >
+//   <IonAvatar slot="start" class="ios hydrated">
+//     <img
+//       src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y"
+//       alt=""
+//     />
+//   </IonAvatar>
+
+//   <IonLabel
+//     slot="start"
+//     className={`sc-ion-label-ios-h sc-ion-label-ios-s ios hydrated ${styles["message-details"]}`}
+//   >
+//     <IonText color="dark">
+//       <h2>
+//         <strong>{name}</strong>
+//       </h2>
+//     </IonText>
+//     <IonText color="medium">
+//       <p className="ion-text-nowrap">
+//         {recentMsg} {recentMsg} {recentMsg} {recentMsg} {recentMsg}{" "}
+//         {recentMsg} {recentMsg} {recentMsg} {recentMsg} {recentMsg}{" "}
+//         {recentMsg} {recentMsg}
+//       </p>
+//     </IonText>
+//   </IonLabel>
+
+//   <IonNote slot="end">xd</IonNote>
+// </IonItem>
+
+{
+  /* <IonItem
       className={styles["conversation-item"]}
       button
       onClick={() =>
@@ -81,8 +146,6 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
           </IonCol>
         </IonRow>
       </IonGrid>
-    </IonItem>
-  );
-};
-
+    </IonItem> */
+}
 export default ConversationItem;
