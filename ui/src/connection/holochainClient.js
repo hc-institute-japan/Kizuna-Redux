@@ -64,7 +64,6 @@ export function callZome({ id, zome, func }) {
       zomeCall = holochainClient.callZome(id, zome, func);
 
       const rawResult = await zomeCall(args);
-      console.log(rawResult);
       const jsonResult = JSON.parse(rawResult);
       const error =
         get("Err", jsonResult) || get("SerializationError", jsonResult);
@@ -151,7 +150,7 @@ export async function hcUprtcl() {
     devEnv: {
       // this property should be changed to your local paths and dna hash
       templateDnasPaths: {
-        QmUm1HtsHbxhde5kwGfDwhdk7knBW1Wfa6jzQ1pDQNd643 :
+        QmW1SJB7imT5PApeCCTweYAcCcGn33kQW5MgFc7pXxCg3c :
         "/Users/tats/projects/Kizuna/dnas/p2pcomm/dist/p2pcomm.dna.json"
         ,
       },

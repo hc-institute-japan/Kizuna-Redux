@@ -1,27 +1,58 @@
 import gql from "graphql-tag";
-
 const schema = gql`
   type Message {
     author: ID!
-    author_username: String!
+    authorUsername: String!
     recipient: ID!
-    timestamp: Float
-    payload: String
+    timestamp: Float!
+    payload: String!
   }
-  type DNA {
-    id: String,
-    hash: ID
+
+  type Conversation {
+    name: String!,
+    address: String!,
+    messages: [Message!]
   }
+
   input Requirements {
-    id: ID
-    recipient: String
+    myId: ID!
+    conversantId: ID!
   }
+
+  input Properties {
+    id: String
+    creator: ID
+    conversant: ID
+  }
+
+  type initializeResult {
+    id: String
+    creator: ID
+    conversant: ID
+  }
+
+  type MembersDetail {
+    id: ID!
+    username: String!
+  }
+
+  type Members {
+    me: MembersDetail!
+    conversant: MembersDetail!
+  }
+
+  type P2PInstance {
+    id: String,
+    members: Members
+  }
+  
   extend type Query {
-    getMessages(author: ID, recipient: ID): [Message!]
-    getMessageDNAs: [DNA]
+    getConversationFromId(author: ID, properties: Properties): Conversation!
+    getConversationFromIds(members: Requirements, properties: Properties): Conversation!
+    getP2PCommInstances: [P2PInstance!]
   }
   extend type Mutation {
-    initializeP2PDNA(requirements: Requirements): Boolean
+    initializeP2PDNA(properties: Properties): initializeResult!
     sendMessage(author: ID, recipient: ID, message: String): Message
   }
 `;

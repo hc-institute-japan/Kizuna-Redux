@@ -1,6 +1,6 @@
 import { useLazyQuery } from "@apollo/react-hooks";
 import { IonLoading, IonRouterOutlet } from "@ionic/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import withToast, { ToastProps } from "../../components/Toast/withToast";
 import ME from "../../graphql/query/meQuery";
@@ -24,26 +24,27 @@ const Auth: React.FC<ToastProps> = ({ pushErr }) => {
   );
   const dispatch = useDispatch();
 
-  // this query is being called even before the holochain connection is finished establishing.
-  // needs error handling
-  const [username, setUsername] = useState(null);
-  const [getMe, { loading, data, error }] = useLazyQuery(ME);
-
-  useEffect(() => {
-    const address = localStorage.getItem("agent_address");
-    // localStorage.removeItem("agent_address");
-    getMe();
-    if (data && data?.me?.username) setUsername(data?.me?.username);
-    if (username !== null) {
-      if (address) {
-        dispatch(authenticate(address));
-      } else {
-        localStorage.setItem("agent_address", data?.me?.id);
-        dispatch(authenticate(data?.me?.id));
+  const [getMe, { loading, error }] = useLazyQuery(ME, {
+    notifyOnNetworkStatusChange: true,
+    fetchPolicy: "network-only",
+    onCompleted: (data) => {
+      // localStorage.removeItem("agent_address");
+      const address = localStorage.getItem("agent_address");
+      if (data?.me?.username) {
+        if (address) {
+          localStorage.setItem("agent_address", data?.me?.id);
+          dispatch(authenticate(data.me));
+        } else {
+          localStorage.setItem("agent_address", data?.me?.id);
+          dispatch(authenticate(data?.me?.id));
+        }
       }
-    }
-  }, [dispatch, data, username, getMe]);
+    },
+  });
 
+  useEffect(() => getMe(), [getMe]);
+
+  // this can be done in onError instead
   useEffect(() => {
     if (error) pushErr(error, {}, "profiles");
   }, [error, pushErr]);

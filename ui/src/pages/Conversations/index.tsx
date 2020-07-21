@@ -1,6 +1,6 @@
 import { IonPage, IonFab, IonContent, IonFabButton, IonIcon, IonModal } from "@ionic/react";
 import { useSelector } from "react-redux";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import HomeHeader from "../../components/Header/HomeHeader";
 import { RootState } from "../../redux/reducers";
 import ConversationList from "./ConversationList";
@@ -12,13 +12,7 @@ const Conversations: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false)
   const { conversations } = useSelector((state: RootState) => state.conversations);
 
-  // useEffect(() => {
-  //   onSignal((signal: any) => {
-  //     console.log(signal)
-  //   })
-  // }, []);
-  
-  // console.log(profile);
+  useEffect(() => console.log(conversations), [conversations]);
 
   return (
     <IonPage>

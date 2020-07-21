@@ -15,30 +15,31 @@ type ChatHeaderProps = {
   name: string;
 };
 
-const ChatHeader: React.FC<ChatHeaderProps> = ({ name }: ChatHeaderProps) => (
-  <IonHeader>
-    <IonToolbar>
-      <IonButtons slot="start">
-        <IonBackButton />
-      </IonButtons>
-      <div className={styles["header-label"]}>
-        <img
-          height="40px"
-          className={`ion-float-left ${styles.img}`}
-          src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y"
-          alt=""
-        />
-
-        <IonTitle className="ion-no-padding ion-padding-start">{name}</IonTitle>
-      </div>
-      <IonButtons slot="end">
-        <IonButton>
-          <IonIcon slot="end" icon={call} />
-        </IonButton>
-      </IonButtons>
-    </IonToolbar>
-  </IonHeader>
-);
+const ChatHeader: React.FC<ChatHeaderProps> = ({ name }: ChatHeaderProps) => {
+  return (
+    <IonHeader>
+      <IonToolbar>
+        <IonButtons slot="start">
+          <IonBackButton />
+        </IonButtons>
+        <div className={styles["header-label"]}>
+          <img
+            height="40px"
+            className={`ion-float-left ${styles.img}`}
+            src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y"
+            alt=""
+          />
+          <IonTitle className="ion-no-padding ion-padding-start">{name}</IonTitle>
+        </div>
+        <IonButtons slot="end">
+          <IonButton>
+            <IonIcon slot="end" icon={call} />
+          </IonButton>
+        </IonButtons>
+      </IonToolbar>
+    </IonHeader>
+  );
+}
 
 /* <IonGrid class="ion-no-padding">
           <IonRow className={`${styles["header-row"]}`}>

@@ -6,7 +6,9 @@ import { LOG_MESSAGE } from "./actionTypes";
 
 export const logMessage = (conversation: Conversation) => (
   dispatch: ThunkDispatch<void, {}, AnyAction>
-) => dispatch({ type: LOG_MESSAGE, conversation });
+) => {
+  dispatch({ type: LOG_MESSAGE, conversation })
+};
 
 export const getMessages = (name: string) => (
   dispatch: ThunkDispatch<void, {}, AnyAction>,

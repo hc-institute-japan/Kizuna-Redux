@@ -12,13 +12,13 @@ test_agent = true
 
 [[dnas]]
 file = '/Users/tats/projects/Kizuna/dnas/lobby/dist/lobby.dna.json'
-hash = 'QmReKtvE9ZyE4jLZrjQbz3MdJEjm2kPEqhQbdCmq6mVqiV'
+hash = 'QmTYBd3gRUvGj1w5oLzuA9AQ1tYsiimcMKjZHGWhyNzurf'
 id = 'hc-run-dna'
 
 [[dnas]]
-file = 'dna/QmWfgGhuhb3iGtCoPn2zmPQJqLXKPpEqmeKh4Cz4xCN4dD.dna.json'
-hash = 'QmWfgGhuhb3iGtCoPn2zmPQJqLXKPpEqmeKh4Cz4xCN4dD'
-id = 'message-dna-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
+file = 'dna/QmZkb4rzNRe3dxyif9VkNGfhv7YMrdWrC9pK4csEwodJGD.dna.json'
+hash = 'QmZkb4rzNRe3dxyif9VkNGfhv7YMrdWrC9pK4csEwodJGD'
+id = 'message-dna-HcSci7umev8E78wbdr93P957TYSb3G9SUPvkrOpOK7yxmb7sZfjDHEHk4n8vcpz-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
 
 [[instances]]
 agent = 'hc-run-agent'
@@ -30,11 +30,11 @@ type = 'memory'
 
 [[instances]]
 agent = 'hc-run-agent'
-dna = 'message-dna-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
-id = 'message-instance-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
+dna = 'message-dna-HcSci7umev8E78wbdr93P957TYSb3G9SUPvkrOpOK7yxmb7sZfjDHEHk4n8vcpz-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
+id = 'message-instance-HcSci7umev8E78wbdr93P957TYSb3G9SUPvkrOpOK7yxmb7sZfjDHEHk4n8vcpz-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
 
 [instances.storage]
-path = 'storage/message-instance-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
+path = 'storage/message-instance-HcSci7umev8E78wbdr93P957TYSb3G9SUPvkrOpOK7yxmb7sZfjDHEHk4n8vcpz-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
 type = 'lmdb'
 
 [[interfaces]]
@@ -45,7 +45,7 @@ id = 'websocket-interface'
 id = 'test-instance'
 
 [[interfaces.instances]]
-id = 'message-instance-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
+id = 'message-instance-HcSci7umev8E78wbdr93P957TYSb3G9SUPvkrOpOK7yxmb7sZfjDHEHk4n8vcpz-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
 
 [interfaces.driver]
 port = 8888

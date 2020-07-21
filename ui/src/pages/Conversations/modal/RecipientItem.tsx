@@ -24,7 +24,7 @@ const RecipientItem: React.FC<Props> = ({ contact, pushErr, conversations, myAdd
   return (
     <IonItem
       button
-      onClick={async() => {
+      onClick={async () => {
           if (doesConvExist()) {
             history.push(`/chat-room/${contact.username}`, {
               name: contact.username,
@@ -34,23 +34,21 @@ const RecipientItem: React.FC<Props> = ({ contact, pushErr, conversations, myAdd
             try {
               const createP2PDNAResult = await initializeP2PDNA({
                 variables : {
-                  requirements: {
-                    id: myAddress,
-                    recipient: contact.id,
+                  properties: {
+                    creator: myAddress,
+                    conversant: contact.id,
                   }
                 }
               });
               // need else statement
-              console.log(createP2PDNAResult.data.initializeP2PDNA);
-              if (createP2PDNAResult.data.initializeP2PDNA) {
-                console.log("working?");
+              console.log(createP2PDNAResult);
+              if (createP2PDNAResult.data.initializeP2PDNA.id) {
                 const requestResult = await requestToChat({
                   variables : {
                     sender: myAddress,
                     recipient: contact.id,
                   }
                 });
-                console.log(requestResult);
                 const parsedResult = JSON.parse(requestResult?.data?.requestToChat);
                 if (parsedResult.code === "request_pending" || parsedResult === "recipient_offline") history.push(`/chat-room/${contact.username}`, {
                   name: contact.username,

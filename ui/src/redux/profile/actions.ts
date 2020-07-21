@@ -6,8 +6,9 @@ import { Profile } from "../../utils/types";
 
 export const setProfile = (profile: Profile) => (
   dispatch: ThunkDispatch<void, {}, AnyAction>
-) =>
+) => {
   dispatch({
     type: SET_PROFILE,
     profile,
   });
+}

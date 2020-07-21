@@ -3,6 +3,7 @@ export interface ActionType {
   [key: string]: any;
 }
 
+// probably needes to be defined strictly
 export interface Profile {
   [key: string]: any | null;
 }
@@ -31,4 +32,13 @@ export interface Conversation {
   name: string,
   address: string,
   messages: Array<Message>,
+}
+
+export interface Members {
+  me: Profile,
+  conversant: Profile,
+}
+export interface P2PInstance {
+  id: string,
+  members: Members
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { IonItemGroup } from "@ionic/react";
 import ConversationItem from "./ConversationItem";
 import { Conversation } from "../../utils/types";
@@ -9,17 +9,20 @@ type ConversationListProps = {
 
 const ConversationList: React.FC<ConversationListProps> = ({
   conversations,
-}: ConversationListProps) => (
-  <IonItemGroup>
-    {conversations.map((conversation) => (
-      <ConversationItem
-        key={conversation.name}
-        name={conversation.name}
-        recipientAddr={conversation.address}
-        messages={conversation.messages}
-      />
-    ))}
-  </IonItemGroup>
-);
+}: ConversationListProps) => {
+  useEffect(() => console.log(conversations), [conversations])
+  return (
+    <IonItemGroup>
+      {conversations.map((conversation) => (
+        <ConversationItem
+          key={conversation.name}
+          name={conversation.name}
+          recipientAddr={conversation.address}
+          messages={conversation.messages}
+        />
+      ))}
+    </IonItemGroup>
+  );
+}
 
 export default ConversationList;
