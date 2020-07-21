@@ -41,7 +41,8 @@ const RecipientItem: React.FC<Props> = ({ contact, pushErr, conversations, myAdd
                 }
               });
               // need else statement
-              if (createP2PDNAResult.data.initializeP2PDNA) {
+              console.log(createP2PDNAResult);
+              if (createP2PDNAResult.data.initializeP2PDNA.id) {
                 const requestResult = await requestToChat({
                   variables : {
                     sender: myAddress,

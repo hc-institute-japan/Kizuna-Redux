@@ -61,11 +61,13 @@ const resolvers = {
       });
     },
     getConversationFromId: async (_, input, { callZome }) => {
-      const addresses = [input.author, input.recipient];
-      const myAddress = await getMyId(callZome);
+      console.log(input);
+      // can we have the schema to not allow id to be null if creator/conversant is null and vice versa?
+      const P2PInstanceId = input.properties.id ? input.properties.id : `message-instance-${input.properties.creator}-${input.properties.conversant}`;
+      const addresses = [input.properties.creator, input.properties.conversant];
       const conversantId = addresses.every(address => address === myAddress) ? myAddress : addresses.find(address => address !== myAddress);
       const messages = await callZome({
-        id: `message-instance-${myAddress}-${conversantId}`,
+        id: P2PInstanceId,
         zome: "messages",
         func: "get_messages_from_address",
       })({
@@ -100,9 +102,11 @@ const resolvers = {
         messages: messagesRes,
       }
     },
-    getConversationFromIds: async (_, { members }, { callZome }) => {
+    getConversationFromIds: async (_, input, { callZome }) => {
+      const members = input.members;
+      const P2PInstanceId = input.properties.id ? input.properties.id : `message-instance-${input.properties.creator}-${input.properties.conversant}`;
       const messages = await callZome({
-        id: `message-instance-${members.myId}-${members.conversantId}`,
+        id: P2PInstanceId,
         zome: "messages",
         func: "get_messages_from_addresses",
       })({
@@ -184,29 +188,38 @@ const resolvers = {
         members: [properties.creator, properties.conversant],
       };
 
-      // fix this shit. wont work if the agents are different
+      const instanceId = `message-instance-${properties.creator}-${properties.conversant}`;
+      
 
       // clone DNA from template and initialize using properties
       try {
         await connection.cloneDna(
           agentConfig.id, // agent to 'host' the DNA
           `message-dna-${properties.creator}-${properties.conversant}`, // DNA id
-          `message-instance-${properties.creator}-${properties.conversant}`, // instance id
+          instanceId, // instance id
           "QmW1SJB7imT5PApeCCTweYAcCcGn33kQW5MgFc7pXxCg3c", // DNA address
           membersProperties, // properties
           (interfaces) =>
             interfaces.find((iface) => iface.id === "websocket-interface") // interface
         );
-        return true;
+        return {
+          id: instanceId,
+          creator: properties.creator,
+          conversant: properties.conversant,
+        };
       } catch (error) {
           // check if the message instance is already configured
           const running_instances = await callAdmin("admin/instance/running")();
           const message_instances = running_instances.filter(instance => 
-            instance.id.includes(`message-instance-${properties.creator}-${properties.conversant}`)
+            instance.id.includes(instanceId)
           );
 
           if (message_instances.length !== 0) {
-            return true;  
+            return {
+              id: instanceId,
+              creator: properties.creator,
+              conversant: properties.conversant,
+            };  
           } else {
             console.log(error);
             // revert changes to conductor config
@@ -214,7 +227,11 @@ const resolvers = {
             await callAdmin("admin/dna/uninstall")({id: `message-dna-${properties.creator}-${properties.conversant}`});
             
             // return error here instead of false
-            return false;
+            return {
+              id: null,
+              creator: null,
+              conversant: null,
+            };
           }
       }
     },

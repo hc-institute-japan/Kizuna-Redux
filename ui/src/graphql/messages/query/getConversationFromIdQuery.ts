@@ -1,8 +1,8 @@
 import gql from "graphql-tag";
 
 export default gql`
-  query GetConversationFromId($author: ID, $recipient: ID) {
-    getConversationFromId(author: $author, recipient: $recipient) {
+  query GetConversationFromId($author: ID, $properties: Properties) {
+    getConversationFromId(author: $author, properties: $properties) {
       name
       address
       messages {

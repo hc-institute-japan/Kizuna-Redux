@@ -26,7 +26,6 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
   const dispatch = useDispatch();
   const { profile: { id: myAddr } } = useSelector((state: RootState) => state.profile);
 
-  const [me, setMe] = useState("");
   const [conversant, setConversant] = useState("");
 
   const [latestMsg, setLatestMsg] = useState({
@@ -35,9 +34,8 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
   });
 
   useEffect(() => {
-    setMe(myAddr);
-    console.log(me);
-  }, [myAddr, me]);
+    console.log(myAddr);
+  }, [myAddr]);
 
   const [P2PInstances, setP2PInstances] = useState<Array<P2PInstance>>([]);
 
@@ -91,6 +89,11 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
             members: {
               myId: instance.members.me.id,
               conversantId: instance.members.conversant.id,
+            },
+            properties: {
+              id: instance.id,
+              creator: null,
+              conversant: null,
             }
           }
         });
@@ -151,7 +154,7 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
   });
 
   const findConversantAddr = (addresses: Array<string>): string => {
-    if (addresses[0] === me && addresses[1] === me) return addresses[0];
+    if (addresses[0] === myAddr && addresses[1] === myAddr) return addresses[0];
     console.log(myAddr);
     const conversantAddr = addresses.find(addr => addr !== myAddr);
     return conversantAddr!
@@ -162,8 +165,12 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
       console.log("on completed");
       getConversationOnJoin({
         variables : {
-          author: conversant,
-          recipient: myAddr,
+          author: data.initializeP2PDNA.conversant,
+          properties: {
+            id: data.initializeP2PDNA.id,
+            creator: data.initializeP2PDNA.creator,
+            conversant: data.initializeP2PDNA.conversant,
+          }
         }
       });
     }
@@ -179,7 +186,6 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
         setConversant(conversantAddr);
         console.log(conversantAddr);
         console.log(myAddr);
-        console.log(me);
         console.log(conversant);
         if (parsedArgs.in_contacts) {
           await initializeP2PDNA({

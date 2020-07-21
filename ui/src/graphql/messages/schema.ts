@@ -20,8 +20,15 @@ const schema = gql`
   }
 
   input Properties {
-    creator: ID!
-    conversant: ID!
+    id: String
+    creator: ID
+    conversant: ID
+  }
+
+  type initializeResult {
+    id: String
+    creator: ID
+    conversant: ID
   }
 
   type MembersDetail {
@@ -40,12 +47,12 @@ const schema = gql`
   }
   
   extend type Query {
-    getConversationFromId(author: ID, recipient: ID): Conversation!
-    getConversationFromIds(members: Requirements): Conversation!
+    getConversationFromId(author: ID, properties: Properties): Conversation!
+    getConversationFromIds(members: Requirements, properties: Properties): Conversation!
     getP2PCommInstances: [P2PInstance!]
   }
   extend type Mutation {
-    initializeP2PDNA(properties: Properties): Boolean
+    initializeP2PDNA(properties: Properties): initializeResult!
     sendMessage(author: ID, recipient: ID, message: String): Message
   }
 `;
