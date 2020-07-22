@@ -1,4 +1,4 @@
-import { useLazyQuery, useMutation } from "@apollo/react-hooks";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
@@ -18,11 +18,31 @@ import INITIALIZE_P2P_DNA from "../graphql/messages/mutations/initializeP2PDNAMu
 import CONVERSATION_FROM_ID from "../graphql/messages/query/getConversationFromIdQuery";
 import CONVERSATION_FROM_IDS from "../graphql/messages/query/getConversationFromIdsQuery";
 import P2P_COMM_INSTANCES from "../graphql/messages/query/getP2PCommInstancesQuery";
+import CONTACTS from "../graphql/query/listContactsQuery";
+import { setContacts } from "../redux/contacts/actions";
 import USERNAME from "../graphql/query/usernameQuery";
-import { Message, Conversation, P2PInstance } from "../utils/types";
+import { Message, Conversation, P2PInstance, Profile } from "../utils/types";
 import { RootState } from "../redux/reducers";
 
 const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
+  const [hasFetched, setHasFetched] = useState(false);
+
+  const { contacts } = useSelector(
+    (state: RootState) => state.contacts
+  );
+  const contactsResult = useQuery(CONTACTS, {
+    fetchPolicy: "no-cache",
+    skip: hasFetched,
+    onCompleted: data => {
+      setHasFetched(true);
+      dispatch(setContacts(data ? data.contacts : contacts));
+    },
+    onError: (error) => {
+      // this needs to be fixed later on
+      pushErr(error, {}, "contacts");
+    },
+  });
+
   const dispatch = useDispatch();
   const { profile: { id: myAddr } } = useSelector((state: RootState) => state.profile);
 
@@ -114,6 +134,7 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
       console.log(newMsg);
       const conversation: Conversation = {
         name: data.username,
+        // this is wrong. conversant will always not be the address of the sender.
         address: conversant,
         messages: [newMsg],
       };
@@ -177,6 +198,7 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
   });
 
   const resolveSignal = async (signal: any) => {
+    console.log("signal_received");
     let parsedArgs;
     if (signal?.signal?.arguments) parsedArgs = JSON.parse(signal?.signal?.arguments);
     switch(signal?.signal?.name) {
@@ -218,10 +240,13 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
         break;
       case "message_received":
         // get username from contacts.
-        const conversantName: string = dispatch(getUsername(parsedArgs.payload.author) as any);
+        console.log(parsedArgs.payload.author);
+        const conversantName: Profile = dispatch(getUsername(parsedArgs.payload.author) as any);
+        console.log(conversantName);
         console.log(parsedArgs);
         // if not in contacts
         if (!conversantName) {
+          console.log("hello?")
           const newMessage = {
             payload: parsedArgs.payload.message,
             createdAt: parsedArgs.payload.timestamp,
@@ -235,12 +260,12 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
         }
         // TODO: cache the recent message
         const newMessage: Message = {
-          sender: conversantName,
+          sender: conversantName.username,
           payload: parsedArgs.payload.message,
           createdAt: parsedArgs.payload.timestamp,
         };
         const conversation: Conversation = {
-          name: conversantName,
+          name: conversantName.username,
           address: parsedArgs.payload.recipient,
           messages: [newMessage],
         };

@@ -17,7 +17,6 @@ export default (state = initialState, action: ActionType) => {
       if (i >= 0)
         state.conversations[i].messages.push(action.conversation.messages[0]);
       else state.conversations.push(action.conversation);
-
       return { ...state };
     default:
       return state;
