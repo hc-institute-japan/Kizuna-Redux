@@ -95,6 +95,16 @@ const resolvers = {
           timestamp: message.timestamp,
           payload: message.message,
         }
+      }).sort((a, b) => {
+        const messageA = a.timestamp;
+        const messageB = b.timestamp;
+        if (messageA < messageB) {
+          return -1;
+        } 
+        if (messageA > messageB) {
+          return 1;
+        }
+        return 0;
       });
       return {
         name: conversantUsername,
@@ -151,6 +161,16 @@ const resolvers = {
           timestamp: message.timestamp,
           payload: message.message,
         }
+      }).sort((a, b) => {
+        const messageA = a.timestamp;
+        const messageB = b.timestamp;
+        if (messageA < messageB) {
+          return -1;
+        } 
+        if (messageA > messageB) {
+          return 1;
+        }
+        return 0;
       });
 
       return {
