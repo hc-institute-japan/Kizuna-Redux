@@ -20,6 +20,7 @@ const RecipientItem: React.FC<Props> = ({ contact, pushErr, conversations, myAdd
   const [requestToChat] = useMutation(REQUEST_TO_CHAT);
 
   const doesConvExist = () => conversations.some(conversation => conversation.name === contact.username);
+  const getConv = () => conversations.find(conv => conv.name === contact.username);
 
   return (
     <IonItem
@@ -29,6 +30,7 @@ const RecipientItem: React.FC<Props> = ({ contact, pushErr, conversations, myAdd
             history.push(`/chat-room/${contact.username}`, {
               name: contact.username,
               recipientAddr: contact.id,
+              instanceId: getConv()?.instanceId,
             })
           } else {
             try {

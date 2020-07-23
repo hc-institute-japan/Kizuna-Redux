@@ -30,7 +30,8 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
   const { contacts } = useSelector(
     (state: RootState) => state.contacts
   );
-  const contactsResult = useQuery(CONTACTS, {
+
+  useQuery(CONTACTS, {
     fetchPolicy: "no-cache",
     skip: hasFetched,
     onCompleted: data => {
@@ -46,11 +47,10 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
   const dispatch = useDispatch();
   const { profile: { id: myAddr } } = useSelector((state: RootState) => state.profile);
 
-  const [conversant, setConversant] = useState("");
-
   const [latestMsg, setLatestMsg] = useState({
     payload: "",
     createdAt: 0,
+    author: "",
   });
 
   useEffect(() => {
@@ -77,6 +77,7 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
       const conversation: Conversation = {
         name: conversationData.name,
         address: conversationData.address,
+        instanceId: data?.getConversationFromIds.instanceId,
         messages: transformedMessages,
       };
       dispatch(logMessage(conversation));
@@ -130,12 +131,13 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
         payload: latestMsg.payload,
         createdAt: latestMsg.createdAt,
       }
-      console.log(conversant);
+      // console.log(conv);
       console.log(newMsg);
       const conversation: Conversation = {
         name: data.username,
         // this is wrong. conversant will always not be the address of the sender.
-        address: conversant,
+        address: latestMsg.author,
+        instanceId: "",
         messages: [newMsg],
       };
       dispatch(logMessage(conversation));
@@ -160,6 +162,7 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
         conversation = {
           name: conversantName,
           address: conversationData.address,
+          instanceId: conversationData.instanceId,
           messages: transformedMessages,
         };
         dispatch(logMessage(conversation));
@@ -167,6 +170,7 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
         conversation = {
           name: conversantName,
           address: conversationData.address,
+          instanceId: conversationData.instanceId,
           messages: [],
         };
         dispatch(logMessage(conversation));
@@ -205,10 +209,10 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
       case "request_received":
         console.log(parsedArgs.addresses.members);
         const conversantAddr = findConversantAddr(parsedArgs.addresses.members);
-        setConversant(conversantAddr);
+        // setConv(conversantAddr);
+        // console.log(conv);
         console.log(conversantAddr);
         console.log(myAddr);
-        console.log(conversant);
         if (parsedArgs.in_contacts) {
           await initializeP2PDNA({
             variables : {
@@ -246,10 +250,12 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
         console.log(parsedArgs);
         // if not in contacts
         if (!conversantName) {
+          // This is needs to be separated from the chat page we have now.
           console.log("hello?")
           const newMessage = {
             payload: parsedArgs.payload.message,
             createdAt: parsedArgs.payload.timestamp,
+            author: parsedArgs.payload.author,
           };
           setLatestMsg(newMessage);
           getUsernameAndLog({
@@ -267,6 +273,7 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
         const conversation: Conversation = {
           name: conversantName.username,
           address: parsedArgs.payload.recipient,
+          instanceId: "",
           messages: [newMessage],
         };
         dispatch(logMessage(conversation));

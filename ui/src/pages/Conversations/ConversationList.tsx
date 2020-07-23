@@ -17,6 +17,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
         <ConversationItem
           key={conversation.name}
           name={conversation.name}
+          instanceId={conversation.instanceId}
           recipientAddr={conversation.address}
           messages={conversation.messages}
         />

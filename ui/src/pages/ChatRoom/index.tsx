@@ -16,6 +16,7 @@ import SEND_MESSAGE from "../../graphql/messages/mutations/sendMessageMutation";
 interface LocationState {
   name: string;
   recipientAddr: string,
+  instanceId: string,
 }
 
 const ChatRoom: React.FC = () => {
@@ -23,8 +24,27 @@ const ChatRoom: React.FC = () => {
   const location = useLocation<LocationState>();
   const dispatch = useDispatch();
   const [messages, setMessages] = useState<Array<Message>>([]);
-  const [sendMessage] = useMutation(SEND_MESSAGE);
+  const [sendMessage] = useMutation(SEND_MESSAGE, {
+    notifyOnNetworkStatusChange: true,
+    onCompleted: (data) => {
+      const newMessage = {
+        sender: me,
+        payload: data?.sendMessage?.payload,
+        createdAt: data?.sendMessage?.timestamp,
+      };
+      setMessages((curr) => [...curr, newMessage]);
+      const conversation: Conversation = {
+        name: id!,
+        address: recipientAddr,
+        instanceId: instanceId,
+        messages: [newMessage], // this should be the result from sendMessage
+      };
+      dispatch(logMessage(conversation));
+      scrollToBottom();
+    },
+  });
   const id = location.state.name;
+  const instanceId = location.state.instanceId;
   const { recipientAddr } = location.state;
 
   useEffect(() => {
@@ -50,21 +70,14 @@ const ChatRoom: React.FC = () => {
           author: myAddr,
           recipient: recipientAddr,
           message: finalPayload,
+          properties: {
+            id: instanceId,
+            creator: null,
+            conversant: null,
+          }
         }
       });
-      const newMessage = {
-        sender: me,
-        payload: sendResult.data?.sendMessage?.payload,
-        createdAt: sendResult.data?.sendMessage?.timestamp,
-      };
-      setMessages((curr) => [...curr, newMessage]);
-      const conversation: Conversation = {
-        name: id!,
-        address: recipientAddr,
-        messages: [newMessage], // this should be the result from sendMessage
-      };
-      dispatch(logMessage(conversation));
-      scrollToBottom();
+      console.log(sendResult);
     } catch (e) {
       //pushErr
     }

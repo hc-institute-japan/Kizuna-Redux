@@ -99,6 +99,7 @@ const resolvers = {
       return {
         name: conversantUsername,
         address: conversantId,
+        instanceId: P2PInstanceId,
         messages: messagesRes,
       }
     },
@@ -155,6 +156,7 @@ const resolvers = {
       return {
         name: conversantUsername,
         address: members.conversantId,
+        instanceId: P2PInstanceId,
         messages: messagesRes,
       }
 
@@ -162,8 +164,9 @@ const resolvers = {
   },
   Mutation: {
     sendMessage: async (_, input, { callZome }) => {
+      const P2PInstanceId = input.properties.id ? input.properties.id : `message-instance-${input.properties.creator}-${input.properties.conversant}`;
       const response = await callZome({
-        id: `message-instance-${input.author}-${input.recipient}`,
+        id: P2PInstanceId,
         zome: "messages",
         func: "send",
       })({

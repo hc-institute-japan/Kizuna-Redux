@@ -31,6 +31,7 @@ export interface Message {
 export interface Conversation {
   name: string,
   address: string,
+  instanceId: string,
   messages: Array<Message>,
 }
 

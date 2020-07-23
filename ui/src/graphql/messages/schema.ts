@@ -11,6 +11,7 @@ const schema = gql`
   type Conversation {
     name: String!,
     address: String!,
+    instanceId: String!,
     messages: [Message!]
   }
 
@@ -53,7 +54,7 @@ const schema = gql`
   }
   extend type Mutation {
     initializeP2PDNA(properties: Properties): initializeResult!
-    sendMessage(author: ID, recipient: ID, message: String): Message
+    sendMessage(author: ID, recipient: ID, message: String, properties: Properties): Message
   }
 `;
 

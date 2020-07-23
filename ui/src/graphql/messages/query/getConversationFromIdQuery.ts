@@ -5,6 +5,7 @@ export default gql`
     getConversationFromId(author: $author, properties: $properties) {
       name
       address
+      instanceId
       messages {
         author
         authorUsername
