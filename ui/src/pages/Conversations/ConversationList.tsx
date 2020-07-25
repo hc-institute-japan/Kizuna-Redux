@@ -10,7 +10,6 @@ type ConversationListProps = {
 const ConversationList: React.FC<ConversationListProps> = ({
   conversations,
 }: ConversationListProps) => {
-  useEffect(() => console.log(conversations), [conversations])
   return (
     <IonItemGroup>
       {conversations.map((conversation) => (

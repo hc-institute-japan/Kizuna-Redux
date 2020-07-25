@@ -12,9 +12,10 @@ interface Props extends ToastProps {
   contact: Profile;
   conversations: Array<Conversation>,
   myAddress: string,
+  setShowLoading(value: boolean): Function,
 }
 
-const RecipientItem: React.FC<Props> = ({ contact, pushErr, conversations, myAddress }: Props) => {
+const RecipientItem: React.FC<Props> = ({ contact, pushErr, conversations, myAddress, setShowLoading }: Props) => {
   const history = useHistory();
   const [initializeP2PDNA] = useMutation(INITIALIZE_P2P_DNA);
   const [requestToChat] = useMutation(REQUEST_TO_CHAT);
@@ -26,6 +27,7 @@ const RecipientItem: React.FC<Props> = ({ contact, pushErr, conversations, myAdd
     <IonItem
       button
       onClick={async () => {
+        setShowLoading(true);
           if (doesConvExist()) {
             history.push(`/chat-room/${contact.username}`, {
               name: contact.username,
@@ -52,10 +54,15 @@ const RecipientItem: React.FC<Props> = ({ contact, pushErr, conversations, myAdd
                   }
                 });
                 const parsedResult = JSON.parse(requestResult?.data?.requestToChat);
-                if (parsedResult.code === "request_pending" || parsedResult === "recipient_offline") history.push(`/chat-room/${contact.username}`, {
-                  name: contact.username,
-                  recipientAddr: contact.id,
-                })
+                if (parsedResult.code === "request_pending" || parsedResult === "recipient_offline") {
+                  setShowLoading(false);
+                  history.push(`/chat-room/${contact.username}`, {
+                    name: contact.username,
+                    recipientAddr: contact.id,
+                    // data integrity
+                    instanceId: `message-instance-${myAddress}-${contact.id}`,
+                  })
+                }
               }
             } catch (e) {
               // TODO: PushErr

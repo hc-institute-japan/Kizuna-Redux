@@ -12,8 +12,6 @@ const Conversations: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false)
   const { conversations } = useSelector((state: RootState) => state.conversations);
 
-  useEffect(() => console.log(conversations), [conversations]);
-
   return (
     <IonPage>
       <HomeHeader />

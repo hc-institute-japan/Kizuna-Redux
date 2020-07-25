@@ -17,7 +17,8 @@ interface Props extends ToastProps {
 
 const NewConversationModal: React.FC<Props> = ({ pushErr, setShowModal, conversations }: Props) => {
 	const [search, setSearch] = useState("");
-	const [hasFetched, setHasFetched] = useState(false);
+  const [hasFetched, setHasFetched] = useState(false);
+  const [showLocading, setShowLoading] = useState<boolean>(false);
 	const dispatch = useDispatch();
 
 	const {
@@ -53,8 +54,14 @@ const NewConversationModal: React.FC<Props> = ({ pushErr, setShowModal, conversa
 					search={search}
 					conversations={conversations}
 					indexedContacts={indexedContacts}
-					myAddress={myAddress}
+          myAddress={myAddress}
+          setShowLoading={setShowLoading}
 				/>
+				<IonLoading
+        			isOpen={showLocading}
+        			message={'Creating a private chatroom...'}
+        			duration={5000}
+      			/>
 			</IonContent>
   ) : (
     <IonLoading isOpen={loading} message={"Please wait..."} />

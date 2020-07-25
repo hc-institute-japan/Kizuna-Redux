@@ -21,7 +21,7 @@ import P2P_COMM_INSTANCES from "../graphql/messages/query/getP2PCommInstancesQue
 import CONTACTS from "../graphql/query/listContactsQuery";
 import { setContacts } from "../redux/contacts/actions";
 import USERNAME from "../graphql/query/usernameQuery";
-import { Message, Conversation, P2PInstance, Profile } from "../utils/types";
+import { Message, Conversation, P2PInstance, Profile, Members } from "../utils/types";
 import { RootState } from "../redux/reducers";
 
 const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
@@ -52,10 +52,6 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
     createdAt: 0,
     author: "",
   });
-
-  useEffect(() => {
-    console.log(myAddr);
-  }, [myAddr]);
 
   const [P2PInstances, setP2PInstances] = useState<Array<P2PInstance>>([]);
 
@@ -126,6 +122,7 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
     fetchPolicy: "network-only",
     notifyOnNetworkStatusChange: true,
     onCompleted: data => {
+      // most likely latestMsg will be empty here.
       const newMsg: Message = {
         sender: data.username,
         payload: latestMsg.payload,
@@ -202,7 +199,6 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
   });
 
   const resolveSignal = async (signal: any) => {
-    console.log("signal_received");
     let parsedArgs;
     if (signal?.signal?.arguments) parsedArgs = JSON.parse(signal?.signal?.arguments);
     switch(signal?.signal?.name) {
@@ -244,7 +240,6 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
         break;
       case "message_received":
         // get username from contacts.
-        console.log(parsedArgs.payload.author);
         const conversantName: Profile = dispatch(getUsername(parsedArgs.payload.author) as any);
         console.log(conversantName);
         console.log(parsedArgs);
@@ -270,9 +265,20 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
           payload: parsedArgs.payload.message,
           createdAt: parsedArgs.payload.timestamp,
         };
+        const members: Members = {
+          me: {
+            id: parsedArgs.payload.recipient,
+          },
+          conversant: {
+            id:  parsedArgs.payload.author,
+          }
+        };
+        console.log(P2PInstances);
+        const thisInstance = P2PInstances.find(instance => instance.members.me.id === members.me.id && instance.members.conversant.id === members.conversant.id);
+        console.log(thisInstance);
         const conversation: Conversation = {
           name: conversantName.username,
-          address: parsedArgs.payload.recipient,
+          address: parsedArgs.payload.author,
           instanceId: "",
           messages: [newMessage],
         };
@@ -283,13 +289,17 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
     }
   };
 
+  // this stops when initializeP2PDNA is called
   useEffect(() => {
-    onSignal((signal: any) => resolveSignal(signal))
-  }, []);
+    onSignal((signal: any) => {
+      console.log(signal);
+      resolveSignal(signal);
+    })
+  }, [initializeP2PDNA]);
 
   useEffect(() => {
     getP2PCommInstances();
-  }, [])
+  }, [getP2PCommInstances])
 
   return (
     <>

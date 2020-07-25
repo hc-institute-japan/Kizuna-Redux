@@ -24,7 +24,6 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   recipientAddr,
   instanceId,
 }: ConversationItemProps) => {
-  const [recentMsg, setRecentMsg] = useState("");
   const history = useHistory();
 
   const getRecentMsg = (msgs: Array<Message>) => {
@@ -37,12 +36,8 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       if (!currMsg || (currMsg && msg.createdAt > currMsg.createdAt))
         currMsg = msg;
     });
-    setRecentMsg(currMsg.payload);
+    return currMsg.payload;
   };
-
-  useEffect(() => {
-    getRecentMsg(messages);
-  }, [messages]);
 
   return (
     <IonItem
@@ -76,7 +71,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
 
         <IonRow className={styles["row"]}>
           <IonCol size="8" className={styles["col"]}>
-            <b className={styles["recent-message"]}>{recentMsg}</b>
+            <b className={styles["recent-message"]}>{getRecentMsg(messages)}</b>
           </IonCol>
 
           <IonCol size="4" className={styles["col"]}>
