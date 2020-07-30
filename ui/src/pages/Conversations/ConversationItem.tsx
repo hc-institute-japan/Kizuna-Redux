@@ -5,17 +5,18 @@ import { Message } from "../../utils/types";
 import styles from "./style.module.css";
 
 type ConversationItemProps = {
-  name: string;
-  recipientAddr: string
-  messages: Array<Message>;
+  name: string,
+  recipientAddr: string,
+  messages: Array<Message>,
+  instanceId: string,
 };
 
 const ConversationItem: React.FC<ConversationItemProps> = ({
   name,
   messages,
   recipientAddr,
+  instanceId,
 }: ConversationItemProps) => {
-  const [recentMsg, setRecentMsg] = useState("");
   const history = useHistory();
 
   const getRecentMsg = (msgs: Array<Message>) => {
@@ -28,7 +29,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       if (!currMsg || (currMsg && msg.createdAt > currMsg.createdAt))
         currMsg = msg;
     });
-    setRecentMsg(currMsg.payload);
+    return currMsg.payload;
   };
 
   useEffect(() => {
@@ -116,6 +117,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
         history.push(`/chat-room/${name}`, {
           name,
           recipientAddr,
+          instanceId,
         })
       }
     >
@@ -138,7 +140,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
 
         <IonRow className={styles["row"]}>
           <IonCol size="8" className={styles["col"]}>
-            <b className={styles["recent-message"]}>{recentMsg}</b>
+            <b className={styles["recent-message"]}>{getRecentMsg(messages)}</b>
           </IonCol>
 
           <IonCol size="4" className={styles["col"]}>

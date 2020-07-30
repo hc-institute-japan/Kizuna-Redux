@@ -1,12 +1,11 @@
 import { IonContent, IonGrid, IonPage } from "@ionic/react";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { useMutation } from "@apollo/react-hooks";
-import { logMessage, getMessages } from "../../redux/conversations/actions";
+import { logMessage } from "../../redux/conversations/actions";
 import { RootState } from "../../redux/reducers";
-import { getTimestamp } from "../../utils/helpers/index";
-import { Conversation, Message } from "../../utils/types";
+import { Conversation } from "../../utils/types";
 import ChatFooter from "./ChatFooter";
 import ChatHeader from "./ChatHeader";
 import Me from "./Me";
@@ -16,20 +15,42 @@ import SEND_MESSAGE from "../../graphql/messages/mutations/sendMessageMutation";
 interface LocationState {
   name: string;
   recipientAddr: string,
+  instanceId: string,
 }
 
 const ChatRoom: React.FC = () => {
   const [payload, setPayload] = useState<string>();
   const location = useLocation<LocationState>();
   const dispatch = useDispatch();
-  const [messages, setMessages] = useState<Array<Message>>([]);
-  const [sendMessage] = useMutation(SEND_MESSAGE);
+  const { conversations } = useSelector((state: RootState) => state.conversations);
+  const [sendMessage] = useMutation(SEND_MESSAGE, {
+    notifyOnNetworkStatusChange: true,
+    onCompleted: (data) => {
+      const newMessage = {
+        sender: me,
+        payload: data?.sendMessage?.payload,
+        createdAt: data?.sendMessage?.timestamp,
+      };
+      const conversation: Conversation = {
+        name: id!,
+        address: recipientAddr,
+        instanceId: instanceId,
+        messages: [newMessage], // this should be the result from sendMessage
+      };
+      dispatch(logMessage(conversation));
+      scrollToBottom();
+    },
+  });
   const id = location.state.name;
+  const instanceId = location.state.instanceId;
   const { recipientAddr } = location.state;
 
-  useEffect(() => {
-    setMessages(dispatch(getMessages(id)) as any);
-  }, [id]);
+  const getConv = () => conversations.find(conv => conv.name === id);
+
+  // this is not getting called when a new message is received.
+  // useEffect(() => {
+  //   setMessages(dispatch(getMessages(id)) as any);
+  // }, [id]);
 
   const {
     profile: { username: me, id: myAddr },
@@ -50,21 +71,14 @@ const ChatRoom: React.FC = () => {
           author: myAddr,
           recipient: recipientAddr,
           message: finalPayload,
+          properties: {
+            id: instanceId,
+            creator: null,
+            conversant: null,
+          }
         }
       });
-      const newMessage = {
-        sender: me,
-        payload: sendResult.data?.sendMessage?.payload,
-        createdAt: sendResult.data?.sendMessage?.timestamp,
-      };
-      setMessages((curr) => [...curr, newMessage]);
-      const conversation: Conversation = {
-        name: id!,
-        address: recipientAddr,
-        messages: [newMessage], // this should be the result from sendMessage
-      };
-      dispatch(logMessage(conversation));
-      scrollToBottom();
+      console.log(sendResult);
     } catch (e) {
       //pushErr
     }
@@ -75,7 +89,7 @@ const ChatRoom: React.FC = () => {
       <ChatHeader name={id!} />
       <IonContent scrollEvents={true}>
         <IonGrid>
-          {messages.map((message) =>
+          {getConv()?.messages.map((message) =>
             message.sender === me ? (
               <Me key={JSON.stringify(message)} message={message} />
             ) : (

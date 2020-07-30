@@ -11,14 +11,16 @@ export default (state = initialState, action: ActionType) => {
   switch (action.type) {
     case LOG_MESSAGE:
       const { name } = action.conversation;
-      const i = state.conversations.findIndex(
+      let conversations = [...state.conversations];
+      // this depends on username being unique. What would be better to compare is 
+      // the instanceId but currently difficult bc of Authenticated L279-285.
+      const i = conversations.findIndex(
         (conversation: Conversation) => conversation.name === name
       );
       if (i >= 0)
-        state.conversations[i].messages.push(action.conversation.messages[0]);
-      else state.conversations.push(action.conversation);
-
-      return { ...state };
+      conversations[i].messages.push(action.conversation.messages[0]);
+      else conversations.push(action.conversation);
+      return { ...state, conversations };
     default:
       return state;
   }

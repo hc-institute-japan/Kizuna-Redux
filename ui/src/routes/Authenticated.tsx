@@ -1,4 +1,4 @@
-import { useLazyQuery, useMutation } from "@apollo/react-hooks";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect, Route, Switch } from "react-router-dom";
@@ -18,24 +18,40 @@ import INITIALIZE_P2P_DNA from "../graphql/messages/mutations/initializeP2PDNAMu
 import CONVERSATION_FROM_ID from "../graphql/messages/query/getConversationFromIdQuery";
 import CONVERSATION_FROM_IDS from "../graphql/messages/query/getConversationFromIdsQuery";
 import P2P_COMM_INSTANCES from "../graphql/messages/query/getP2PCommInstancesQuery";
+import CONTACTS from "../graphql/query/listContactsQuery";
+import { setContacts } from "../redux/contacts/actions";
 import USERNAME from "../graphql/query/usernameQuery";
-import { Message, Conversation, P2PInstance } from "../utils/types";
+import { Message, Conversation, P2PInstance, Profile, Members } from "../utils/types";
 import { RootState } from "../redux/reducers";
 
 const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
+  const [hasFetched, setHasFetched] = useState(false);
+
+  const { contacts } = useSelector(
+    (state: RootState) => state.contacts
+  );
+
+  useQuery(CONTACTS, {
+    fetchPolicy: "no-cache",
+    skip: hasFetched,
+    onCompleted: data => {
+      setHasFetched(true);
+      dispatch(setContacts(data ? data.contacts : contacts));
+    },
+    onError: (error) => {
+      // this needs to be fixed later on
+      pushErr(error, {}, "contacts");
+    },
+  });
+
   const dispatch = useDispatch();
   const { profile: { id: myAddr } } = useSelector((state: RootState) => state.profile);
-
-  const [conversant, setConversant] = useState("");
 
   const [latestMsg, setLatestMsg] = useState({
     payload: "",
     createdAt: 0,
+    author: "",
   });
-
-  useEffect(() => {
-    console.log(myAddr);
-  }, [myAddr]);
 
   const [P2PInstances, setP2PInstances] = useState<Array<P2PInstance>>([]);
 
@@ -57,6 +73,7 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
       const conversation: Conversation = {
         name: conversationData.name,
         address: conversationData.address,
+        instanceId: data?.getConversationFromIds.instanceId,
         messages: transformedMessages,
       };
       dispatch(logMessage(conversation));
@@ -105,16 +122,19 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
     fetchPolicy: "network-only",
     notifyOnNetworkStatusChange: true,
     onCompleted: data => {
+      // most likely latestMsg will be empty here.
       const newMsg: Message = {
         sender: data.username,
         payload: latestMsg.payload,
         createdAt: latestMsg.createdAt,
       }
-      console.log(conversant);
+      // console.log(conv);
       console.log(newMsg);
       const conversation: Conversation = {
         name: data.username,
-        address: conversant,
+        // this is wrong. conversant will always not be the address of the sender.
+        address: latestMsg.author,
+        instanceId: "",
         messages: [newMsg],
       };
       dispatch(logMessage(conversation));
@@ -139,6 +159,7 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
         conversation = {
           name: conversantName,
           address: conversationData.address,
+          instanceId: conversationData.instanceId,
           messages: transformedMessages,
         };
         dispatch(logMessage(conversation));
@@ -146,6 +167,7 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
         conversation = {
           name: conversantName,
           address: conversationData.address,
+          instanceId: conversationData.instanceId,
           messages: [],
         };
         dispatch(logMessage(conversation));
@@ -183,10 +205,10 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
       case "request_received":
         console.log(parsedArgs.addresses.members);
         const conversantAddr = findConversantAddr(parsedArgs.addresses.members);
-        setConversant(conversantAddr);
+        // setConv(conversantAddr);
+        // console.log(conv);
         console.log(conversantAddr);
         console.log(myAddr);
-        console.log(conversant);
         if (parsedArgs.in_contacts) {
           await initializeP2PDNA({
             variables : {
@@ -218,13 +240,17 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
         break;
       case "message_received":
         // get username from contacts.
-        const conversantName: string = dispatch(getUsername(parsedArgs.payload.author) as any);
+        const conversantName: Profile = dispatch(getUsername(parsedArgs.payload.author) as any);
+        console.log(conversantName);
         console.log(parsedArgs);
         // if not in contacts
         if (!conversantName) {
+          // This is needs to be separated from the chat page we have now.
+          console.log("hello?")
           const newMessage = {
             payload: parsedArgs.payload.message,
             createdAt: parsedArgs.payload.timestamp,
+            author: parsedArgs.payload.author,
           };
           setLatestMsg(newMessage);
           getUsernameAndLog({
@@ -235,13 +261,25 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
         }
         // TODO: cache the recent message
         const newMessage: Message = {
-          sender: conversantName,
+          sender: conversantName.username,
           payload: parsedArgs.payload.message,
           createdAt: parsedArgs.payload.timestamp,
         };
+        const members: Members = {
+          me: {
+            id: parsedArgs.payload.recipient,
+          },
+          conversant: {
+            id:  parsedArgs.payload.author,
+          }
+        };
+        console.log(P2PInstances);
+        const thisInstance = P2PInstances.find(instance => instance.members.me.id === members.me.id && instance.members.conversant.id === members.conversant.id);
+        console.log(thisInstance);
         const conversation: Conversation = {
-          name: conversantName,
-          address: parsedArgs.payload.recipient,
+          name: conversantName.username,
+          address: parsedArgs.payload.author,
+          instanceId: "",
           messages: [newMessage],
         };
         dispatch(logMessage(conversation));
@@ -251,13 +289,17 @@ const Authenticated: React.FC<ToastProps> = ({ pushErr }) => {
     }
   };
 
+  // this stops when initializeP2PDNA is called
   useEffect(() => {
-    onSignal((signal: any) => resolveSignal(signal))
-  }, []);
+    onSignal((signal: any) => {
+      console.log(signal);
+      resolveSignal(signal);
+    })
+  }, [initializeP2PDNA]);
 
   useEffect(() => {
     getP2PCommInstances();
-  }, [])
+  }, [getP2PCommInstances])
 
   return (
     <>

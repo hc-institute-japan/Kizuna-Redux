@@ -21,8 +21,6 @@ const Conversations: React.FC = () => {
     (state: RootState) => state.conversations
   );
 
-  useEffect(() => console.log(conversations), [conversations]);
-
   return (
     <IonPage>
       <HomeHeader />

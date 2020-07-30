@@ -10,6 +10,7 @@ interface Props {
   };
   conversations: Array<Conversation>,
   myAddress: string,
+  setShowLoading: any,
 }
 
 const RecipientList: React.FC<Props> = ({
@@ -17,6 +18,7 @@ const RecipientList: React.FC<Props> = ({
   search,
   conversations,
   myAddress,
+  setShowLoading
 }) => {
   const searchContacts =
     search.length > 0 ? indexedContacts[search.charAt(0).toUpperCase()] : null;
@@ -33,7 +35,7 @@ const RecipientList: React.FC<Props> = ({
               contact.username.toLowerCase().includes(search.toLowerCase())
             )
             .map((contact) => (
-              <RecipientItem key={contact.username} contact={contact} conversations={conversations} myAddress={myAddress}  />
+              <RecipientItem key={contact.username} contact={contact} conversations={conversations} myAddress={myAddress} setShowLoading={setShowLoading}  />
             ))}
         </IonItemGroup>
       ) : (
@@ -46,7 +48,7 @@ const RecipientList: React.FC<Props> = ({
                   <IonLabel>{index}</IonLabel>
                 </IonItemDivider>
                 {contacts.map((contact) => (
-                  <RecipientItem key={contact.username} contact={contact} conversations={conversations} myAddress={myAddress} />
+                  <RecipientItem key={contact.username} contact={contact} conversations={conversations} myAddress={myAddress} setShowLoading={setShowLoading} />
                 ))}
               </IonItemGroup>
             );
