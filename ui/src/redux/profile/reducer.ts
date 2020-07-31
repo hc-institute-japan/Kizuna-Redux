@@ -14,13 +14,12 @@ const initialState = {
 export default (state = initialState, action: ActionType) => {
   switch (action.type) {
     case actions.SET_PROFILE:
-      console.log(action.profile)
-      const profile = action.profile;
-      // delete profile.id;
-      delete profile.__typename;
+      delete action.profile.__typename;
       return {
         ...state,
-        profile,
+        profile: {
+          ...action.profile,
+        },
       };
 
     default:

@@ -5,10 +5,12 @@ import { Message } from "../../utils/types";
 import styles from "./style.module.css";
 
 type ConversationItemProps = {
-  name: string,
-  recipientAddr: string,
-  messages: Array<Message>,
-  instanceId: string,
+  name: {
+    username: string;
+  };
+  recipientAddr: string;
+  messages: Array<Message>;
+  instanceId: string;
 };
 
 const ConversationItem: React.FC<ConversationItemProps> = ({
@@ -31,10 +33,6 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
     });
     return currMsg.payload;
   };
-
-  useEffect(() => {
-    getRecentMsg(messages);
-  }, [messages]);
 
   const handleOnClick = () =>
     history.push(`/chat-room/${name}`, {
@@ -60,11 +58,11 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       <IonLabel className="sc-ion-label-ios-h sc-ion-label-ios-s ios hydrated">
         <h2>
           <strong>
-            <IonText color="dark">{name}</IonText>
+            <IonText color="dark">{name.username}</IonText>
           </strong>
         </h2>
         <p className="ion-text-nowrap">
-          <IonText color="medium">{recentMsg}</IonText>
+          <IonText color="medium">{getRecentMsg(messages)}</IonText>
         </p>
       </IonLabel>
       <IonNote slot="end" className="ios hydrated">

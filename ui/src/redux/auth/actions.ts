@@ -7,7 +7,7 @@ import { Profile } from "../../utils/types";
 export const authenticate = (profile: Profile) => (
   dispatch: ThunkDispatch<void, {}, AnyAction>
 ) => {
-  if (profile) {
+  if (profile && profile.username) {
     dispatch({
       type: SET_PROFILE,
       profile,

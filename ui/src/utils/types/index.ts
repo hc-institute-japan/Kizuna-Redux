@@ -23,23 +23,23 @@ export interface Blocked {
 }
 
 export interface Message {
-  sender: string,
-  payload: string,
-  createdAt: number,
+  sender: string;
+  payload: string;
+  createdAt: number;
 }
 
 export interface Conversation {
-  name: string,
-  address: string,
-  instanceId: string,
-  messages: Array<Message>,
+  name: string;
+  address: string;
+  instanceId: string;
+  messages: Array<Message>;
 }
 
 export interface Members {
-  me: Profile,
-  conversant: Profile,
+  me: Profile;
+  conversant: Profile;
 }
 export interface P2PInstance {
-  id: string,
-  members: Members
+  id: string;
+  members: Members;
 }

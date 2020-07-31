@@ -6,8 +6,9 @@ import RouterContainer from "./RouterContainer";
 import ErrorContainer from "./ErrorContainer";
 import ToastContainer from "../components/Toast/ToastContainer";
 import ToastProvider from "../components/Toast/ToastProvider";
+import P2PContainer from "./P2PContainer";
 
-const Container = ({ children }: { children: React.ReactNode }) => {
+const Container: React.FC = ({ children }) => {
   /**
    * @name Container
    * Contains the whole application with the following containers:
@@ -25,10 +26,12 @@ const Container = ({ children }: { children: React.ReactNode }) => {
         <IonicContainer>
           <ErrorContainer>
             <RouterContainer>
-              <ToastProvider>
-                {children}
-                <ToastContainer />
-              </ToastProvider>
+              <P2PContainer>
+                <ToastProvider>
+                  {children}
+                  <ToastContainer />
+                </ToastProvider>
+              </P2PContainer>
             </RouterContainer>
           </ErrorContainer>
         </IonicContainer>

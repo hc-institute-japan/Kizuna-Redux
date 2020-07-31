@@ -12,11 +12,13 @@ const ConversationList: React.FC<ConversationListProps> = ({
   conversations,
 }: ConversationListProps) => (
   <IonList color="light" className={styles["conversation-list"]}>
-    {conversations.map((conversation) => (
+    {conversations.map((conversation, i) => (
       <ConversationItem
         key={JSON.stringify(conversation)}
-        name={conversation.name}
+        name={{ username: conversation.name }}
+        recipientAddr={conversation.address}
         messages={conversation.messages}
+        instanceId={conversation.instanceId}
       />
     ))}
   </IonList>

@@ -101,7 +101,7 @@ export function callZome({ id, zome, func }) {
   };
 }
 
-export function callAdmin( adminFn ) {
+export function callAdmin(adminFn) {
   return async function (args = {}) {
     try {
       let adminCall;
@@ -150,9 +150,8 @@ export async function hcUprtcl() {
     devEnv: {
       // this property should be changed to your local paths and dna hash
       templateDnasPaths: {
-        QmW1SJB7imT5PApeCCTweYAcCcGn33kQW5MgFc7pXxCg3c :
-        "/Users/tats/projects/Kizuna/dnas/p2pcomm/dist/p2pcomm.dna.json"
-        ,
+        QmWamgURZoyEgPQjMCBRraKCHgDbFmRWtasGzMsNTGfKbS:
+          "/Users/neilsongardose/Documents/projects/beyonder/refork/Kizuna/dnas/p2pcomm/dist/p2pcomm.dna.json",
       },
     },
   });

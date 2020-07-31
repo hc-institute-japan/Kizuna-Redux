@@ -12,8 +12,7 @@ const resolvers = {
         username: agent.username,
       }));
     },
-    me: async (_obj, _args, { callZome, onSignal }) => {
-      // onSignal("test", (signal) => console.log(signal));
+    me: async (_obj, _args, { callZome }) => {
       const agent_id = await callZome({
         id: "test-instance",
         zome: "profiles",
@@ -26,6 +25,7 @@ const resolvers = {
       })({
         agent_address: agent_id,
       });
+      console.log(username);
       if (username) {
         return {
           id: agent_id,
@@ -47,7 +47,7 @@ const resolvers = {
         agent_address: input.address,
       });
       return usernameResult;
-    }
+    },
   },
   Mutation: {
     createProfile: async (_obj, username, { callZome }) => {
