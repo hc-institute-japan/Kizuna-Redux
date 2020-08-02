@@ -1,77 +1,14 @@
-import { getTimestamp } from "../../utils/helpers/";
-import { hcUprtcl } from "../../connection/holochainClient";
-
-let myAddress;
-
-const getMyId = async (callZome) => {
-  if (myAddress) return myAddress;
-  myAddress = await callZome({
-    id: "test-instance",
-    zome: "profiles",
-    func: "get_my_address",
-  })();
-  return myAddress;
-};
+import { getTimestamp, getP2PInstanceId, getP2PDnaId } from "../../utils/helpers/";
+import { getMyId } from "../utils/";
 
 const resolvers = {
   Query: {
-    getP2PCommInstances: async (_, __, { callAdmin, callZome }) => {
-      const allInstances = await callAdmin("admin/instance/running")();
-      const p2pCommInstances = allInstances.filter((dna) =>
-        dna.id.includes("message-instance")
-      );
-      return p2pCommInstances.map(async (p2pCommInstance) => {
-        const members = await callZome({
-          id: p2pCommInstance.id,
-          zome: "allowed-members",
-          func: "get_members",
-        })();
-
-        const myAddress = await getMyId(callZome);
-        const conversantAddress = members.members.find(
-          (member) => member !== myAddress
-        );
-
-        const myUsername = await callZome({
-          id: "test-instance",
-          zome: "profiles",
-          func: "get_username",
-        })({
-          agent_address: myAddress,
-        });
-
-        const conversantUsername = await callZome({
-          id: "test-instance",
-          zome: "profiles",
-          func: "get_username",
-        })({
-          agent_address: conversantAddress,
-        });
-
-        return {
-          id: p2pCommInstance.id,
-          members: {
-            me: {
-              id: myAddress,
-              username: myUsername,
-            },
-            conversant: {
-              id: conversantAddress,
-              username: conversantUsername,
-            },
-          },
-        };
-      });
-    },
     getConversationFromId: async (_, input, { callZome }) => {
       // can we have the schema to not allow id to be null if creator/conversant is null and vice versa?
-      const P2PInstanceId = input.properties.id
-        ? input.properties.id
-        : `message-instance-${input.properties.creator}-${input.properties.conversant}`;
+      const P2PInstanceId = input.properties.id ? input.properties.id : getP2PInstanceId(input.properties.creator, input.properties.conversant);
       const addresses = [input.properties.creator, input.properties.conversant];
-      const conversantId = addresses.every((address) => address === myAddress)
-        ? myAddress
-        : addresses.find((address) => address !== myAddress);
+      const me = await getMyId(callZome);
+      const conversantId = addresses.every(address => address === me) ? me : addresses.find(address => address !== me);
       const messages = await callZome({
         id: P2PInstanceId,
         zome: "messages",
@@ -93,7 +30,8 @@ const resolvers = {
       })({
         agent_address: conversantId,
       });
-      const messagesRes = messages.map((message) => {
+      console.log(conversantUsername);
+      const messagesRes = messages.map(message => {
         return {
           author: message.author,
           authorUsername,
@@ -121,9 +59,7 @@ const resolvers = {
     },
     getConversationFromIds: async (_, input, { callZome }) => {
       const members = input.members;
-      const P2PInstanceId = input.properties.id
-        ? input.properties.id
-        : `message-instance-${input.properties.creator}-${input.properties.conversant}`;
+      const P2PInstanceId = input.properties.id ? input.properties.id : getP2PInstanceId(input.properties.creator, input.properties.conversant);
       const messages = await callZome({
         id: P2PInstanceId,
         zome: "messages",
@@ -194,7 +130,7 @@ const resolvers = {
   },
   Mutation: {
     sendMessage: async (_, input, { callZome }) => {
-      const P2PInstanceId = input.properties.id ? input.properties.id : `message-instance-${input.properties.creator}-${input.properties.conversant}`;
+      const P2PInstanceId = input.properties.id ? input.properties.id : getP2PInstanceId(input.properties.creator, input.properties.conversant);
       const response = await callZome({
         id: P2PInstanceId,
         zome: "messages",
@@ -210,66 +146,6 @@ const resolvers = {
         timestamp: response.timestamp,
         payload: response.message,
       };
-    },
-    initializeP2PDNA: async (_obj, { properties }, { callZome, callAdmin }) => {
-      const connection = await hcUprtcl();
-      const myAddress = await getMyId(callZome);
-      const agentConfig = await connection.getAgentConfig(myAddress);
-
-      // initialize properties
-      const membersProperties = {
-        members: [properties.creator, properties.conversant],
-      };
-
-      const instanceId = `message-instance-${properties.creator}-${properties.conversant}`;
-
-      // clone DNA from template and initialize using properties
-      try {
-        await connection.cloneDna(
-          agentConfig.id, // agent to 'host' the DNA
-          `message-dna-${properties.creator}-${properties.conversant}`, // DNA id
-          instanceId, // instance id
-          "QmWamgURZoyEgPQjMCBRraKCHgDbFmRWtasGzMsNTGfKbS", // DNA address
-          membersProperties, // properties
-          (interfaces) =>
-            interfaces.find((iface) => iface.id === "websocket-interface") // interface
-        );
-        return {
-          id: instanceId,
-          creator: properties.creator,
-          conversant: properties.conversant,
-        };
-      } catch (error) {
-        // check if the message instance is already configured
-        const running_instances = await callAdmin("admin/instance/running")();
-        const message_instances = running_instances.filter((instance) =>
-          instance.id.includes(instanceId)
-        );
-
-        if (message_instances.length !== 0) {
-          return {
-            id: instanceId,
-            creator: properties.creator,
-            conversant: properties.conversant,
-          };
-        } else {
-          console.log(error);
-          // revert changes to conductor config
-          await callAdmin("admin/instance/remove")({
-            id: `message-instance-${properties.creator}-${properties.conversant}`,
-          });
-          await callAdmin("admin/dna/uninstall")({
-            id: `message-dna-${properties.creator}-${properties.conversant}`,
-          });
-
-          // return error here instead of false
-          return {
-            id: null,
-            creator: null,
-            conversant: null,
-          };
-        }
-      }
     },
   },
 };

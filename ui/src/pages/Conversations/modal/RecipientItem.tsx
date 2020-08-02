@@ -4,7 +4,8 @@ import React from "react";
 import { useMutation } from "@apollo/react-hooks";
 import withToast, { ToastProps } from "../../../components/Toast/withToast";
 import { Profile, Conversation } from "../../../utils/types";
-import INITIALIZE_P2P_DNA from "../../../graphql/messages/mutations/initializeP2PDNAMutation";
+import { getP2PInstanceId } from "../../../utils/helpers";
+import INITIALIZE_P2P_DNA from "../../../graphql/p2pcomm/mutations/initializeP2PDNAMutation";
 import REQUEST_TO_CHAT from "../../../graphql/requests/mutations/requestToChatMutation";
 
 
@@ -54,13 +55,22 @@ const RecipientItem: React.FC<Props> = ({ contact, pushErr, conversations, myAdd
                   }
                 });
                 const parsedResult = JSON.parse(requestResult?.data?.requestToChat);
-                if (parsedResult.code === "request_pending" || parsedResult === "recipient_offline") {
+                if (parsedResult.code === "request_pending") {
                   setShowLoading(false);
                   history.push(`/chat-room/${contact.username}`, {
                     name: contact.username,
                     recipientAddr: contact.id,
                     // data integrity
-                    instanceId: `message-instance-${myAddress}-${contact.id}`,
+                    instanceId: getP2PInstanceId(myAddress, contact.id),
+                  })
+                } else if (parsedResult.code === "recipient_offline") {
+                  console.log("offline!");
+                  setShowLoading(false);
+                  history.push(`/chat-room/${contact.username}`, {
+                    name: contact.username,
+                    recipientAddr: contact.id,
+                    // data integrity
+                    instanceId: getP2PInstanceId(myAddress, contact.id),
                   })
                 }
               }

@@ -13,7 +13,7 @@ export default (state = initialState, action: ActionType) => {
       const { name } = action.conversation;
       let conversations = [...state.conversations];
       // this depends on username being unique. What would be better to compare is
-      // the instanceId but currently difficult bc of Authenticated L279-285.
+      // the instanceId but currently difficult bc of how p2pinstance bug in p2pcontainer.
       const i = conversations.findIndex(
         (conversation: Conversation) => conversation.name === name
       );

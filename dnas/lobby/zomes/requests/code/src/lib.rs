@@ -4,26 +4,18 @@ use hdk::prelude::*;
 use hdk_proc_macros::zome;
 use serde_json::json;
 
+pub mod request;
+use request::{
+    RequestReturn,
+};
+
 // see https://developer.holochain.org/api/0.0.49-alpha1/hdk/ for info on using the hdk library
 
 // This is a sample zome that defines an entry type "MyEntry" that can be committed to the
 // agent's chain via the exposed function create_my_entry
 
-#[derive(Serialize, Deserialize, Debug, DefaultJson, Clone)]
-pub struct Members {
-    members: Vec<Address>,
-}
-
-impl Members {
-    fn new(sender: Address, recipient: Address) -> Self {
-        Members {
-            members: vec![sender, recipient]
-        }
-    }
-}
-
 #[zome]
-mod requests {
+mod requests_zome {
 
     #[init]
     fn init() {
@@ -35,24 +27,32 @@ mod requests {
         Ok(())
     }
 
+    #[entry_def]
+    fn request_def() -> ValidatingEntryType {
+        request::request_definition()
+    }
+
     #[zome_fn("hc_public")]
     fn request_to_chat(sender: Address, recipient: Address) -> ZomeApiResult<String> {
-        let dna_properties = Members::new(sender.clone(), recipient.clone());
-        match hdk::send(recipient, json!(dna_properties).to_string(), 10000.into()) {
+        let dna_properties = request::Members::new(sender.clone(), recipient.clone());
+        // for testing set to 5000ms
+        match hdk::send(recipient.clone(), json!(dna_properties.clone()).to_string(), 5000.into()) {
             Ok(_response) => {
                 Ok(JsonString::from_json(&format!("{{\"code\": \"{}\"}}", "request_pending".to_owned())).to_string())
             },
             _=> {
                 // send a request_notif that will be linked to the recipient agent_address
+                request::Request::send_request_offline(&recipient, dna_properties.members)?;
                 Ok(JsonString::from_json(&format!("{{\"code\": \"{}\"}}", "recipient_offline".to_owned())).to_string())
             }
         }
     }
 
+    // could be used to ensure the joining of chat.
     #[zome_fn("hc_public")]
     fn accept_request(sender: Address) -> ZomeApiResult<String> {
 
-        match hdk::send(sender, "request_accepted".to_owned(), 10000.into()) {
+        match hdk::send(sender, "request_accepted".to_owned(), 5000.into()) {
             Ok(response) => {
                 let _emitted = hdk::emit_signal(
                     "request_accepted",
@@ -68,6 +68,18 @@ mod requests {
                 Ok(JsonString::from_json(&format!("{{\"code\": \"{}\"}}", "recipient_offline".to_owned())).to_string())
             }
         }
+    }
+
+    // when agent comes back online and this function is called,
+    // it returns an empty array even if there is a request entry to be fetched.
+    #[zome_fn("hc_public")]
+    fn fetch_requests() -> ZomeApiResult<Vec<RequestReturn>> {
+        request::Request::fetch_requests()
+    }
+
+    #[zome_fn("hc_public")]
+    fn delete_request(request_address: Address) -> ZomeApiResult<bool> {
+        request::Request::delete_request(&request_address)
     }
 
     #[receive]

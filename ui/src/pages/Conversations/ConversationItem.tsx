@@ -35,9 +35,11 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   };
 
   const handleOnClick = () =>
-    history.push(`/chat-room/${name}`, {
-      name,
-      messages: [...messages],
+    history.push(`/chat-room/${name.username}`, {
+      name: name.username,
+      recipientAddr,
+      instanceId,
+
     });
 
   return (

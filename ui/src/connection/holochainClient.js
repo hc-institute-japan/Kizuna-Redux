@@ -89,7 +89,7 @@ export function callZome({ id, zome, func }) {
         );
       }
 
-      console.log(e);
+      console.log(e, id, zome, func);
 
       throw new Error(
         JSON.stringify({
@@ -150,8 +150,8 @@ export async function hcUprtcl() {
     devEnv: {
       // this property should be changed to your local paths and dna hash
       templateDnasPaths: {
-        QmWamgURZoyEgPQjMCBRraKCHgDbFmRWtasGzMsNTGfKbS:
-          "/Users/neilsongardose/Documents/projects/beyonder/refork/Kizuna/dnas/p2pcomm/dist/p2pcomm.dna.json",
+        QmcFSFFKwEbi6AKK3kxapsFi3Cm1zZ4gUSnKCW6bCtCYnP:
+          "/Users/tats/projects/Kizuna/dnas/p2pcomm/dist/p2pcomm.dna.json",
       },
     },
   });

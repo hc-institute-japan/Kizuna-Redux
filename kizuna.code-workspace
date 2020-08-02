@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "dnas/lobby/zomes/contacts/code"
+		},
+		{
+			"path": "dnas/lobby/zomes/profiles/code"
+		},
+		{
+			"path": "dnas/lobby/zomes/requests/code"
+		},
+		{
+			"path": "dnas/p2pcomm/zomes/messages/code"
+		},
+		{
+			"path": "dnas/p2pcomm/zomes/allowed-members/code"
+		},
+		{
+			"path": "ui"
+		}
+	]
+}

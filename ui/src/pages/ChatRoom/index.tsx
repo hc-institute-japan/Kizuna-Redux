@@ -36,6 +36,7 @@ const ChatRoom: React.FC = () => {
         instanceId: instanceId,
         messages: [newMessage], // this should be the result from sendMessage
       };
+      // BUG: new message is only being rendered when I type a new message.
       dispatch(logMessage(conversation));
       scrollToBottom();
     },

@@ -505,6 +505,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "holochain_entry_utils"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "68fe29df8decf0023d7c1fcfd27223125db5571bd1debf3409b882cb4419ebae"
+dependencies = [
+ "hdk",
+ "holochain_json_derive 0.0.30",
+ "serde",
+ "serde_derive",
+ "serde_json",
+]
+
+[[package]]
 name = "holochain_json_api"
 version = "0.0.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1159,6 +1172,7 @@ version = "0.1.0"
 dependencies = [
  "hdk",
  "hdk_proc_macros",
+ "holochain_entry_utils",
  "holochain_json_derive 0.0.30",
  "holochain_wasm_utils",
  "serde",
