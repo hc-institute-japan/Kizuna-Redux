@@ -8,6 +8,7 @@ import { authenticate } from "../../redux/auth/actions";
 import { RootState } from "../../redux/reducers";
 import Authenticated from "../../routes/Authenticated";
 import Unauthenticated from "../../routes/Unauthenticated";
+import P2PContainer from "../../containers/P2PContainer";
 
 /**
  *
@@ -31,7 +32,13 @@ const Auth: React.FC<ToastProps> = ({ pushErr }) => {
 
   return !loading ? (
     <IonRouterOutlet>
-      {isAuthenticated ? <Authenticated /> : <Unauthenticated />}
+      {isAuthenticated ? (
+        <P2PContainer>
+          <Authenticated />
+        </P2PContainer>
+      ) : (
+        <Unauthenticated />
+      )}
     </IonRouterOutlet>
   ) : (
     <IonLoading isOpen={loading} message="Please wait..." />

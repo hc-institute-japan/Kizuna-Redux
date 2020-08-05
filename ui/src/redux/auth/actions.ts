@@ -8,13 +8,18 @@ export const authenticate = (profile: Profile) => (
   dispatch: ThunkDispatch<void, {}, AnyAction>
 ) => {
   if (profile && profile.username) {
-    dispatch({
-      type: SET_PROFILE,
-      profile,
-    });
-    dispatch({
-      type: AUTHENTICATE,
-      agentAddress: profile.id,
+    new Promise((resolve, reject) => {
+      resolve(
+        dispatch({
+          type: SET_PROFILE,
+          profile,
+        })
+      );
+    }).then(() => {
+      dispatch({
+        type: AUTHENTICATE,
+        agentAddress: profile.id,
+      });
     });
   }
 };

@@ -9,10 +9,11 @@ const initialState = {
 export default (state = initialState, action: ActionType) => {
   switch (action.type) {
     case actions.AUTHENTICATE:
-      return Object.assign({}, state, {
-        isAuthenticated: true,
+      return {
+        ...state,
         agentAddress: action.agentAddress,
-      });
+        isAuthenticated: true,
+      };
     default:
       return state;
   }

@@ -26,11 +26,12 @@ const Conversations: React.FC = () => {
       <HomeHeader />
       <IonContent>
         <ConversationList conversations={conversations} />
-
         <IonModal isOpen={showModal}>
-          <NewConversationModal setShowModal={setShowModal} conversations={conversations}/>
+          <NewConversationModal
+            setShowModal={setShowModal}
+            conversations={conversations}
+          />
         </IonModal>
-
         <IonFab
           onClick={() => setShowModal(true)}
           vertical="bottom"
@@ -38,7 +39,7 @@ const Conversations: React.FC = () => {
           slot="fixed"
         >
           <IonFabButton>
-            <IonIcon className={`${styles["fab-icon"]}`} icon={pencil} />
+            <IonIcon className={styles["fab-icon"]} icon={pencil} />
           </IonFabButton>
         </IonFab>
       </IonContent>

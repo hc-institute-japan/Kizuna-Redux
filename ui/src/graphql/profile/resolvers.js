@@ -25,7 +25,7 @@ const resolvers = {
       })({
         agent_address: agent_id,
       });
-      console.log(username);
+
       if (username) {
         return {
           id: agent_id,

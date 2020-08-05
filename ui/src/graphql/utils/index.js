@@ -1,4 +1,4 @@
-import { getP2PDnaId, getP2PInstanceId} from "../../utils/helpers";
+import { getP2PDnaId, getP2PInstanceId } from "../../utils/helpers";
 
 let myAddress;
 
@@ -12,7 +12,12 @@ export const getMyId = async (callZome) => {
   return myAddress;
 };
 
-export const initializeOrJoinP2PDNA = async (properties, callZome, callAdmin, hcUprtcl) => {
+export const initializeOrJoinP2PDNA = async (
+  properties,
+  callZome,
+  callAdmin,
+  hcUprtcl
+) => {
   const connection = await hcUprtcl();
   const me = await getMyId(callZome);
   const agentConfig = await connection.getAgentConfig(me);
@@ -22,8 +27,10 @@ export const initializeOrJoinP2PDNA = async (properties, callZome, callAdmin, hc
     members: [properties.creator, properties.conversant],
   };
 
-  const instanceId = getP2PInstanceId(properties.creator, properties.conversant);
-  
+  const instanceId = getP2PInstanceId(
+    properties.creator,
+    properties.conversant
+  );
 
   // clone DNA from template and initialize using properties
   try {
@@ -31,7 +38,7 @@ export const initializeOrJoinP2PDNA = async (properties, callZome, callAdmin, hc
       agentConfig.id, // agent to 'host' the DNA
       getP2PDnaId(properties.creator, properties.conversant), // DNA id
       instanceId, // instance id
-      "QmcFSFFKwEbi6AKK3kxapsFi3Cm1zZ4gUSnKCW6bCtCYnP", // DNA address
+      "QmUAzmr3quHVDbX5u1irnWiAxFqbAGpa5QGJeokcH8SJG2", // DNA address
       membersProperties, // properties
       (interfaces) =>
         interfaces.find((iface) => iface.id === "websocket-interface") // interface
@@ -44,7 +51,7 @@ export const initializeOrJoinP2PDNA = async (properties, callZome, callAdmin, hc
   } catch (error) {
     // check if the message instance is already configured
     const running_instances = await callAdmin("admin/instance/running")();
-    const message_instances = running_instances.filter(instance => 
+    const message_instances = running_instances.filter((instance) =>
       instance.id.includes(instanceId)
     );
 
@@ -53,13 +60,13 @@ export const initializeOrJoinP2PDNA = async (properties, callZome, callAdmin, hc
         id: instanceId,
         creator: properties.creator,
         conversant: properties.conversant,
-      };  
+      };
     } else {
-      console.log(error);
+      // console.log(error);
       // revert changes to conductor config
-      await callAdmin("admin/instance/remove")({id: instanceId});
-      await callAdmin("admin/dna/uninstall")({id: instanceId});
-      
+      await callAdmin("admin/instance/remove")({ id: instanceId });
+      await callAdmin("admin/dna/uninstall")({ id: instanceId });
+
       // return error here instead of this
       return {
         id: null,

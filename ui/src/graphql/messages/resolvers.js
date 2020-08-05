@@ -1,14 +1,25 @@
-import { getTimestamp, getP2PInstanceId, getP2PDnaId } from "../../utils/helpers/";
+import {
+  getTimestamp,
+  getP2PInstanceId,
+  getP2PDnaId,
+} from "../../utils/helpers/";
 import { getMyId } from "../utils/";
 
 const resolvers = {
   Query: {
     getConversationFromId: async (_, input, { callZome }) => {
       // can we have the schema to not allow id to be null if creator/conversant is null and vice versa?
-      const P2PInstanceId = input.properties.id ? input.properties.id : getP2PInstanceId(input.properties.creator, input.properties.conversant);
+      const P2PInstanceId = input.properties.id
+        ? input.properties.id
+        : getP2PInstanceId(
+            input.properties.creator,
+            input.properties.conversant
+          );
       const addresses = [input.properties.creator, input.properties.conversant];
       const me = await getMyId(callZome);
-      const conversantId = addresses.every(address => address === me) ? me : addresses.find(address => address !== me);
+      const conversantId = addresses.every((address) => address === me)
+        ? me
+        : addresses.find((address) => address !== me);
       const messages = await callZome({
         id: P2PInstanceId,
         zome: "messages",
@@ -30,26 +41,16 @@ const resolvers = {
       })({
         agent_address: conversantId,
       });
-      console.log(conversantUsername);
-      const messagesRes = messages.map(message => {
-        return {
+      // console.log(conversantUsername);
+      const messagesRes = messages
+        .map((message) => ({
           author: message.author,
           authorUsername,
           recipient: message.recipient,
           timestamp: message.timestamp,
           payload: message.message,
-        }
-      }).sort((a, b) => {
-        const messageA = a.timestamp;
-        const messageB = b.timestamp;
-        if (messageA < messageB) {
-          return -1;
-        } 
-        if (messageA > messageB) {
-          return 1;
-        }
-        return 0;
-      });
+        }))
+        .sort((a, b) => a.timestamp - b.timestamp);
       return {
         name: conversantUsername,
         address: conversantId,
@@ -59,7 +60,12 @@ const resolvers = {
     },
     getConversationFromIds: async (_, input, { callZome }) => {
       const members = input.members;
-      const P2PInstanceId = input.properties.id ? input.properties.id : getP2PInstanceId(input.properties.creator, input.properties.conversant);
+      const P2PInstanceId = input.properties.id
+        ? input.properties.id
+        : getP2PInstanceId(
+            input.properties.creator,
+            input.properties.conversant
+          );
       const messages = await callZome({
         id: P2PInstanceId,
         zome: "messages",
@@ -100,25 +106,27 @@ const resolvers = {
         return res.username;
       };
 
-      const messagesRes = messages.map((message) => {
-        return {
-          author: message.author,
-          authorUsername: getUsernameFromAddr(message.author),
-          recipient: message.recipient,
-          timestamp: message.timestamp,
-          payload: message.message,
-        }
-      }).sort((a, b) => {
-        const messageA = a.timestamp;
-        const messageB = b.timestamp;
-        if (messageA < messageB) {
-          return -1;
-        } 
-        if (messageA > messageB) {
-          return 1;
-        }
-        return 0;
-      });
+      const messagesRes = messages
+        .map((message) => {
+          return {
+            author: message.author,
+            authorUsername: getUsernameFromAddr(message.author),
+            recipient: message.recipient,
+            timestamp: message.timestamp,
+            payload: message.message,
+          };
+        })
+        .sort((a, b) => {
+          const messageA = a.timestamp;
+          const messageB = b.timestamp;
+          if (messageA < messageB) {
+            return -1;
+          }
+          if (messageA > messageB) {
+            return 1;
+          }
+          return 0;
+        });
 
       return {
         name: conversantUsername,
@@ -130,7 +138,12 @@ const resolvers = {
   },
   Mutation: {
     sendMessage: async (_, input, { callZome }) => {
-      const P2PInstanceId = input.properties.id ? input.properties.id : getP2PInstanceId(input.properties.creator, input.properties.conversant);
+      const P2PInstanceId = input.properties.id
+        ? input.properties.id
+        : getP2PInstanceId(
+            input.properties.creator,
+            input.properties.conversant
+          );
       const response = await callZome({
         id: P2PInstanceId,
         zome: "messages",

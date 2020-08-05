@@ -26,12 +26,12 @@ const Container: React.FC = ({ children }) => {
         <IonicContainer>
           <ErrorContainer>
             <RouterContainer>
-              <P2PContainer>
-                <ToastProvider>
-                  {children}
-                  <ToastContainer />
-                </ToastProvider>
-              </P2PContainer>
+              {/* <P2PContainer> */}
+              <ToastProvider>
+                {children}
+                <ToastContainer />
+              </ToastProvider>
+              {/* </P2PContainer> */}
             </RouterContainer>
           </ErrorContainer>
         </IonicContainer>

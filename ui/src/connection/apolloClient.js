@@ -30,25 +30,25 @@ const schemaLink = new SchemaLink({
 const links = [
   ...(process.env.NODE_ENV !== "test" && [
     onError(({ graphQLErrors, networkError }) => {
-      if (graphQLErrors) {
-        console.group("GraphQL Errors: ");
-        graphQLErrors.map(({ message, locations, path }, index) =>
-          console.log(
-            `${
-              index + 1
-            }: Message: ${message}, Location: ${locations}, Path: ${path}`
-          )
-        );
-        console.groupEnd();
-      }
-      if (networkError) {
-        console.group("Network Error: ");
-        console.log(networkError);
-        console.groupEnd();
-      }
+      // if (graphQLErrors) {
+      //   console.group("GraphQL Errors: ");
+      //   graphQLErrors.map(({ message, locations, path }, index) =>
+      //     console.log(
+      //       `${
+      //         index + 1
+      //       }: Message: ${message}, Location: ${locations}, Path: ${path}`
+      //     )
+      //   );
+      //   console.groupEnd();
+      // }
+      // if (networkError) {
+      //   console.group("Network Error: ");
+      //   console.log(networkError);
+      //   console.groupEnd();
+      // }
     }),
   ]),
-  apolloLogger,
+  // apolloLogger,
   schemaLink,
 ];
 

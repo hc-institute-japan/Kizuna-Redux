@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 import SEND_MESSAGE from "../../graphql/messages/mutations/sendMessageMutation";
 import { logMessage } from "../../redux/conversations/actions";
 import { RootState } from "../../redux/reducers";
-import { Conversation, Message } from "../../utils/types";
+import { Conversation, Message, Profile } from "../../utils/types";
 import ChatFooter from "./ChatFooter";
 import ChatHeader from "./ChatHeader";
 import Me from "./Me";
@@ -22,6 +22,9 @@ const ChatRoom: React.FC = () => {
   const [payload, setPayload] = useState<string>();
   const location = useLocation<LocationState>();
   const dispatch = useDispatch();
+
+  const { name: id, instanceId, recipientAddr } = location.state;
+
   const [sendMessage] = useMutation(SEND_MESSAGE, {
     notifyOnNetworkStatusChange: true,
     onCompleted: (data) => {
@@ -33,7 +36,7 @@ const ChatRoom: React.FC = () => {
       const conversation: Conversation = {
         name: id!,
         address: recipientAddr,
-        instanceId: instanceId,
+        instanceId,
         messages: [newMessage], // this should be the result from sendMessage
       };
       // BUG: new message is only being rendered when I type a new message.
@@ -41,16 +44,16 @@ const ChatRoom: React.FC = () => {
       scrollToBottom();
     },
   });
-  const id = location.state.name;
-  const instanceId = location.state.instanceId;
-  const { recipientAddr } = location.state;
   const content = useRef<HTMLIonContentElement>(null);
-  const messages = useSelector(
-    (state: RootState) =>
-      state.conversations.conversations.find(
-        (conversation) => conversation.name === id
-      )?.messages
-  );
+
+  const { messages, isContact } = useSelector((state: RootState) => ({
+    messages: state.conversations.conversations.find(
+      (conversation) => conversation.name === id
+    )?.messages,
+    isContact: state.contacts.contacts.some(
+      (contact: Profile) => contact.id !== recipientAddr
+    ),
+  }));
 
   // this is not getting called when a new message is received.
   // useEffect(() => {
@@ -64,47 +67,28 @@ const ChatRoom: React.FC = () => {
   const scrollToBottom = () => {
     content?.current?.scrollToBottom();
   };
+
   useEffect(scrollToBottom, [messages]);
 
   const sendNewMessage = async () => {
-    try {
-      //needs to be changed.
-      let finalPayload;
-      finalPayload = payload;
-      setPayload("");
-      const sendResult = await sendMessage({
-        variables: {
-          author: myAddr,
-          recipient: recipientAddr,
-          message: finalPayload,
-          properties: {
-            id: instanceId,
-            creator: null,
-            conversant: null,
-          },
+    await sendMessage({
+      variables: {
+        author: myAddr,
+        recipient: recipientAddr,
+        message: payload,
+        properties: {
+          id: instanceId,
+          creator: null,
+          conversant: null,
         },
-      });
-      // console.log(sendResult);
-      // const newMessage = {
-      //   sender: me,
-      //   payload: sendResult.data?.sendMessage?.payload,
-      //   createdAt: sendResult.data?.sendMessage?.timestamp,
-      // };
-      // setMessages((curr) => [...curr, newMessage]);
-      // const conversation: Conversation = {
-      //   name: id!,
-      //   address: recipientAddr,
-      //   messages: [newMessage], // this should be the result from sendMessage
-      // };
-      // dispatch(logMessage(conversation));
-    } catch (e) {
-      //pushErr
-    }
+      },
+    });
+    setPayload("");
   };
 
   return (
     <IonPage>
-      <ChatHeader name={id!} />
+      <ChatHeader name={id!} isContact={isContact} />
       <IonContent ref={content} scrollEvents={true}>
         <IonGrid>
           {messages
