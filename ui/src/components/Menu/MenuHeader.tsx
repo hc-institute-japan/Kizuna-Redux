@@ -1,10 +1,4 @@
-import {
-  IonGrid,
-  IonText,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-} from "@ionic/react";
+import { IonHeader, IonTitle, IonToolbar } from "@ionic/react";
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/reducers";

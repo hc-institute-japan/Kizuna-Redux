@@ -1,19 +1,19 @@
 import {
-  IonPage,
-  IonFab,
   IonContent,
+  IonFab,
   IonFabButton,
   IonIcon,
   IonModal,
+  IonPage,
 } from "@ionic/react";
+import { pencil } from "ionicons/icons";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import React, { useState, useEffect } from "react";
 import HomeHeader from "../../components/Header/HomeHeader";
 import { RootState } from "../../redux/reducers";
 import ConversationList from "./ConversationList";
-import { pencil } from "ionicons/icons";
-import styles from "./style.module.css";
 import NewConversationModal from "./modal/NewConversationModal";
+import styles from "./style.module.css";
 
 const Conversations: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false);

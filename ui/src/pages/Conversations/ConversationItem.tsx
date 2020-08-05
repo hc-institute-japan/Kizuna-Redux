@@ -1,9 +1,9 @@
-import { IonAvatar, IonItem, IonText, IonLabel, IonNote } from "@ionic/react";
-import React, { useEffect, useState } from "react";
+import { IonAvatar, IonItem, IonLabel, IonNote, IonText } from "@ionic/react";
+import Moment from "moment";
+import React from "react";
 import { useHistory } from "react-router-dom";
 import { Message } from "../../utils/types";
 import styles from "./style.module.css";
-import Moment from "moment";
 
 type ConversationItemProps = {
   name: {

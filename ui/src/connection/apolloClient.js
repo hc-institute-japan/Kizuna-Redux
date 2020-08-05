@@ -1,12 +1,11 @@
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { ApolloClient } from "apollo-client";
-import { ApolloLink, Observable } from "apollo-link";
+import { ApolloLink } from "apollo-link";
 import { onError } from "apollo-link-error";
-import apolloLogger from "apollo-link-logger";
+// import apolloLogger from "apollo-link-logger";
 import { SchemaLink } from "apollo-link-schema";
 import { makeExecutableSchema } from "graphql-tools";
-import { callZome, hcUprtcl, onSignal, callAdmin } from "./holochainClient";
-
+import { callAdmin, callZome, hcUprtcl, onSignal } from "./holochainClient";
 import resolvers from "./resolvers";
 import typeDefs from "./typeDefs";
 

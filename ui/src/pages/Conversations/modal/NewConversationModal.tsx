@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
 import { useQuery } from "@apollo/react-hooks";
-import { useSelector, useDispatch } from "react-redux";
-import { IonPage, IonLoading, IonContent } from "@ionic/react";
-import { setContacts } from "../../../redux/contacts/actions";
-import CONTACTS from "../../../graphql/query/listContactsQuery";
-import { RootState } from "../../../redux/reducers";
+import { IonContent, IonLoading } from "@ionic/react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import withToast, { ToastProps } from "../../../components/Toast/withToast";
-import RecipientList from "./RecipientList";
-import NewConversationHeader from "./NewConversationHeader";
+import CONTACTS from "../../../graphql/query/listContactsQuery";
+import { setContacts } from "../../../redux/contacts/actions";
+import { RootState } from "../../../redux/reducers";
 import { Conversation } from "../../../utils/types";
+import NewConversationHeader from "./NewConversationHeader";
+import RecipientList from "./RecipientList";
 
 interface Props extends ToastProps {
   setShowModal(value: boolean): Function;
@@ -50,6 +50,7 @@ const NewConversationModal: React.FC<Props> = ({
       setHasFetched(true);
       dispatch(setContacts(data ? data.contacts : contacts));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
   return !loading ? (

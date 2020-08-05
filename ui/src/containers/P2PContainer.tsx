@@ -309,7 +309,7 @@ const P2PContainer: React.FC = ({ children }) => {
           };
           // console.log(P2PInstances);
           // bug: p2pinstances are undefined.
-          const thisInstance = P2PInstances.find(
+          P2PInstances.find(
             (instance) =>
               instance.members.me.id === members.me.id &&
               instance.members.conversant.id === members.conversant.id
@@ -331,10 +331,8 @@ const P2PContainer: React.FC = ({ children }) => {
 
   useEffect(() => {
     onSignal(resolveSignal);
-  }, []);
-
-  useEffect(() => {
     fetchRequestAndJoinP2PComm();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return <>{children}</>;

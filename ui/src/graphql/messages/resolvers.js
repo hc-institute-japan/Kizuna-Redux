@@ -1,8 +1,4 @@
-import {
-  getTimestamp,
-  getP2PInstanceId,
-  getP2PDnaId,
-} from "../../utils/helpers/";
+import { getP2PInstanceId, getTimestamp } from "../../utils/helpers/";
 import { getMyId } from "../utils/";
 
 const resolvers = {
