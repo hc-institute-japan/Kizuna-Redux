@@ -2,15 +2,13 @@ import React from "react";
 import { IonRow, IonCol, IonText } from "@ionic/react";
 import styles from "./style.module.css";
 import { Message } from "../../utils/types";
+import Moment from "moment";
 
 interface Props {
   message: Message;
 }
-const getProperTimestamp = (timestamp: number) => {
-  const originalTimeStamp = timestamp * 1000;
-  const d = new Date(originalTimeStamp);
-  return d.toLocaleString();
-};
+const getProperTimestamp = (timestamp: number) =>
+  Moment(new Date(timestamp).toLocaleString()).format("LT");
 
 const Others: React.FC<Props> = ({ message }) => {
   return (

@@ -8,12 +8,9 @@ interface Props {
   message: Message;
 }
 
-const getProperTimestamp = (timestamp: number) => {
-  const originalTimeStamp = timestamp * 1000;
-  const d = new Date(originalTimeStamp);
+const getProperTimestamp = (timestamp: number) =>
+  moment(new Date(timestamp).toLocaleString()).format("LT");
 
-  return moment(d.toLocaleString()).format("LT");
-};
 const Me: React.FC<Props> = ({ message }) => {
   return (
     <IonRow>

@@ -1,7 +1,11 @@
 import React from "react";
 import { IonHeader, IonToolbar, IonButtons, IonMenuButton } from "@ionic/react";
 
-const HomeHeader = () => (
+interface Props {
+  isMultiselect: boolean;
+}
+
+const HomeHeader: React.FC<Props> = () => (
   <IonHeader>
     <IonToolbar>
       <IonButtons slot="start">

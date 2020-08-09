@@ -60,9 +60,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
         </p>
       </IonLabel>
       <IonNote slot="end" className="ios hydrated">
-        <p className="ion-no-margin">
-          {Moment(currMsg?.createdAt * 1000).fromNow()}
-        </p>
+        <p className="ion-no-margin">{Moment(currMsg?.createdAt).fromNow()}</p>
         <div className={styles.badge}>50</div>
       </IonNote>
     </IonItem>
