@@ -21,16 +21,15 @@ export const initializeOrJoinP2PDNA = async (
   const connection = await hcUprtcl();
   const me = await getMyId(callZome);
   const agentConfig = await connection.getAgentConfig(me);
-
-  // initialize properties
-  const membersProperties = {
-    members: [properties.creator, properties.conversant],
-  };
-
   const instanceId = getP2PInstanceId(
     properties.creator,
     properties.conversant
-  );
+    );
+    // initialize properties
+    const p2pProperties = {
+      members: [properties.creator, properties.conversant],
+      instance_id: instanceId,
+    };
 
   // clone DNA from template and initialize using properties
   try {

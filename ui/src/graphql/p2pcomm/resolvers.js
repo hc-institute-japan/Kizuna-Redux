@@ -16,11 +16,11 @@ const resolvers = {
 
         const me = await getMyId(callZome);
         // console.log(me);
-        const conversantAddress = members.members.every(
+        const conversantAddress = members.every(
           (address) => address === me
         )
           ? me
-          : members.members.find((address) => address !== me);
+          : members.find((address) => address !== me);
         // console.log(conversantAddress);
 
         const myUsername = await callZome({

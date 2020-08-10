@@ -65,11 +65,10 @@ const resolvers = {
       const messages = await callZome({
         id: P2PInstanceId,
         zome: "messages",
-        func: "get_messages_from_addresses",
+        func: "get_all_messages_from_addresses",
       })({
         ids: [members.myId, members.conversantId],
       });
-
       const myUsername = await callZome({
         id: "test-instance",
         zome: "profiles",
@@ -112,17 +111,7 @@ const resolvers = {
             payload: message.message,
           };
         })
-        .sort((a, b) => {
-          const messageA = a.timestamp;
-          const messageB = b.timestamp;
-          if (messageA < messageB) {
-            return -1;
-          }
-          if (messageA > messageB) {
-            return 1;
-          }
-          return 0;
-        });
+        .sort((a, b) => a.timestamp - b.timestamp);
 
       return {
         name: conversantUsername,

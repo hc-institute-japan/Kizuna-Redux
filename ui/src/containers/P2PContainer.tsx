@@ -18,7 +18,6 @@ import {
   Message,
   P2PInstance,
   Profile,
-  Members,
 } from "../utils/types";
 
 /**
@@ -37,7 +36,6 @@ const P2PContainer: React.FC = ({ children }) => {
    * Local state
    */
   const [hasFetched, setHasFetched] = useState(false);
-  const [P2PInstances, setP2PInstances] = useState<Array<P2PInstance>>([]);
   const [latestMsg, setLatestMsg] = useState({
     payload: "",
     createdAt: 0,
@@ -88,7 +86,7 @@ const P2PContainer: React.FC = ({ children }) => {
         name: conversationData.name,
         address: conversationData.address,
         messages: transformedMessages,
-        instanceId: data?.getConversationFromIds.instanceId,
+        instanceId: conversationData.instanceId,
       };
       dispatch(logMessage(conversation));
     },
@@ -98,14 +96,12 @@ const P2PContainer: React.FC = ({ children }) => {
     notifyOnNetworkStatusChange: true,
     fetchPolicy: "network-only",
     onCompleted: ({ getP2PCommInstances }) => {
-      // console.log(getP2PCommInstances);
       const instances: Array<P2PInstance> = getP2PCommInstances.map(
         ({ id, members }: any) => ({
           id,
           members,
         })
       );
-      setP2PInstances(instances);
       instances.forEach((instance) => {
         getConversationFromIds({
           variables: {
@@ -134,12 +130,12 @@ const P2PContainer: React.FC = ({ children }) => {
         payload: latestMsg.payload,
         createdAt: latestMsg.createdAt,
       };
-      // console.log(conv);
-      // console.log(newMsg);
+
       const conversation: Conversation = {
         name: data.username,
         // this could go wrong. latestMsg will always not be the address of the sender.
         address: latestMsg.author,
+        // Q: Will this string being empty cause a problem?
         instanceId: "",
         messages: [newMsg],
       };
@@ -170,8 +166,8 @@ const P2PContainer: React.FC = ({ children }) => {
         conversation = {
           name: username,
           address,
+          instanceId,
           messages: transformedMessages,
-          instanceId: "",
         };
       } else
         conversation = {
@@ -235,6 +231,7 @@ const P2PContainer: React.FC = ({ children }) => {
   const resolveSignal = async (sig: any) => {
     const { signal = null } = { ...sig };
     if (signal) {
+      console.log(signal.arguments);
       const parsedArgs = JSON.parse(signal.arguments);
       console.log(signal.name);
       switch (signal.name) {
@@ -242,14 +239,16 @@ const P2PContainer: React.FC = ({ children }) => {
           const conversantAddr = findConversantAddr(
             parsedArgs.addresses.members
           );
+
           // temporary fix for the bug where id is undefined
+          const myAddr = id ? id : localStorage.getItem("agent_address");
 
           if (parsedArgs.in_contacts) {
             await initializeP2PDNA({
               variables: {
                 properties: {
                   creator: conversantAddr,
-                  conversant: id,
+                  conversant: myAddr,
                 },
               },
             });
@@ -259,7 +258,7 @@ const P2PContainer: React.FC = ({ children }) => {
               variables: {
                 properties: {
                   creator: conversantAddr,
-                  conversant: id,
+                  conversant: myAddr,
                 },
               },
             });
@@ -278,7 +277,8 @@ const P2PContainer: React.FC = ({ children }) => {
           const conversantName: Profile = dispatch(
             getUsername(parsedArgs.payload.author) as any
           );
-
+          const instanceId: string = parsedArgs.instance_id;
+          console.log(instanceId);
           // if not in contacts
           if (!conversantName) {
             const newMessage = {
@@ -299,27 +299,11 @@ const P2PContainer: React.FC = ({ children }) => {
             payload: parsedArgs.payload.message,
             createdAt: parsedArgs.payload.timestamp,
           };
-          const members: Members = {
-            me: {
-              id: parsedArgs.payload.recipient,
-            },
-            conversant: {
-              id: parsedArgs.payload.author,
-            },
-          };
-          // console.log(P2PInstances);
-          // bug: p2pinstances are undefined.
-          P2PInstances.find(
-            (instance) =>
-              instance.members.me.id === members.me.id &&
-              instance.members.conversant.id === members.conversant.id
-          );
-          // console.log(thisInstance);
           const conversation: Conversation = {
             name: conversantName.username,
             address: parsedArgs.payload.author,
             messages: [newMessage],
-            instanceId: "",
+            instanceId: instanceId,
           };
           dispatch(logMessage(conversation));
           break;
