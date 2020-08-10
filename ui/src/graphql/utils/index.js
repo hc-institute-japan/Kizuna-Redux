@@ -37,7 +37,7 @@ export const initializeOrJoinP2PDNA = async (
       agentConfig.id, // agent to 'host' the DNA
       getP2PDnaId(properties.creator, properties.conversant), // DNA id
       instanceId, // instance id
-      "QmUAzmr3quHVDbX5u1irnWiAxFqbAGpa5QGJeokcH8SJG2", // DNA address
+      "QmezmetLrPguo88J4jLZrZN45mQ6Ahtue9kRKqFkusTm5n", // DNA address
       membersProperties, // properties
       (interfaces) =>
         interfaces.find((iface) => iface.id === "websocket-interface") // interface
