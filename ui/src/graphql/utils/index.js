@@ -38,7 +38,7 @@ export const initializeOrJoinP2PDNA = async (
       getP2PDnaId(properties.creator, properties.conversant), // DNA id
       instanceId, // instance id
       "QmezmetLrPguo88J4jLZrZN45mQ6Ahtue9kRKqFkusTm5n", // DNA address
-      membersProperties, // properties
+      p2pProperties, // properties
       (interfaces) =>
         interfaces.find((iface) => iface.id === "websocket-interface") // interface
     );
