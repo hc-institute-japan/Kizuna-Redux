@@ -3,6 +3,7 @@ import { getMyId } from "../utils/";
 
 const resolvers = {
   Query: {
+    //TODO: remove this and just use the Ids one instead
     getConversationFromId: async (_, input, { callZome }) => {
       // can we have the schema to not allow id to be null if creator/conversant is null and vice versa?
       const P2PInstanceId = input.properties.id
@@ -19,9 +20,9 @@ const resolvers = {
       const messages = await callZome({
         id: P2PInstanceId,
         zome: "messages",
-        func: "get_messages_from_address",
+        func: "get_all_messages_from_addresses",
       })({
-        id: input.author,
+        id: [input.author],
       });
       const authorUsername = await callZome({
         id: "test-instance",

@@ -70,7 +70,6 @@ const NewConversationModal: React.FC<Props> = ({
       <IonLoading
         isOpen={showLocading}
         message="Creating a private chatroom..."
-        duration={5000}
       />
     </IonContent>
   ) : (

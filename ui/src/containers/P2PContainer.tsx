@@ -319,6 +319,11 @@ const P2PContainer: React.FC = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    fetchRequestAndJoinP2PComm();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return <>{children}</>;
 };
 

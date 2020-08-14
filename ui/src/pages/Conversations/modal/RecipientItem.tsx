@@ -65,38 +65,23 @@ const RecipientItem: React.FC<Props> = ({
               const parsedResult = JSON.parse(
                 requestResult?.data?.requestToChat
               );
-              if (
-                parsedResult.code === "request_pending" ||
-                parsedResult === "recipient_offline"
-              ) {
+              if (parsedResult.code === "request_pending") {
                 setShowLoading(false);
                 history.push(`/chat-room/${contact.username}`, {
                   name: contact.username,
                   recipientAddr: contact.id,
                   // data integrity
-                  instanceId: `message-instance-${myAddress}-${contact.id}`,
+                  instanceId: getP2PInstanceId(myAddress, contact.id),
                 });
-                const parsedResult = JSON.parse(
-                  requestResult?.data?.requestToChat
-                );
-                if (parsedResult.code === "request_pending") {
-                  setShowLoading(false);
-                  history.push(`/chat-room/${contact.username}`, {
-                    name: contact.username,
-                    recipientAddr: contact.id,
-                    // data integrity
-                    instanceId: getP2PInstanceId(myAddress, contact.id),
-                  });
-                } else if (parsedResult.code === "recipient_offline") {
-                  // console.log("offline!");
-                  setShowLoading(false);
-                  history.push(`/chat-room/${contact.username}`, {
-                    name: contact.username,
-                    recipientAddr: contact.id,
-                    // data integrity
-                    instanceId: getP2PInstanceId(myAddress, contact.id),
-                  });
-                }
+              } else if (parsedResult.code === "recipient_offline") {
+                console.log("offline!");
+                setShowLoading(false);
+                history.push(`/chat-room/${contact.username}`, {
+                  name: contact.username,
+                  recipientAddr: contact.id,
+                  // data integrity
+                  instanceId: getP2PInstanceId(myAddress, contact.id),
+                });
               }
             }
           } catch (e) {
