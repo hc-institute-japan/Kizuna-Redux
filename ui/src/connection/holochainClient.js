@@ -150,7 +150,7 @@ export async function hcUprtcl() {
     devEnv: {
       // this property should be changed to your local paths and dna hash
       templateDnasPaths: {
-        QmUAzmr3quHVDbX5u1irnWiAxFqbAGpa5QGJeokcH8SJG2:
+        [process.env.DNA_PATH]:
           "/Users/neilsongardose/Documents/projects/beyonder/refork/Kizuna/dnas/p2pcomm/dist/p2pcomm.dna.json",
       },
     },

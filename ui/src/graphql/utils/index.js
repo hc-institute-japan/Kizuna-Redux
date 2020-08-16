@@ -24,12 +24,12 @@ export const initializeOrJoinP2PDNA = async (
   const instanceId = getP2PInstanceId(
     properties.creator,
     properties.conversant
-    );
-    // initialize properties
-    const p2pProperties = {
-      members: [properties.creator, properties.conversant],
-      instance_id: instanceId,
-    };
+  );
+  // initialize properties
+  const p2pProperties = {
+    members: [properties.creator, properties.conversant],
+    instance_id: instanceId,
+  };
 
   // clone DNA from template and initialize using properties
   try {
@@ -37,7 +37,7 @@ export const initializeOrJoinP2PDNA = async (
       agentConfig.id, // agent to 'host' the DNA
       getP2PDnaId(properties.creator, properties.conversant), // DNA id
       instanceId, // instance id
-      "QmezmetLrPguo88J4jLZrZN45mQ6Ahtue9kRKqFkusTm5n", // DNA address
+      process.env.DNA_PATH, // DNA address
       p2pProperties, // properties
       (interfaces) =>
         interfaces.find((iface) => iface.id === "websocket-interface") // interface
