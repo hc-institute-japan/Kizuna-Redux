@@ -30,6 +30,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
       sender: "",
       payload: "",
       createdAt: 0,
+      address: "",
     };
     contents.forEach((content) => {
       if (

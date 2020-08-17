@@ -1,18 +1,8 @@
 import gql from "graphql-tag";
 
 export default gql`
-  mutation UpdateMessage(
-    $id: ID
-    $message: String
-    $author: ID
-    $recipient: ID
-  ) {
-    updateMessage(
-      id: $id
-      message: $message
-      author: $author
-      recipient: $recipient
-    )
+  mutation UpdateMessage($instanceId: ID, $id: ID, $message: String) {
+    updateMessage(instanceId: $instanceId, id: $id, message: $message)
     Boolean
   }
 `;

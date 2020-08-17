@@ -13,12 +13,7 @@ import { getUsername } from "../redux/contacts/actions";
 import { logMessage } from "../redux/conversations/actions";
 import { setContacts } from "../redux/contacts/actions";
 import { RootState } from "../redux/reducers";
-import {
-  Conversation,
-  Message,
-  P2PInstance,
-  Profile,
-} from "../utils/types";
+import { Conversation, Message, P2PInstance, Profile } from "../utils/types";
 
 /**
  *
@@ -40,6 +35,7 @@ const P2PContainer: React.FC = ({ children }) => {
     payload: "",
     createdAt: 0,
     author: "",
+    address: "",
   });
 
   /**
@@ -80,6 +76,7 @@ const P2PContainer: React.FC = ({ children }) => {
           sender: message.authorUsername,
           payload: message.payload,
           createdAt: message.timestamp,
+          address: message.address,
         })
       );
       const conversation: Conversation = {
@@ -129,6 +126,7 @@ const P2PContainer: React.FC = ({ children }) => {
         sender: data.username,
         payload: latestMsg.payload,
         createdAt: latestMsg.createdAt,
+        address: latestMsg.address,
       };
 
       const conversation: Conversation = {
@@ -161,6 +159,7 @@ const P2PContainer: React.FC = ({ children }) => {
             sender: message.authorUsername,
             payload: message.payload,
             createdAt: message.timestamp,
+            address: message.address,
           })
         );
         conversation = {
@@ -231,9 +230,8 @@ const P2PContainer: React.FC = ({ children }) => {
   const resolveSignal = async (sig: any) => {
     const { signal = null } = { ...sig };
     if (signal) {
-      console.log(signal.arguments);
       const parsedArgs = JSON.parse(signal.arguments);
-      console.log(signal.name);
+
       switch (signal.name) {
         case "request_received":
           const conversantAddr = findConversantAddr(
@@ -278,13 +276,14 @@ const P2PContainer: React.FC = ({ children }) => {
             getUsername(parsedArgs.payload.author) as any
           );
           const instanceId: string = parsedArgs.instance_id;
-          console.log(instanceId);
+
           // if not in contacts
           if (!conversantName) {
             const newMessage = {
               payload: parsedArgs.payload.message,
               createdAt: parsedArgs.payload.timestamp,
               author: parsedArgs.payload.author,
+              address: parsedArgs.payload.address,
             };
             setLatestMsg(newMessage);
             getUsernameAndLog({
@@ -298,6 +297,7 @@ const P2PContainer: React.FC = ({ children }) => {
             sender: conversantName.username,
             payload: parsedArgs.payload.message,
             createdAt: parsedArgs.payload.timestamp,
+            address: parsedArgs.payload.address,
           };
           const conversation: Conversation = {
             name: conversantName.username,
@@ -313,11 +313,11 @@ const P2PContainer: React.FC = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    onSignal(resolveSignal);
-    fetchRequestAndJoinP2PComm();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   onSignal(resolveSignal);
+  //   fetchRequestAndJoinP2PComm();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   useEffect(() => {
     fetchRequestAndJoinP2PComm();

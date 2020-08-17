@@ -7,12 +7,13 @@ const schema = gql`
     recipient: ID!
     timestamp: Float!
     payload: String!
+    address: ID!
   }
 
   type Conversation {
-    name: String!,
-    address: String!,
-    instanceId: String!,
+    name: String!
+    address: String!
+    instanceId: String!
     messages: [Message!]
   }
 
@@ -20,13 +21,23 @@ const schema = gql`
     myId: ID!
     conversantId: ID!
   }
-  
+
   extend type Query {
     getConversationFromId(author: ID, properties: Properties): Conversation!
-    getConversationFromIds(members: Requirements, properties: Properties): Conversation!
+    getConversationFromIds(
+      members: Requirements
+      properties: Properties
+    ): Conversation!
   }
   extend type Mutation {
-    sendMessage(author: ID, recipient: ID, message: String, properties: Properties): Message
+    sendMessage(
+      author: ID
+      recipient: ID
+      message: String
+      properties: Properties
+    ): Message
+    updateMessage(instanceId: ID, id: ID, message: String): Boolean
+    deleteMessages(instanceId: ID, addresses: [ID]): Boolean
   }
 `;
 

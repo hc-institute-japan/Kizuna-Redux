@@ -89,7 +89,7 @@ export function callZome({ id, zome, func }) {
         );
       }
 
-      // console.log(e);
+      console.log(e);
 
       throw new Error(
         JSON.stringify({
@@ -115,7 +115,7 @@ export function callAdmin(adminFn) {
     } catch (e) {
       // const { error } = { ...e };
 
-      // console.log(e);
+      console.log(e);
 
       // if (Internal) {
       //   const err = JSON.parse(Internal);

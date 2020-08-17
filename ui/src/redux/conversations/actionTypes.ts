@@ -1,1 +1,2 @@
 export const LOG_MESSAGE = "LOG_MESSAGE";
+export const LOG_CONVERSATION = "LOG_CONVERSATION";

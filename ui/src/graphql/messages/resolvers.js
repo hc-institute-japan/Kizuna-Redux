@@ -108,8 +108,9 @@ const resolvers = {
             author: message.author,
             authorUsername: getUsernameFromAddr(message.author),
             recipient: message.recipient,
-            timestamp: message.timestamp,
+            timestamp: message.timestamp * 1000,
             payload: message.message,
+            address: message.address,
           };
         })
         .sort((a, b) => a.timestamp - b.timestamp);
@@ -140,12 +141,27 @@ const resolvers = {
         timestamp: getTimestamp(),
       });
       return {
-        author: response.author,
-        recipient: response.recipient,
-        timestamp: response.timestamp,
+        ...response,
         payload: response.message,
       };
     },
+    updateMessage: async (_, { instanceId, id, message }, { callZome }) => {
+      await callZome({
+        id: instanceId,
+        zome: "messages",
+        func: "update_message",
+      })({
+        id,
+        message,
+      });
+      return true;
+    },
+    deleteMessages: async (_, { instanceId: id, addresses }, { callZome }) =>
+      await callZome({
+        id,
+        zome: "messages",
+        func: "delete_messages",
+      })({ anchor_addresses: addresses }),
   },
 };
 

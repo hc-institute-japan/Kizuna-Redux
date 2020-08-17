@@ -1,16 +1,20 @@
 import { useMutation } from "@apollo/react-hooks";
-import { IonContent, IonGrid, IonPage } from "@ionic/react";
+import { IonContent, IonPage, IonText } from "@ionic/react";
+import Moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import ListItem from "../../components/Item";
+import List, { ListRef } from "../../components/List";
 import SEND_MESSAGE from "../../graphql/messages/mutations/sendMessageMutation";
 import { logMessage } from "../../redux/conversations/actions";
 import { RootState } from "../../redux/reducers";
 import { Conversation, Message, Profile } from "../../utils/types";
+import ChatEditFooter from "./ChatEditFooter";
 import ChatFooter from "./ChatFooter";
 import ChatHeader from "./ChatHeader";
-import Me from "./Me";
-import Others from "./Others";
+import ChatMultiselectHeader from "./ChatMultiSelectHeader";
+import styles from "./style.module.css";
 
 interface LocationState {
   name: string;
@@ -18,12 +22,39 @@ interface LocationState {
   instanceId: string;
 }
 
+const getProperTimestamp = (timestamp: number) =>
+  Moment(new Date(timestamp).toLocaleString()).format("LT");
+
 const ChatRoom: React.FC = () => {
   const [payload, setPayload] = useState<string>();
   const location = useLocation<LocationState>();
   const dispatch = useDispatch();
-
+  const [isMultiselect, setIsMultiselect] = useState(false);
+  const [toEdit, setToEdit] = useState<Message | null>(null);
+  const [items, setItems] = useState<{ [id: string]: Message }>({});
+  const list = useRef<ListRef>(null);
+  const content = useRef<HTMLIonContentElement>(null);
   const { name: id, instanceId, recipientAddr } = location.state;
+  const {
+    profile: { username: me, id: myAddr },
+  } = useSelector((state: RootState) => state.profile);
+
+  const { conversation, isContact } = useSelector((state: RootState) => ({
+    conversation: state.conversations.conversations.find(
+      (conversation) => conversation.name === id
+    ),
+    isContact: state.contacts.contacts.some(
+      (contact: Profile) => contact.id === recipientAddr
+    ),
+  }));
+
+  const messages = conversation?.messages || [];
+
+  const edit = (item: Message) => {
+    setToEdit(item);
+    setIsMultiselect(false);
+    list?.current?.close();
+  };
 
   const [sendMessage] = useMutation(SEND_MESSAGE, {
     notifyOnNetworkStatusChange: true,
@@ -31,7 +62,8 @@ const ChatRoom: React.FC = () => {
       const newMessage = {
         sender: me,
         payload: data?.sendMessage?.payload,
-        createdAt: data?.sendMessage?.timestamp,
+        createdAt: data?.sendMessage?.timestamp * 1000,
+        address: data?.sendMessage?.address,
       };
       const conversation: Conversation = {
         name: id!,
@@ -44,25 +76,6 @@ const ChatRoom: React.FC = () => {
       scrollToBottom();
     },
   });
-  const content = useRef<HTMLIonContentElement>(null);
-
-  const { messages, isContact } = useSelector((state: RootState) => ({
-    messages: state.conversations.conversations.find(
-      (conversation) => conversation.name === id
-    )?.messages,
-    isContact: state.contacts.contacts.some(
-      (contact: Profile) => contact.id !== recipientAddr
-    ),
-  }));
-
-  // this is not getting called when a new message is received.
-  // useEffect(() => {
-  //   setMessages(dispatch(getMessages(id)) as any);
-  // }, [id]);
-
-  const {
-    profile: { username: me, id: myAddr },
-  } = useSelector((state: RootState) => state.profile);
 
   const scrollToBottom = () => {
     content?.current?.scrollToBottom();
@@ -88,26 +101,92 @@ const ChatRoom: React.FC = () => {
 
   return (
     <IonPage>
-      <ChatHeader name={id!} isContact={isContact} />
+      {isMultiselect ? (
+        <ChatMultiselectHeader
+          items={items}
+          edit={edit}
+          instanceId={instanceId}
+          list={list}
+          conversation={conversation}
+          me={me}
+        />
+      ) : (
+        <ChatHeader name={id!} isContact={isContact} />
+      )}
       <IonContent ref={content} scrollEvents={true}>
-        <IonGrid>
+        <List
+          ref={list}
+          className={styles.list}
+          isMultiselect={(bool: boolean) => setIsMultiselect(bool)}
+          onClick={(i: number) => {}}
+          onMultiselectClick={(i: number) =>
+            setItems((curr) => {
+              if (curr[messages[i].address]) delete curr[messages[i].address];
+              else curr[messages[i].address] = messages[i];
+
+              return { ...curr };
+            })
+          }
+        >
           {messages
             ? messages.map((message: Message) =>
                 message.sender === me ? (
-                  <Me key={JSON.stringify(message)} message={message} />
+                  // i % 2 === 1 ? (
+                  <ListItem
+                    lines="none"
+                    color="none"
+                    key={JSON.stringify(message)}
+                    className={styles.me}
+                  >
+                    <div
+                      className={`${styles["my-message"]} ${styles["message"]} ion-text-wrap`}
+                    >
+                      <IonText>
+                        <p className="ion-text-start">{message.payload}</p>
+                      </IonText>
+                      <div className={`${styles["time"]}`}>
+                        {getProperTimestamp(message.createdAt)}
+                      </div>
+                    </div>
+                  </ListItem>
                 ) : (
-                  <Others key={JSON.stringify(message)} message={message} />
+                  <ListItem
+                    lines="none"
+                    color="none"
+                    key={JSON.stringify(message)}
+                    className={styles.other}
+                  >
+                    <div
+                      className={`${styles["other-message"]} ${styles["message"]} ion-text-wrap`}
+                    >
+                      <IonText>
+                        <p>{message.payload}</p>
+                      </IonText>
+                      <div className={`${styles["time"]}`}>
+                        {getProperTimestamp(message.createdAt)}
+                      </div>
+                    </div>
+                  </ListItem>
                 )
               )
             : null}
-        </IonGrid>
+        </List>
       </IonContent>
 
-      <ChatFooter
-        payload={payload}
-        setPayload={setPayload}
-        sendNewMessage={sendNewMessage}
-      />
+      {isMultiselect ? null : toEdit ? (
+        <ChatEditFooter
+          instanceId={instanceId}
+          edit={toEdit}
+          conversation={conversation}
+          setToEdit={setToEdit}
+        />
+      ) : (
+        <ChatFooter
+          payload={payload}
+          setPayload={setPayload}
+          sendNewMessage={sendNewMessage}
+        />
+      )}
     </IonPage>
   );
 };

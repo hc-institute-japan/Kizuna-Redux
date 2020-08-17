@@ -1,7 +1,10 @@
 import gql from "graphql-tag";
 
 export default gql`
-  query GetConversationFromIds($members: Requirements, $properties: Properties) {
+  query GetConversationFromIds(
+    $members: Requirements
+    $properties: Properties
+  ) {
     getConversationFromIds(members: $members, properties: $properties) {
       name
       address
@@ -12,6 +15,7 @@ export default gql`
         recipient
         timestamp
         payload
+        address
       }
     }
   }

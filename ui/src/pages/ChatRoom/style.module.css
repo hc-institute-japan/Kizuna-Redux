@@ -1,3 +1,6 @@
+.list {
+  background-color: var(--ion-background-color);
+}
 .messages {
   display: flex;
   flex-direction: column;
@@ -8,6 +11,7 @@
   padding: 0.5rem;
   border-radius: 15px;
   margin-top: 0.3rem;
+  max-width: 95%;
   /* white-space: pre-wrap;   */
 }
 .message p {
@@ -16,18 +20,14 @@
 
 .other-message {
   background: var(--ion-color-medium);
-}
-
-.my-message-container {
-  display: flex;
-  justify-content: flex-end;
+  margin-right: 5%;
 }
 
 .my-message {
-  margin-left: auto;
   text-align: end;
   background: var(--ion-color-primary);
   color: #fff;
+  margin-left: auto;
 }
 
 .time {

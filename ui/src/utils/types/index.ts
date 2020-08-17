@@ -23,6 +23,7 @@ export interface Blocked {
 }
 
 export interface Message {
+  address: string;
   sender: string;
   payload: string;
   createdAt: number;

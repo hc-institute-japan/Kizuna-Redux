@@ -1,11 +1,11 @@
 import { IonList } from "@ionic/react";
+import PropTypes from "prop-types";
 import React, {
   forwardRef,
+  useEffect,
   useImperativeHandle,
   useState,
-  useEffect,
 } from "react";
-import PropTypes from "prop-types";
 import ListItem from "../Item";
 
 /**
@@ -18,6 +18,10 @@ import ListItem from "../Item";
  * @param {function} isMultiselect - Callback that passes a boolean argument in order to determine if the list is in its multi-select mode.
  */
 
+export interface ListRef {
+  close(): void;
+}
+
 const List = forwardRef<any, any>((props, ref) => {
   /**
    * Used to determine if the list is in regular or multi select form
@@ -29,7 +33,7 @@ const List = forwardRef<any, any>((props, ref) => {
    */
   useEffect(() => {
     props.isMultiselect(isMultiselect);
-  }, [isMultiselect]);
+  }, [isMultiselect, props]);
 
   /**
    * Ref functions that can used outside the component to manipulate the mode of the list. (Can be used in Header to revert the list from multi-select mode to its regulary mode)
@@ -57,7 +61,11 @@ const List = forwardRef<any, any>((props, ref) => {
     })
   );
 
-  return <IonList className="ios list-ios hydrated">{children}</IonList>;
+  return (
+    <IonList className={`ios list-ios hydrated ${props.className || ""}`}>
+      {children}
+    </IonList>
+  );
 });
 
 List.propTypes = {
