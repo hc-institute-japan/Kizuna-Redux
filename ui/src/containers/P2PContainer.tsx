@@ -313,11 +313,10 @@ const P2PContainer: React.FC = ({ children }) => {
     }
   };
 
-  // useEffect(() => {
-  //   onSignal(resolveSignal);
-  //   fetchRequestAndJoinP2PComm();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
+  useEffect(() => {
+    onSignal(resolveSignal);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     fetchRequestAndJoinP2PComm();
