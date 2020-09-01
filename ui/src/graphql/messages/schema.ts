@@ -10,6 +10,13 @@ const schema = gql`
     address: ID!
   }
 
+  type Result {
+    author: ID!
+    payload: String!
+    timestamp: Float!
+    address: ID!
+  }
+
   type Conversation {
     name: String!
     address: String!
@@ -38,6 +45,10 @@ const schema = gql`
     ): Message
     updateMessage(instanceId: ID, id: ID, message: String): Boolean
     deleteMessages(instanceId: ID, addresses: [ID]): Boolean
+  }
+
+  extend type Subscription {
+    messageReceived: Result!
   }
 `;
 

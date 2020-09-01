@@ -5,9 +5,12 @@ import {
   HolochainConnectionModule,
   HolochainConnection,
 } from "@uprtcl/holochain-provider";
+import { PubSub } from "graphql-subscriptions";
 
 let holochainClient;
 let holochainUprtclClient;
+
+export const pubsub = new PubSub();
 
 // NB: This should be set to false when you want to run against a Holochain Conductor
 // with a websocket interface running on REACT_APP_DNA_INTERFACE_URL.
@@ -54,6 +57,24 @@ export async function onSignal(callback) {
   await initAndGetHolochainClient();
   holochainClient.onSignal(callback);
 }
+
+onSignal((sig) => {
+  const { signal = null } = { ...sig };
+  if (signal) {
+    console.log(signal);
+    const parsedArgs = JSON.parse(signal.arguments);
+    if (signal.name === "message_received") {
+      pubsub.publish("message_received", {
+        messageReceived: {
+          author: parsedArgs.payload.author,
+          payload: parsedArgs.payload.message,
+          timestamp: parsedArgs.payload.timestamp,
+          address: parsedArgs.payload.address,
+        }
+      })
+    }
+  };
+});
 
 export function callZome({ id, zome, func }) {
   return async function (args = {}) {
@@ -150,8 +171,8 @@ export async function hcUprtcl() {
     devEnv: {
       // this property should be changed to your local paths and dna hash
       templateDnasPaths: {
-        [process.env.DNA_PATH]:
-          "/Users/neilsongardose/Documents/projects/beyonder/refork/Kizuna/dnas/p2pcomm/dist/p2pcomm.dna.json",
+        QmXcX3pBRgDB3xCWnuNGEuoJCEGmBf5APvZfVVXNJa1WtD:
+          "/Users/tats/projects/Kizuna/dnas/p2pcomm/dist/p2pcomm.dna.json",
       },
     },
   });

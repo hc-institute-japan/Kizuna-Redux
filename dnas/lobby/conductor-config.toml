@@ -11,14 +11,14 @@ public_address = 'HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhm
 test_agent = true
 
 [[dnas]]
-file = '/Users/neilsongardose/Documents/projects/beyonder/refork/Kizuna/dnas/lobby/dist/lobby.dna.json'
-hash = 'QmPbVP1Qfvyq5RqdxWiKktf7aLU8uXLR8THbUTfrF4H34V'
+file = '/Users/tats/projects/Kizuna/dnas/lobby/dist/lobby.dna.json'
+hash = 'QmZTKLAKmJLGvYWdkeoFQFPhroeJpWV6kVCTjHWUUnL1wk'
 id = 'hc-run-dna'
 
 [[dnas]]
-file = 'dna/QmXWjiBEZVBZ25x6v7xLn1hYRbkUUYs4GDrid9Lta3cnAC.dna.json'
-hash = 'QmXWjiBEZVBZ25x6v7xLn1hYRbkUUYs4GDrid9Lta3cnAC'
-id = 'p2p-dna-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
+file = 'dna/QmcN3wPAyjUKGN9jT2xSkA5XTyFzwrEYM3TPTGtwvciMCb.dna.json'
+hash = 'QmcN3wPAyjUKGN9jT2xSkA5XTyFzwrEYM3TPTGtwvciMCb'
+id = 'p2p-dna-HcSci7umev8E78wbdr93P957TYSb3G9SUPvkrOpOK7yxmb7sZfjDHEHk4n8vcpz-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
 
 [[instances]]
 agent = 'hc-run-agent'
@@ -26,15 +26,16 @@ dna = 'hc-run-dna'
 id = 'test-instance'
 
 [instances.storage]
-type = 'memory'
+path = 'storage/hc-run-dna'
+type = 'lmdb'
 
 [[instances]]
 agent = 'hc-run-agent'
-dna = 'p2p-dna-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
-id = 'p2p-instance-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
+dna = 'p2p-dna-HcSci7umev8E78wbdr93P957TYSb3G9SUPvkrOpOK7yxmb7sZfjDHEHk4n8vcpz-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
+id = 'p2p-instance-HcSci7umev8E78wbdr93P957TYSb3G9SUPvkrOpOK7yxmb7sZfjDHEHk4n8vcpz-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
 
 [instances.storage]
-path = 'storage/p2p-instance-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
+path = 'storage/p2p-instance-HcSci7umev8E78wbdr93P957TYSb3G9SUPvkrOpOK7yxmb7sZfjDHEHk4n8vcpz-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
 type = 'lmdb'
 
 [[interfaces]]
@@ -45,7 +46,7 @@ id = 'websocket-interface'
 id = 'test-instance'
 
 [[interfaces.instances]]
-id = 'p2p-instance-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
+id = 'p2p-instance-HcSci7umev8E78wbdr93P957TYSb3G9SUPvkrOpOK7yxmb7sZfjDHEHk4n8vcpz-HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
 
 [interfaces.driver]
 port = 8888
@@ -57,6 +58,10 @@ type = 'debug'
 
 [logger.rules]
 rules = []
+
+[network]
+sim2h_url = 'ws://localhost:9000'
+type = 'sim2h'
 
 [passphrase_service]
 type = 'cmd'

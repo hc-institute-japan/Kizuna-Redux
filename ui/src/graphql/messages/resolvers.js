@@ -1,5 +1,9 @@
 import { getP2PInstanceId, getTimestamp } from "../../utils/helpers/";
 import { getMyId } from "../utils/";
+import { onSignal, pubsub } from "../../connection/holochainClient";
+import asyncify from "callback-to-async-iterator";
+
+const MESSAGE_RECEIVED = 'message_received';
 
 const resolvers = {
   Query: {
@@ -22,7 +26,7 @@ const resolvers = {
         zome: "messages",
         func: "get_all_messages_from_addresses",
       })({
-        id: [input.author],
+        ids: [input.author],
       });
       const authorUsername = await callZome({
         id: "test-instance",
@@ -163,6 +167,46 @@ const resolvers = {
         func: "delete_messages",
       })({ anchor_addresses: addresses }),
   },
+  Subscription: {
+    messageReceived: {
+      resolve: (payload) => {
+        console.log("resolve subscription")
+        console.log(payload);
+        return payload.messageReceived;
+      },
+      subscribe: () => pubsub.asyncIterator(MESSAGE_RECEIVED),
+    },
+    // messageReceived: {
+    //   resolve: (payload) => {
+    //     console.log(payload);
+    //     return payload.messageReceived;
+    //   },
+    //   subscribe: () => asyncify(listenToMessageReceived, {
+    //     onError: (err) => {
+    //       console.log("FINALLY AN ERROR!!")
+    //       console.log(err);
+    //     }
+    //   })
+    // }
+  }
 };
+
+// const listenToMessageReceived = onSignal((sig) => {
+//   // console.log(sig);
+//   const { signal = null } = { ...sig };
+//   if (signal) {
+//     console.log(signal);
+//     const parsedArgs = JSON.parse(signal.arguments);
+//     if (signal.name === "message_received") {
+//       console.log(parsedArgs.payload);
+//       return {
+//         author: parsedArgs.payload.author,
+//         payload: parsedArgs.payload.message,
+//         timestamp: parsedArgs.payload.timestamp,
+//         address: parsedArgs.payload.address,
+//       }
+//     }
+//   };
+// });
 
 export default resolvers;

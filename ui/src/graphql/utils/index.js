@@ -18,6 +18,7 @@ export const initializeOrJoinP2PDNA = async (
   callAdmin,
   hcUprtcl
 ) => {
+  console.log(properties);
   const connection = await hcUprtcl();
   const me = await getMyId(callZome);
   const agentConfig = await connection.getAgentConfig(me);
@@ -31,13 +32,15 @@ export const initializeOrJoinP2PDNA = async (
     instance_id: instanceId,
   };
 
+
   // clone DNA from template and initialize using properties
   try {
     await connection.cloneDna(
       agentConfig.id, // agent to 'host' the DNA
       getP2PDnaId(properties.creator, properties.conversant), // DNA id
       instanceId, // instance id
-      process.env.DNA_PATH, // DNA address
+      // TATS: process.env.DNA_PATH becomes undefined here so reverting back to hardcoded string
+      "QmXcX3pBRgDB3xCWnuNGEuoJCEGmBf5APvZfVVXNJa1WtD", // DNA address
       p2pProperties, // properties
       (interfaces) =>
         interfaces.find((iface) => iface.id === "websocket-interface") // interface
