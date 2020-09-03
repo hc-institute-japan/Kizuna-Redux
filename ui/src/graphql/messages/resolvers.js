@@ -22,7 +22,7 @@ const resolvers = {
         zome: "messages",
         func: "get_all_messages_from_addresses",
       })({
-        id: [input.author],
+        ids: [input.author],
       });
       const authorUsername = await callZome({
         id: "test-instance",

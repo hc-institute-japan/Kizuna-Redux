@@ -31,13 +31,15 @@ export const initializeOrJoinP2PDNA = async (
     instance_id: instanceId,
   };
 
+  console.log(process.env.REACT_APP_DNA_PATH);
+
   // clone DNA from template and initialize using properties
   try {
     await connection.cloneDna(
       agentConfig.id, // agent to 'host' the DNA
       getP2PDnaId(properties.creator, properties.conversant), // DNA id
       instanceId, // instance id
-      process.env.DNA_PATH, // DNA address
+      process.env.REACT_APP_DNA_PATH, // DNA address
       p2pProperties, // properties
       (interfaces) =>
         interfaces.find((iface) => iface.id === "websocket-interface") // interface
