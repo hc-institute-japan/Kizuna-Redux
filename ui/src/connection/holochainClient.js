@@ -171,8 +171,8 @@ export async function hcUprtcl() {
     devEnv: {
       // this property should be changed to your local paths and dna hash
       templateDnasPaths: {
-        QmXcX3pBRgDB3xCWnuNGEuoJCEGmBf5APvZfVVXNJa1WtD:
-          "/Users/tats/projects/Kizuna/dnas/p2pcomm/dist/p2pcomm.dna.json",
+        [process.env.REACT_APP_DNA_PATH]:
+        "/Users/tats/projects/Kizuna/dnas/p2pcomm/dist/p2pcomm.dna.json",
       },
     },
   });

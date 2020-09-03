@@ -39,8 +39,7 @@ export const initializeOrJoinP2PDNA = async (
       agentConfig.id, // agent to 'host' the DNA
       getP2PDnaId(properties.creator, properties.conversant), // DNA id
       instanceId, // instance id
-      // TATS: process.env.DNA_PATH becomes undefined here so reverting back to hardcoded string
-      "QmXcX3pBRgDB3xCWnuNGEuoJCEGmBf5APvZfVVXNJa1WtD", // DNA address
+      process.env.REACT_APP_DNA_PATH, // DNA address
       p2pProperties, // properties
       (interfaces) =>
         interfaces.find((iface) => iface.id === "websocket-interface") // interface
