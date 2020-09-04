@@ -1,0 +1,52 @@
+bridges = []
+persistence_dir = ''
+ui_bundles = []
+ui_interfaces = []
+
+[[agents]]
+id = 'kizuna-agent2'
+keystore_file = 'bobby.key'
+name = 'bobby'
+public_address = 'HcScjPP777sMdV47tdBRI6fNBdhs75djvXKu5sB7Vukhuhib86CO5vWP8J7NBna'
+
+[[dnas]]
+file = '../dist/lobby.dna.json'
+hash = 'QmZTKLAKmJLGvYWdkeoFQFPhroeJpWV6kVCTjHWUUnL1wk'
+id = 'hc-run-dna'
+
+[[instances]]
+agent = 'kizuna-agent2'
+dna = 'hc-run-dna'
+id = 'test-instance'
+
+[instances.storage]
+type = 'memory'
+
+[[interfaces]]
+admin = true
+id = 'websocket-interface'
+
+[[interfaces.instances]]
+id = 'test-instance'
+
+[interfaces.driver]
+port = 8889
+type = 'websocket'
+
+[logger]
+state_dump = true
+type = 'debug'
+
+[logger.rules]
+rules = []
+
+[network]
+sim2h_url = 'ws://localhost:9000'
+type = 'sim2h'
+
+[passphrase_service]
+type = 'cmd'
+
+[signals]
+consistency = false
+trace = false

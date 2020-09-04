@@ -1,0 +1,52 @@
+bridges = []
+persistence_dir = ''
+ui_bundles = []
+ui_interfaces = []
+
+[[agents]]
+id = 'kizuna-agent'
+keystore_file = 'alice.key'
+name = 'alice'
+public_address = 'HcScj5x93w8dbTGyaqAzkgP38Nwxjiwt9Vo4ii9BnwUq3aenhcs3DEC65wfpixa'
+
+[[dnas]]
+file = '../dist/lobby.dna.json'
+hash = 'QmZTKLAKmJLGvYWdkeoFQFPhroeJpWV6kVCTjHWUUnL1wk'
+id = 'hc-run-dna'
+
+[[instances]]
+agent = 'kizuna-agent'
+dna = 'hc-run-dna'
+id = 'test-instance'
+
+[instances.storage]
+type = 'memory'
+
+[[interfaces]]
+admin = true
+id = 'websocket-interface'
+
+[[interfaces.instances]]
+id = 'test-instance'
+
+[interfaces.driver]
+port = 8888
+type = 'websocket'
+
+[logger]
+state_dump = true
+type = 'debug'
+
+[logger.rules]
+rules = []
+
+[network]
+sim2h_url = 'ws://localhost:9000'
+type = 'sim2h'
+
+[passphrase_service]
+type = 'cmd'
+
+[signals]
+consistency = false
+trace = false
