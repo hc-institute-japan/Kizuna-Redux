@@ -56,8 +56,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "hc:alice": "cd ../dnas/lobby && hc run --agent-name alice --networked sim2h",
-    "hc:bob": "cd ../dnas/lobby && hc run --agent-name bob -p 8889 --networked sim2h",
+    "hc:alice": "cd ../dnas/lobby/alice_conductor && holochain -c ./conductor-config-alice.toml",
+    "hc:bob": "cd ../dnas/lobby/bobby_conductor && holochain -c ./conductor-config-bobby.toml",
     "ui:alice": "REACT_APP_DNA_INTERFACE_URL=ws://localhost:8888 ionic serve -p 8100",
     "ui:bob": "REACT_APP_DNA_INTERFACE_URL=ws://localhost:8889 ionic serve -p 8200",
     "demo": "concurrently \"sim2h_server\" \"npm run hc:alice\" \"npm run hc:bob\" \"npm run ui:alice\" \"npm run ui:bob\""
