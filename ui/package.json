@@ -30,8 +30,7 @@
     "apollo-link-error": "^1.1.13",
     "apollo-link-logger": "^1.2.3",
     "apollo-link-schema": "^1.2.4",
-    "apollo-server": "^2.16.1",
-    "callback-to-async-iterator": "^1.1.1",
+    "concurrently": "^5.3.0",
     "graphql": "^14.6.0",
     "graphql-subscriptions": "^1.1.0",
     "graphql-tag": "^2.10.3",
@@ -56,7 +55,12 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "hc:alice": "cd ../dnas/lobby/alice_conductor && holochain -c ./conductor-config-alice.toml",
+    "hc:bob": "cd ../dnas/lobby/bobby_conductor && holochain -c ./conductor-config-bobby.toml",
+    "ui:alice": "REACT_APP_DNA_INTERFACE_URL=ws://localhost:8888 ionic serve -p 8100",
+    "ui:bob": "REACT_APP_DNA_INTERFACE_URL=ws://localhost:8889 ionic serve -p 8200",
+    "demo": "concurrently \"sim2h_server\" \"npm run hc:alice\" \"npm run hc:bob\" \"npm run ui:alice\" \"npm run ui:bob\""
   },
   "eslintConfig": {
     "extends": "react-app"
