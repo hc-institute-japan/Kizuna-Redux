@@ -1,4 +1,4 @@
-import { useLazyQuery, useMutation, useQuery, useSubscription } from "@apollo/react-hooks";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { onSignal } from "../connection/holochainClient";
@@ -9,7 +9,6 @@ import P2P_COMM_INSTANCES from "../graphql/p2pcomm/query/getP2PCommInstancesQuer
 import FETCH_REQUEST_AND_JOIN_P2P_COMM from "../graphql/requests/mutations/fetchRequestAndJoinP2PCommMutation";
 import USERNAME from "../graphql/query/usernameQuery";
 import CONTACTS from "../graphql/query/listContactsQuery";
-import MESSAGE_RECEIVED from "../graphql/messages/subscriptions/messageReceivedSubscription";
 import { getUsername } from "../redux/contacts/actions";
 import { logMessage } from "../redux/conversations/actions";
 import { setContacts } from "../redux/contacts/actions";
@@ -153,7 +152,6 @@ const P2PContainer: React.FC = ({ children }) => {
         name,
       } = data?.getConversationFromId;
       let conversation: Conversation;
-      const { username } = name;
       if (messages?.length) {
         const transformedMessages: Array<Message> = messages?.map(
           (message: any): Message => ({
@@ -164,14 +162,14 @@ const P2PContainer: React.FC = ({ children }) => {
           })
         );
         conversation = {
-          name: username,
+          name: name,
           address,
           instanceId,
           messages: transformedMessages,
         };
       } else
         conversation = {
-          name: username,
+          name: name,
           address,
           instanceId,
           messages: [],
@@ -225,17 +223,6 @@ const P2PContainer: React.FC = ({ children }) => {
           })
         );
       },
-    }
-  );
-
-  const { data: messageData } = useSubscription(
-    MESSAGE_RECEIVED,
-    {
-      onSubscriptionData: (data: any) => {
-        console.log("subscriptionData");
-        console.log(data);
-        console.log(messageData);
-      }
     }
   );
 
@@ -329,11 +316,6 @@ const P2PContainer: React.FC = ({ children }) => {
     onSignal(resolveSignal);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    console.log("useeffect");
-    console.log(messageData);
-  }, [messageData]);
 
   useEffect(() => {
     fetchRequestAndJoinP2PComm();
