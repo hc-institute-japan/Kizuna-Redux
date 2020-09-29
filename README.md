@@ -1,2 +1,3 @@
 # Kizuna
-The safest and most secure messaging app in the world
+A peer-to-peer, end-to-end encrypted messaging application built with Holochain.
+NOTE: This version of Kizuna is using the holochain-redux.
