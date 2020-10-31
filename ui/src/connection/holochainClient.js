@@ -11,10 +11,10 @@ let holochainUprtclClient;
 
 // NB: This should be set to false when you want to run against a Holochain Conductor
 // with a websocket interface running on REACT_APP_DNA_INTERFACE_URL.
-// export const MOCK_DNA_CONNECTION =
-//   process.env.NODE_ENV === "test" ||
-//   process.env.REACT_APP_MOCK_DNA_CONNECTION === "true" ||
-//   false;
+export const MOCK_DNA_CONNECTION =
+  process.env.NODE_ENV === "test" ||
+  process.env.REACT_APP_MOCK_DNA_CONNECTION === "true" ||
+  false;
 
 // Do we need to close ws connection at some point?
 
@@ -22,11 +22,10 @@ export const HOLOCHAIN_LOGGING = process.env.NODE_ENV === "development";
 
 export async function initAndGetHolochainClient() {
   if (holochainClient) return holochainClient;
-
   try {
     holochainClient = await hcWebClientConnect({
       url: process.env.REACT_APP_DNA_INTERFACE_URL,
-      wsClient: { max_reconnects: 0 },
+      wsClient: { max_reconnects: 0, reconnect: true },
     });
 
     if (HOLOCHAIN_LOGGING) {
@@ -48,6 +47,11 @@ export function parseZomeCallPath(zomeCallPath) {
   const [zomeFunc, zome, instanceId] = zomeCallPath.split("/").reverse();
 
   return { instanceId, zome, zomeFunc };
+}
+
+export async function onSignal(callback) {
+  await initAndGetHolochainClient();
+  holochainClient.onSignal(callback);
 }
 
 export function callZome({ id, zome, func }) {
@@ -83,6 +87,48 @@ export function callZome({ id, zome, func }) {
           })
         );
       }
+
+      console.log(e);
+
+      throw new Error(
+        JSON.stringify({
+          code: 1000,
+          message: "Filler",
+        })
+      );
+    }
+  };
+}
+
+export function callAdmin(adminFn) {
+  return async function (args = {}) {
+    try {
+      let adminCall;
+
+      await initAndGetHolochainClient();
+      adminCall = holochainClient.call(adminFn);
+      const rawResult = await adminCall(args);
+      
+      return rawResult;
+    } catch (e) {
+      // const { error } = { ...e };
+
+      console.log(e);
+
+      // if (Internal) {
+      //   const err = JSON.parse(Internal);
+      //   if (err.constructor.name === "Object" && "code" in err) {
+      //     throw new Error(JSON.stringify(err));
+      //   }
+      // } else if (Timeout) {
+      //   throw new Error(
+      //     JSON.stringify({
+      //       code: 502,
+      //       message: "Timeout",
+      //     })
+      //   );
+      // }
+
       throw new Error(
         JSON.stringify({
           code: 1000,
@@ -95,14 +141,15 @@ export function callZome({ id, zome, func }) {
 
 // see https://github.com/uprtcl/js-uprtcl/tree/master/providers/holochain
 export async function hcUprtcl() {
+  await initAndGetHolochainClient();
   if (holochainUprtclClient) return holochainUprtclClient;
   holochainUprtclClient = new HolochainConnection({
     host: process.env.REACT_APP_DNA_INTERFACE_URL,
     devEnv: {
       // this property should be changed to your local paths and dna hash
       templateDnasPaths: {
-        QmR3sFbMo771b6zA9yhDRQx8aGV87yhzetm7Dnptj52WL4:
-          "/Users/tats/projects/Kizuna/dnas/p2pcomm/dist/p2pcomm.dna.json",
+        [process.env.REACT_APP_DNA_PATH]:
+        "/Users/tats/projects/Kizuna/dnas/p2pcomm/dist/p2pcomm.dna.json",
       },
     },
   });

@@ -13,7 +13,7 @@ const HomeTabBar: React.FC = ({ children }) => (
   <IonTabs>
     <IonRouterOutlet>{children}</IonRouterOutlet>
     <IonTabBar slot="bottom">
-      <IonTabButton href="/home/messages" tab="">
+      <IonTabButton href="/home/messages" tab="messages">
         <IonIcon icon={chatbox} />
         <IonLabel>Messages</IonLabel>
       </IonTabButton>

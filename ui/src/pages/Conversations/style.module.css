@@ -1,0 +1,58 @@
+.conversation-list {
+  background-color: var(--ion-background-color);
+}
+
+.conversation-item:hover {
+  background: var(--ion-color-light);
+}
+
+.row {
+  align-items: center;
+}
+
+.message-content {
+  display: flex;
+  align-items: center;
+}
+
+.message-details {
+  flex: 1;
+}
+
+.time {
+  text-align: end;
+  color: #707070;
+  font-size: x-small;
+  margin: 0px !important;
+}
+
+.col {
+  padding: 1px !important;
+  margin: 0px !important;
+}
+
+.recent-message {
+  font-size: small;
+  color: #707070;
+}
+
+.badge {
+  color: var(--ion-color-dark);
+  padding: 0.2rem;
+  margin-top: 2px;
+  background-color: var(--ion-color-primary);
+  border-radius: 30px;
+  float: right;
+}
+
+.conversation-item-name {
+  align-self: center;
+  color: #4b4b4b;
+  font-size: 100%;
+  font-weight: bold;
+  margin: 0px !important;
+}
+
+.fab-icon {
+  color: #fff;
+}

@@ -8,15 +8,17 @@ import {
   IonList,
 } from "@ionic/react";
 import { close } from "ionicons/icons";
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import BackHeader from "../../components/Header/BackHeader";
+import withToast, { ToastProps } from "../../components/Toast/withToast";
 import UNBLOCK_CONTACT from "../../graphql/mutation/unblockContactMutation";
 import { RootState } from "../../redux/reducers";
 import { getTimestamp } from "../../utils/helpers";
+import { Profile } from "../../utils/types";
 import styles from "./style.module.css";
 
-const Blocked: React.FC = ({ pushErr }: any) => {
+const Blocked: React.FC<ToastProps> = ({ pushErr }) => {
   const { blocked } = useSelector((state: RootState) => state.contacts);
   const [unblockContact] = useMutation(UNBLOCK_CONTACT);
   return (
@@ -24,7 +26,7 @@ const Blocked: React.FC = ({ pushErr }: any) => {
       <BackHeader />
       <IonContent>
         <IonList className={`${styles.homeContent} has-tabs`}>
-          {blocked.map((block: any) => (
+          {blocked.map((block: Profile) => (
             <IonItem key={block.username}>
               <IonLabel>{block.username}</IonLabel>
               <IonButton
@@ -35,9 +37,9 @@ const Blocked: React.FC = ({ pushErr }: any) => {
                         username: block.username,
                         timestamp: getTimestamp(),
                       },
-                    })
+                    });
                   } catch (e) {
-                    pushErr(e, {}, "contacts", "unblockContact")
+                    pushErr(e, {}, "contacts", "unblockContact");
                   }
                 }}
                 fill="clear"
@@ -52,4 +54,4 @@ const Blocked: React.FC = ({ pushErr }: any) => {
   );
 };
 
-export default Blocked;
+export default withToast(Blocked);

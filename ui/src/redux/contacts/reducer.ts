@@ -1,5 +1,5 @@
 import { SET_CONTACTS, SET_BLOCKED } from "./actionTypes";
-import { ActionType, Profile } from "../types";
+import { ActionType, Profile } from "../../utils/types";
 
 const initialState = {
   contacts: [],
@@ -10,7 +10,9 @@ const initialState = {
 export default (state = initialState, action: ActionType) => {
   switch (action.type) {
     case SET_CONTACTS:
-      let indexedContacts: any = {};
+      let indexedContacts: {
+        [key: string]: Array<Profile>;
+      } = {};
       const contacts = action.contacts.sort((a: Profile, b: Profile) => {
         const usernameA = a.username.toLowerCase();
         const usernameB = b.username.toLowerCase();

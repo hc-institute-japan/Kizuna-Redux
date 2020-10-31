@@ -7,8 +7,22 @@ import {
 } from "@ionic/react";
 import React from "react";
 import ContactItem from "./ContactItem";
+import EmptyContacts from "./EmptyContacts";
+import { Profile } from "../../utils/types";
 
-const ContactList: React.FC<any> = ({ indexedContacts, search, contacts }) => {
+interface Props {
+  search: string;
+  contacts: Array<Profile> | [];
+  indexedContacts: {
+    [key: string]: Array<Profile> | [];
+  };
+}
+
+const ContactList: React.FC<Props> = ({
+  indexedContacts,
+  search,
+  contacts,
+}) => {
   const searchContacts =
     search.length > 0 ? indexedContacts[search.charAt(0).toUpperCase()] : null;
 
@@ -20,10 +34,10 @@ const ContactList: React.FC<any> = ({ indexedContacts, search, contacts }) => {
             <IonLabel>{search.charAt(0).toUpperCase()}</IonLabel>
           </IonItemDivider>
           {searchContacts
-            .filter((contact: any) =>
+            .filter((contact: Profile) =>
               contact.username.toLowerCase().includes(search.toLowerCase())
             )
-            .map((contact: any) => (
+            .map((contact: Profile) => (
               <ContactItem
                 contacts={contacts}
                 key={contact.username}
@@ -31,16 +45,18 @@ const ContactList: React.FC<any> = ({ indexedContacts, search, contacts }) => {
               />
             ))}
         </IonItemGroup>
+      ) : Object.keys(indexedContacts).length === 0 ? (
+        <EmptyContacts />
       ) : (
         <>
           {Object.keys(indexedContacts).map((index) => {
-            const contacts = indexedContacts[index];
+            const contacts: Array<Profile> = indexedContacts[index];
             const el = (
               <IonItemGroup key={index}>
                 <IonItemDivider>
                   <IonLabel>{index}</IonLabel>
                 </IonItemDivider>
-                {contacts.map((contact: any) => (
+                {contacts.map((contact: Profile) => (
                   <ContactItem
                     contacts={contacts}
                     key={contact.username}

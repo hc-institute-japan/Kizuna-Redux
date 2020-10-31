@@ -11,6 +11,8 @@
 
 # production
 /build
+/target/
+/.cargo/
 
 # misc
 .DS_Store

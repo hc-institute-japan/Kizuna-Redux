@@ -1,22 +1,24 @@
-const schema = `
+import gql from "graphql-tag";
+
+const schema = gql`
     type Profile {
         id: ID!
         username: String
     }
+
     input ProfileInput {
         username: String!
     }
 
-    type Query {
+    extend type Query {
         allAgents: [Profile!]!
         me: Profile
-        username(address: String): String!
+        username(address: String): String
     }
 
-    type Mutation {
+    extend type Mutation {
         createProfile(username: String): Profile!
         deleteProfile(username: String): Boolean
-        updateProfile(profile: ProfileInput): Boolean
     }
 `;
 

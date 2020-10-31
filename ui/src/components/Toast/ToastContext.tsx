@@ -1,8 +1,9 @@
 import { createContext } from "react";
+import { ToastProps } from "./withToast";
 
-const ToastContext = createContext({
-  push: (opt: any): void => {},
-  pushErr: (err: any, opt: any, zomeName: string, funcName: string | null): void => {},
+const ToastContext = createContext<ToastProps>({
+  push: (opt): void => {},
+  pushErr: (err, opt, zomeName, funcName): void => {},
   toast: [],
 });
 

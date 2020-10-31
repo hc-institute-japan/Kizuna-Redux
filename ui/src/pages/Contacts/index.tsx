@@ -5,12 +5,13 @@ import {
   IonFabButton,
   IonIcon,
   IonPage,
+  IonSpinner,
 } from "@ionic/react";
 import { add } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { withRouter } from "react-router-dom";
-import withToast from "../../components/Toast/withToast";
+import { withRouter, RouteComponentProps } from "react-router-dom";
+import withToast, { ToastProps } from "../../components/Toast/withToast";
 import CONTACTS from "../../graphql/query/listContactsQuery";
 import { setContacts } from "../../redux/contacts/actions";
 import { RootState } from "../../redux/reducers";
@@ -18,7 +19,9 @@ import ContactList from "./ContactList";
 import ContactsHeader from "./ContactsHeader";
 import styles from "./style.module.css";
 
-const Contacts = ({ history, pushErr }: any) => {
+interface Props extends RouteComponentProps, ToastProps {}
+
+const Contacts: React.FC<Props> = ({ history, pushErr }) => {
   const [search, setSearch] = useState("");
   const [hasFetched, setHasFetched] = useState(false);
 
@@ -34,7 +37,8 @@ const Contacts = ({ history, pushErr }: any) => {
 
   useEffect(() => {
     // this needs to be fixed later on
-    if (error) pushErr(error, {}, "cotacts");
+    if (error) pushErr(error, {}, "contacts");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
   useEffect(() => {
@@ -49,11 +53,17 @@ const Contacts = ({ history, pushErr }: any) => {
       <ContactsHeader search={search} setSearch={setSearch} />
 
       <IonContent>
-        <ContactList
-          search={search}
-          contacts={contacts}
-          indexedContacts={indexedContacts}
-        />
+        {loading ? (
+          <div className={styles.center}>
+            <IonSpinner />
+          </div>
+        ) : (
+          <ContactList
+            search={search}
+            contacts={contacts}
+            indexedContacts={indexedContacts}
+          />
+        )}
       </IonContent>
       <IonFab
         onClick={() => history.push("/add")}
@@ -63,7 +73,7 @@ const Contacts = ({ history, pushErr }: any) => {
         slot="fixed"
       >
         <IonFabButton>
-          <IonIcon icon={add} />
+          <IonIcon style={{ color: "#FFF" }} icon={add} />
         </IonFabButton>
       </IonFab>
     </IonPage>

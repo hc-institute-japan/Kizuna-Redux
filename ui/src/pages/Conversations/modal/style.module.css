@@ -1,0 +1,26 @@
+.search-bar {
+  --border-radius: 20px !important;
+  --padding: 0px !important;
+  --box-shadow: 0px !important;
+}
+
+.cancel-btn {
+  text-transform: capitalize;
+  padding: 0px !important;
+  margin: 0px !important;
+  color: #f5871a;
+}
+
+.header {
+  padding: 3%;
+}
+
+.row {
+  padding-bottom: 5px;
+}
+
+.title {
+  align-content: center;
+  justify-self: center;
+  padding-left: 20%;
+}

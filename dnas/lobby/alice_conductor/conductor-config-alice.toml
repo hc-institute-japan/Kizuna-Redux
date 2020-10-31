@@ -4,19 +4,18 @@ ui_bundles = []
 ui_interfaces = []
 
 [[agents]]
-id = 'hc-run-agent'
-keystore_file = 'testAgent'
-name = 'testAgent'
-public_address = 'HcScjN8wBwrn3tuyg89aab3a69xsIgdzmX5P9537BqQZ5A7TEZu7qCY4Xzzjhma'
-test_agent = true
+id = 'kizuna-agent'
+keystore_file = 'alice.key'
+name = 'alice'
+public_address = 'HcScj5x93w8dbTGyaqAzkgP38Nwxjiwt9Vo4ii9BnwUq3aenhcs3DEC65wfpixa'
 
 [[dnas]]
-file = '/Users/tats/projects/Kizuna/dnas/lobby/dist/lobby.dna.json'
-hash = 'QmP24cVrdPqE5iE3632TjghQtv2Hcg8jidx7VwTDGmYHK8'
+file = '../dist/lobby.dna.json'
+hash = 'QmZTKLAKmJLGvYWdkeoFQFPhroeJpWV6kVCTjHWUUnL1wk'
 id = 'hc-run-dna'
 
 [[instances]]
-agent = 'hc-run-agent'
+agent = 'kizuna-agent'
 dna = 'hc-run-dna'
 id = 'test-instance'
 
@@ -40,6 +39,10 @@ type = 'debug'
 
 [logger.rules]
 rules = []
+
+[network]
+sim2h_url = 'ws://localhost:9000'
+type = 'sim2h'
 
 [passphrase_service]
 type = 'cmd'

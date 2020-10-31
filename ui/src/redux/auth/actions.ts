@@ -1,13 +1,25 @@
 import { AnyAction } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 import { AUTHENTICATE } from "./actionTypes";
+import { SET_PROFILE } from "../profile/actionTypes";
+import { Profile } from "../../utils/types";
 
-export const authenticate = (agentAddress: String) => (
+export const authenticate = (profile: Profile) => (
   dispatch: ThunkDispatch<void, {}, AnyAction>
 ) => {
-  if (agentAddress)
-    dispatch({
-      type: AUTHENTICATE,
-      agentAddress,
+  if (profile && profile.username) {
+    new Promise((resolve, reject) => {
+      resolve(
+        dispatch({
+          type: SET_PROFILE,
+          profile,
+        })
+      );
+    }).then(() => {
+      dispatch({
+        type: AUTHENTICATE,
+        agentAddress: profile.id,
+      });
     });
+  }
 };

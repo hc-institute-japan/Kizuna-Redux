@@ -1,21 +1,18 @@
-import { IonPage } from "@ionic/react";
 import React from "react";
 import { Redirect, Route } from "react-router-dom";
-import HomeHeader from "../../components/Header/HomeHeader";
 import HomeTabBar from "../../components/Tab/HomeTabBar";
 import Contacts from "../Contacts";
+import Conversations from "../Conversations";
 
 const Home: React.FC = () => (
   <HomeTabBar>
     <Route path="/home/messages" exact>
-      <IonPage>
-        <HomeHeader />
-      </IonPage>
+      <Conversations />
     </Route>
     <Route path="/home/contacts" exact>
       <Contacts />
     </Route>
-    <Redirect from="/home*" to="/home/contacts" />
+    <Redirect from="/home*" to="/home/messages" />
   </HomeTabBar>
 );
 

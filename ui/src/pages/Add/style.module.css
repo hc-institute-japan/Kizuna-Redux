@@ -1,0 +1,18 @@
+.center {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-left: 15vw;
+  padding-right: 15vw;
+  padding-bottom: 15vh;
+}
+.icon {
+  font-size: 3rem;
+}
+
+.text {
+  text-align: center;
+}

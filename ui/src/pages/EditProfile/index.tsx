@@ -8,23 +8,22 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { arrowBack } from "ionicons/icons";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Input from "../../components/Input";
-import { RootState } from "../../redux/reducers";
+import withToast, { ToastProps } from "../../components/Toast/withToast";
 import UPDATE_PROFILE_MUTATION from "../../graphql/mutation/updateProfile";
-import withToast from "../../components/Toast/withToast";
+import { RootState } from "../../redux/reducers";
 
-const EditProfile: React.FC = ({ pushErr }: any) => {
-  const { profile }: { profile: any } = useSelector(
-    (state: RootState) => state.profile
-  );
+const EditProfile: React.FC<ToastProps> = ({ pushErr }) => {
+  const { profile } = useSelector((state: RootState) => state.profile);
   const [profileInput, setProfileInput] = useState({});
 
   const [updateProfile, { error }] = useMutation(UPDATE_PROFILE_MUTATION);
 
   useEffect(() => {
     if (error) pushErr(error);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
   return (

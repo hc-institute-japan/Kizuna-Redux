@@ -1,5 +1,8 @@
 import React from "react";
 import ToastContext from "./ToastContext";
+import { ToastOptions } from "@ionic/react";
+import { ApolloError } from "apollo-boost";
+import Toast from ".";
 
 const withToast = (WrappedComponent: any) => {
   const ToastWrapper = (props: any) => (
@@ -12,9 +15,15 @@ const withToast = (WrappedComponent: any) => {
   return ToastWrapper;
 };
 
-export interface ToastProp {
-  push(opt: any): void;
-  pushErr(err: any, opt?: any): void;
+export interface ToastProps {
+  push(opt: ToastOptions): void;
+  pushErr(
+    err: ApolloError,
+    opt?: ToastOptions,
+    zome?: string,
+    zomeFunction?: string
+  ): void;
+  toast: Array<typeof Toast> | [];
 }
 
 export default withToast;
